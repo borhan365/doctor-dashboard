@@ -1,0 +1,92 @@
+# Healtha.io .cursorroles Configuration
+
+Healtha.io is a comprehensive health directory and management platform designed for doctors, hospitals, patients, medicines, ambulances, health tools, and pharmaceutical companies. It includes features like doctor self-registration, prescription management, hospital directories, telemedicine, advertisement management, and diagnostic price comparison and many more.
+
+## import ImprovementAdvice from "./ImprovementAdvice.md";
+## import Auth from "./Auth.md";
+
+## General Guidelines:
+- Use **Next.js** with App Router.
+- Ensure seamless integration with **Prisma** for database management.
+- Maintain **Zustand** for state management.
+- Optimize for **SEO-friendly nested URLs**.
+- Implement **RBAC (Role-Based Access Control)** for different user types.
+- Ensure high scalability for handling doctor, hospital, and patient data.
+
+## User Roles and Permissions
+
+### 1. **Admin**
+   - Manage all users (doctors, hospitals, patients, staff, assistants).
+   - Control advertisement placements and transactions.
+   - Oversee system-wide settings.
+   - Manage pharmaceutical research data access.
+   - View and edit diagnostic price comparison data.
+   - Approve or reject doctor/hospital listings.
+   - Handle subscription payments and invoices.
+
+### 2. **Doctor**
+   - Register and verify profile.
+   - Manage **chambers** (clinic locations).
+   - Set available appointment schedules.
+   - Issue digital **prescriptions** with:
+     - Clinical Diagnosis templates.
+     - Advice templates.
+     - Medicines from a predefined list.
+     - Diagnostic test recommendations.
+     - and many more.
+   - View and manage patient records.
+   - Send appointment reminders via **Twilio SMS & WhatsApp**.
+   - Access **telemedicine** (video consultation).
+   - Generate invoices for services.
+   - View analytics on patient visits, prescriptions, and trends.
+
+### 3. **Hospital User**
+   - Register and manage hospital details.
+   - Add and manage **departments and services**.
+   - List **doctors and specialists** working in the hospital.
+   - Manage **appointments** booked through Healtha.io.
+   - Set diagnostic test pricing for price comparison tool.
+   - Publish **advertisements** to promote services.
+
+### 4. **Pharmaceutical Company**
+   - Register and manage company profile.
+   - Add and manage **medicines** with detailed descriptions.
+   - Research **doctor prescription trends** including:
+     - Most frequently prescribed medicines.
+     - Top prescribing doctors.
+     - Market insights based on appointment data.
+   - Subscribe to premium analytics for advanced insights.
+
+### 5. **Patient**
+   - Search for doctors, hospitals, and services.
+   - Book online **appointments**.
+   - Access **prescriptions and medical history**.
+   - Receive appointment reminders via SMS/WhatsApp.
+   - View **diagnostic test price comparisons**.
+   - Engage in **telemedicine consultations**.
+
+### 6. **Staff (For Chambers & Hospitals)**
+   - Manage patient appointments.
+   - Handle **billing and invoices**.
+   - Assist doctors with **prescription entry**.
+   - Access patient records (restricted to assigned doctors).
+   - View analytics for patient flow and revenue tracking.
+
+### 7. **Advertiser**
+   - Purchase advertisement slots on Healtha.io.
+   - Track **ad impressions, clicks, and locations**.
+   - Manage transactions related to **advertisements**.
+
+## Technical Notes
+- **SEO Optimization:** Ensure directory pages follow structured URL formats like:
+  - `healtha.io/doctors/bangladesh/dhaka/mirpur`
+  - `healtha.io/hospitals/locations/bangladesh/dhaka`
+- **Security Measures:**
+  - Role-based access control (RBAC) enforcement.
+  - Secure API endpoints with authentication and authorization.
+- **Performance Optimization:**
+  - Use **React Query** for data fetching.
+  - Optimize database queries with Prisma.
+
+---
+

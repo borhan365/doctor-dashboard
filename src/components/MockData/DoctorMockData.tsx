@@ -1,0 +1,177 @@
+export const doctors = [
+  {
+    id: 1,
+    name: "Dr. Tapas Chowdhury",
+    qualifications: "MBBS, BCS (Health), DCH (BSMMU)",
+    specialties: ["Medicine", "Diabetes"],
+    chamber: "Mirsarai Health Care Diagnostic Center",
+    location: "Chattogram",
+    country: "Bangladesh",
+    image:
+      "https://healtha.io/wp-content/uploads/2024/10/Dr.-Tapas-Chowdhury.webp",
+    reviews: { rating: 4.8, count: 124 },
+    experience: "10 years",
+  },
+  {
+    id: 2,
+    name: "Dr. Ripon Nath",
+    qualifications: "MBBS, BCS (Health), FCPS (Medicine)",
+    specialties: ["Medicine"],
+    chamber:
+      "Chittagong Medical College & Hospital, Mirsarai Health Care Diagnostic Center",
+    location: "Chattogram",
+    country: "Bangladesh",
+    image:
+      "https://healtha.io/wp-content/uploads/2024/10/Dr.-Ripon-Nath-medicine-chattogram.webp",
+    reviews: { rating: 4.9, count: 98 },
+    experience: "15 years",
+  },
+  {
+    id: 3,
+    name: "Dr. Nurer Nobi Rahat",
+    qualifications:
+      "MBBS, BCS (Health), DA (Anesthesia &Intensive Care Medicine), MD (Cardiology)",
+    specialties: ["Medicine", "Diabetes"],
+    chamber: "Mirsarai Health Care Diagnostic Center",
+    location: "Chattogram",
+    country: "Bangladesh",
+    image:
+      "https://healtha.io/wp-content/uploads/2024/10/Dr.-Chowdhury-Maimuna-Raisa.webp",
+    reviews: { rating: 4.7, count: 156 },
+    experience: "12 years",
+  },
+  {
+    id: 4,
+    name: "Dr. Chowdhury Maimuna Raisa (Chandni)",
+    qualifications: "MBBS (RU),DMU (Ultrasonography)",
+    specialties: ["Gynecologist"],
+    chamber: "Mirsarai Health Care Diagnostic Center",
+    location: "Chattogram",
+    country: "Bangladesh",
+    image:
+      "https://healtha.io/wp-content/uploads/2024/10/Dr.-Ripon-Nath-medicine-chattogram.webp",
+    reviews: { rating: 4.6, count: 87 },
+    experience: "8 years",
+  },
+  {
+    id: 14,
+    name: "Dr. Tapas Chowdhury",
+    qualifications: "MBBS, BCS (Health), DCH (BSMMU)",
+    specialties: ["Medicine", "Diabetes"],
+    chamber: "Mirsarai Health Care Diagnostic Center",
+    location: "Chattogram",
+    country: "Bangladesh",
+    image:
+      "https://healtha.io/wp-content/uploads/2024/10/Dr.-Tapas-Chowdhury.webp",
+    reviews: { rating: 4.8, count: 124 },
+    experience: "10 years",
+  },
+  {
+    id: 24,
+    name: "Dr. Ripon Nath",
+    qualifications: "MBBS, BCS (Health), FCPS (Medicine)",
+    specialties: ["Medicine"],
+    chamber:
+      "Chittagong Medical College & Hospital, Mirsarai Health Care Diagnostic Center",
+    location: "Chattogram",
+    country: "Bangladesh",
+    image:
+      "https://healtha.io/wp-content/uploads/2024/10/Dr.-Ripon-Nath-medicine-chattogram.webp",
+    reviews: { rating: 4.9, count: 98 },
+    experience: "15 years",
+  },
+  {
+    id: 34,
+    name: "Dr. Nurer Nobi Rahat",
+    qualifications:
+      "MBBS, BCS (Health), DA (Anesthesia &Intensive Care Medicine), MD (Cardiology)",
+    specialties: ["Medicine", "Diabetes"],
+    chamber: "Mirsarai Health Care Diagnostic Center",
+    location: "Chattogram",
+    country: "Bangladesh",
+    image:
+      "https://healtha.io/wp-content/uploads/2024/10/Dr.-Chowdhury-Maimuna-Raisa.webp",
+    reviews: { rating: 4.7, count: 156 },
+    experience: "12 years",
+  },
+  {
+    id: 44,
+    name: "Dr. Chowdhury Maimuna Raisa (Chandni)",
+    qualifications: "MBBS (RU),DMU (Ultrasonography)",
+    specialties: ["Gynecologist"],
+    chamber: "Mirsarai Health Care Diagnostic Center",
+    location: "Chattogram",
+    country: "Bangladesh",
+    image:
+      "https://healtha.io/wp-content/uploads/2024/10/Dr.-Ripon-Nath-medicine-chattogram.webp",
+    reviews: { rating: 4.6, count: 87 },
+    experience: "8 years",
+  },
+  {
+    id: 53,
+    name: "Dr. Chowdhury Maimuna Raisa (Chandni)",
+    qualifications: "MBBS (RU),DMU (Ultrasonography)",
+    specialties: ["Gynecologist"],
+    chamber: "Mirsarai Health Care Diagnostic Center",
+    location: "Chattogram",
+    country: "Bangladesh",
+    image:
+      "https://healtha.io/wp-content/uploads/2024/10/Dr.-Ripon-Nath-medicine-chattogram.webp",
+    reviews: { rating: 4.6, count: 87 },
+    experience: "8 years",
+  },
+  {
+    id: 63,
+    name: "Dr. Tapas Chowdhury",
+    qualifications: "MBBS, BCS (Health), DCH (BSMMU)",
+    specialties: ["Medicine", "Diabetes"],
+    chamber: "Mirsarai Health Care Diagnostic Center",
+    location: "Chattogram",
+    country: "Bangladesh",
+    image:
+      "https://healtha.io/wp-content/uploads/2024/10/Dr.-Tapas-Chowdhury.webp",
+    reviews: { rating: 4.8, count: 124 },
+    experience: "10 years",
+  },
+  {
+    id: 73,
+    name: "Dr. Ripon Nath",
+    qualifications: "MBBS, BCS (Health), FCPS (Medicine)",
+    specialties: ["Medicine"],
+    chamber:
+      "Chittagong Medical College & Hospital, Mirsarai Health Care Diagnostic Center",
+    location: "Chattogram",
+    country: "Bangladesh",
+    image:
+      "https://healtha.io/wp-content/uploads/2024/10/Dr.-Ripon-Nath-medicine-chattogram.webp",
+    reviews: { rating: 4.9, count: 98 },
+    experience: "15 years",
+  },
+  {
+    id: 83,
+    name: "Dr. Nurer Nobi Rahat",
+    qualifications:
+      "MBBS, BCS (Health), DA (Anesthesia &Intensive Care Medicine), MD (Cardiology)",
+    specialties: ["Medicine", "Diabetes"],
+    chamber: "Mirsarai Health Care Diagnostic Center",
+    location: "Chattogram",
+    country: "Bangladesh",
+    image:
+      "https://healtha.io/wp-content/uploads/2024/10/Dr.-Chowdhury-Maimuna-Raisa.webp",
+    reviews: { rating: 4.7, count: 156 },
+    experience: "12 years",
+  },
+  {
+    id: 93,
+    name: "Dr. Chowdhury Maimuna Raisa (Chandni)",
+    qualifications: "MBBS (RU),DMU (Ultrasonography)",
+    specialties: ["Gynecologist"],
+    chamber: "Mirsarai Health Care Diagnostic Center",
+    location: "Chattogram",
+    country: "Bangladesh",
+    image:
+      "https://healtha.io/wp-content/uploads/2024/10/Dr.-Ripon-Nath-medicine-chattogram.webp",
+    reviews: { rating: 4.6, count: 87 },
+    experience: "8 years",
+  },
+];
