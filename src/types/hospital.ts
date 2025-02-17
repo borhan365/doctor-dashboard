@@ -1,5 +1,6 @@
 export interface Hospital {
   // Required fields
+  id: string;
   name: string; // Required
   address: string; // Required
 
@@ -86,7 +87,15 @@ export interface Hospital {
   }> | null;
 
   // Media
-  featuredImage: File | null;
+  featuredImage: {
+    id: string;
+    url: string;
+  };
+  reviews: Array<{
+    id: string;
+    rating: number;
+    comment: string;
+  }> | null;
   banner: File | null;
   gallery: Array<{
     file?: File;
@@ -107,7 +116,10 @@ export interface Hospital {
   features: string[];
   services: string[];
   diagnostics: string[];
-  specialists: string[];
+  specialists: {
+    id: string;
+    title: string;
+  }[];
   locations: Array<{ id: string } | string>;
 
   // Additional Info

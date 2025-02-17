@@ -243,7 +243,7 @@ function Patients() {
             <option value="male">Male</option>
             <option value="female">Female</option>
           </select>
-          <Link href="/doctor/patients/create">
+          <Link href="/dashboard/patients/create">
             <button className="inline-flex h-9 items-center justify-center gap-2 rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-400 disabled:pointer-events-none disabled:opacity-50">
               <Plus className="h-4 w-4" /> Add Patient
             </button>
@@ -334,7 +334,9 @@ function Patients() {
                           </span>
                         </div>
                       )}
-                      <Link href={`/doctor/patients/${patient.id}/appointments`}>
+                      <Link
+                        href={`/dashboard/patients/${patient.id}/appointments`}
+                      >
                         <div className="ml-4">
                           <div className="font-medium text-slate-900">
                             {patient.name}

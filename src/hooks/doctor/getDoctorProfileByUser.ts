@@ -15,7 +15,7 @@ export const useDoctorProfileByUser = (userId?: string) => {
       return response.json();
     },
     enabled: !!userId,
-    onError: (error) => {
+    onError: (error: Error) => {
       console.error("Error fetching doctor profile:", error);
       toast.error("Failed to load doctor profile");
     },

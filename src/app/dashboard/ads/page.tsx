@@ -1,4 +1,4 @@
-import AdsPage from "../../for-doctors/ads/page";
+import AdsPage from "@/app/ads/page";
 
 function DoctorAdsPage() {
   return (

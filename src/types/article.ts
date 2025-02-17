@@ -1,6 +1,13 @@
-import { ArticleFormData } from "@/types/article";
 import axios from "axios";
 import { useCallback, useState } from "react";
+
+export type ArticleFormData = {
+  title: string;
+  slug: string;
+  content: string;
+  thumbnail: string;
+  categoryIds: string[];
+};
 
 export const useArticle = (slug: string) => {
   const [article, setArticle] = useState<ArticleFormData | null>(null);

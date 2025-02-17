@@ -20,7 +20,7 @@ function DoctorGeneralInformationSection({
     onInputChange("prefix", value);
   };
 
-  const handleDoctorTypeChange = (value: string) => {
+  const handleDoctorTypeChange = (value: string[]) => {
     onInputChange("doctorType", value);
   };
 

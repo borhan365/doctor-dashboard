@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { Briefcase, Plus, X } from 'lucide-react'
 
-export function Experience() {
+export function Experience( {onNext}: {onNext: () => void} ) {
   const [experiences, setExperiences] = useState([{ id: 1 }])
 
   const addExperience = () => {

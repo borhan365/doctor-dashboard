@@ -38,9 +38,9 @@ export default function CreatePatient() {
       setFormData(prev => ({
         ...prev,
         [parent]: {
-          ...prev[parent as keyof typeof prev],
-          [child]: value
-        }
+          ...(prev[parent as keyof typeof prev] as object),
+          [child]: value,
+        },
       }));
     } else {
       setFormData(prev => ({ ...prev, [name]: value }));

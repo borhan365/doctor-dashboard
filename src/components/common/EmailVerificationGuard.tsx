@@ -1,5 +1,5 @@
 import { useSession } from 'next-auth/react';
-import { Role, Status } from '@prisma/client';
+import { AuthUser, Role, Status } from '@/types/auth';
 
 interface User {
   id: string;

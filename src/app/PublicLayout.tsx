@@ -1,10 +1,10 @@
 "use client";
 
+import Footer from "@/app/Components/Footer/page";
+import Header from "@/components/Header";
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import Footer from "@/app/Components/Footer/page";
-import Header from "@/app/Components/Header/page";
 
 export default function ClientLayout({
   children,
@@ -40,22 +40,15 @@ export default function ClientLayout({
       )}
     >
       <div className="relative flex">
-        
-
         <div
           className={cn(
             "min-h-screen flex-1",
-            "transition-all duration-300 ease-in-out pl-0",
+            "pl-0 transition-all duration-300 ease-in-out",
           )}
         >
           <Header
             sidebarOpen={sidebarOpen}
             setSidebarOpen={setSidebarOpen}
-            darkMode={isDarkMode}
-            toggleDarkMode={setIsDarkMode}
-            isMobile={
-              typeof window !== "undefined" ? window.innerWidth < 1024 : false
-            }
           />
 
           <main>{children}</main>

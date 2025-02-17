@@ -39,7 +39,7 @@ export default function BookmarkCard({
         <div className="relative h-20 w-20 overflow-hidden rounded-lg flex items-center justify-center">
           {hospital.featuredImage ? (
             <Image
-              src={hospital.featuredImage}
+              src={hospital.featuredImage.url}
               alt={hospital.name}
               fill
               className="object-cover"

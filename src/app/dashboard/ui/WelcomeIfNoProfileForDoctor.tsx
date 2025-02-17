@@ -1,16 +1,19 @@
-import { useSessionStore } from "@/store/sessionStore";
 import Link from "next/link";
 import { FC } from "react";
 
 export const WelcomeIfNoProfileForDoctor: FC = () => {
-  const { user } = useSessionStore();
-  console.log("user", user);
+  const session = {
+    user: {
+      name: "John Doe",
+    },
+  };
+  console.log("user", session);
   return (
     <section className="mb-8 overflow-hidden rounded-lg bg-white dark:bg-slate-800">
       <div className="container mx-auto px-4 py-16">
         <div className="mx-auto max-w-3xl text-center">
           <p className="m-auto mb-4 w-fit rounded-full bg-blue-50 p-2 px-4 text-base font-semibold text-blue-600 dark:text-slate-400">
-            Welcome, Dr. {user?.name}
+            Welcome, Dr. {session?.user?.name}
           </p>
           <h2 className="mb-4 text-3xl font-bold leading-tight text-slate-900 dark:text-white lg:text-4xl">
             Build Your Professional Profile

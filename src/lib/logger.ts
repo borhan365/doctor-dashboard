@@ -1,7 +1,7 @@
 import { prisma } from "./prisma";
 
 interface VerificationAttemptData {
-  userId: number;
+  userId: string;
   email: string;
   success: boolean;
   ipAddress?: string;
@@ -13,7 +13,7 @@ export const logVerificationAttempt = async ({
   email,
   success,
   ipAddress,
-  userAgent
+  userAgent,
 }: VerificationAttemptData) => {
   await prisma.emailVerificationAttempt.create({
     data: {
@@ -22,7 +22,7 @@ export const logVerificationAttempt = async ({
       success,
       ipAddress,
       userAgent,
-      createdAt: new Date() // Using createdAt instead of timestamp based on schema
-    }
+      createdAt: new Date(), // Using createdAt instead of timestamp based on schema
+    },
   });
 };

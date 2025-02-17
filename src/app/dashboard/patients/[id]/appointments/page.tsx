@@ -1,12 +1,11 @@
-import React from 'react'
-import RecentAppointments from '../../../../doctor/appointments/ui/RecentAppointment'
+import RecentAppointments from "@/app/dashboard/appointments/ui/RecentAppointment";
 
 function AppointmentsPage() {
   return (
     <div>
       <RecentAppointments />
     </div>
-  )
+  );
 }
 
-export default AppointmentsPage
+export default AppointmentsPage;

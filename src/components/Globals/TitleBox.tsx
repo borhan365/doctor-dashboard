@@ -15,12 +15,12 @@ function TitleBox({
   onTitleChange,
   onSlugChange,
 }: TitleBoxProps) {
-  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleTitleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     onTitleChange(e.target.value);
     // Removed automatic slug update
   };
 
-  const handleSlugChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const handleSlugChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onSlugChange(e.target.value);
   };
 
@@ -33,7 +33,6 @@ function TitleBox({
         {label}
       </label> */}
       <textarea
-        type="text"
         id="title"
         name="title"
         value={title}

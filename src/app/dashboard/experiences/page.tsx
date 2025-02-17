@@ -1,42 +1,45 @@
 "use client";
 
 import { useDoctorProfileByUser } from "@/hooks/doctor/getDoctorProfileByUser";
-import { useSessionStore } from "@/store/sessionStore";
-import { Chamber } from "@/types/doctor";
 import { Building2, Calendar, MapPin, Plus } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
 function Experiences() {
-  const { user } = useSessionStore();
+  const user = {
+    id: "1",
+  };
   const { data, isLoading, error } = useDoctorProfileByUser(user?.id);
   const [isDeleting, setIsDeleting] = useState(false);
   const [experiences, setExperiences] = useState([
     {
-      id: "1", 
+      id: "1",
       position: "Senior Consultant",
       institution: "City Medical Center",
       location: "Dhaka, Bangladesh",
       period: "2020 - Present",
-      description: "Leading the cardiology department and performing complex cardiac procedures. Specializing in interventional cardiology and cardiac imaging.",
+      description:
+        "Leading the cardiology department and performing complex cardiac procedures. Specializing in interventional cardiology and cardiac imaging.",
       current: true,
     },
     {
       id: "2",
-      position: "Consultant Cardiologist", 
+      position: "Consultant Cardiologist",
       institution: "Health Plus Hospital",
       location: "Dhaka, Bangladesh",
       period: "2015 - 2020",
-      description: "Managed outpatient clinic, performed diagnostic procedures, and participated in research studies.",
+      description:
+        "Managed outpatient clinic, performed diagnostic procedures, and participated in research studies.",
       current: false,
     },
     {
       id: "3",
       position: "Associate Consultant",
-      institution: "Modern Care Hospital", 
+      institution: "Modern Care Hospital",
       location: "Chittagong, Bangladesh",
       period: "2012 - 2015",
-      description: "Provided comprehensive cardiac care and emergency services. Conducted regular health camps and awareness programs.",
+      description:
+        "Provided comprehensive cardiac care and emergency services. Conducted regular health camps and awareness programs.",
       current: false,
     },
   ]);

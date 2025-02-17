@@ -88,6 +88,14 @@ const nextConfig = {
       },
     ],
   },
+  typescript: {
+    // Set this to false to see all errors at once
+    ignoreBuildErrors: false,
+  },
+  eslint: {
+    // Set this to false to see all eslint errors at once
+    ignoreDuringBuilds: false,
+  },
 };
 
 module.exports = nextConfig;

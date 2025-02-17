@@ -1,6 +1,6 @@
 'use client'
 
-import { useLogout } from '@/hooks/useLogout'
+import { useLogout } from '@/app/hooks/useLogout'
 
 export default function LogoutPage() {
   const { logout } = useLogout()

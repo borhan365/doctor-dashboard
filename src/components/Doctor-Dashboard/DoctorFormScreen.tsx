@@ -21,7 +21,7 @@ interface Props {
 }
 
 export function DoctorFormScreen({ onNext }: Props) {
-  const { mutate: createDoctor, isLoading } = useDoctorCreate();
+  const { mutate: createDoctor, isPending: isLoading } = useDoctorCreate();
   const { initialState, validateForm } = useDoctorForm();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -49,12 +49,6 @@ export function DoctorFormScreen({ onNext }: Props) {
     isSponsored: false,
     status: "draft",
 
-    // SEO
-    metaTitle: "",
-    metaDescription: "",
-    metaKeywords: "",
-    metaImage: "",
-
     // Personal Info
     gender: "",
     experience: 0,
@@ -79,7 +73,6 @@ export function DoctorFormScreen({ onNext }: Props) {
     specialists: [],
     treatments: [],
     degrees: [],
-    prefixes: [],
     hospitals: [],
     locations: [],
 
@@ -90,7 +83,7 @@ export function DoctorFormScreen({ onNext }: Props) {
     faqs: [],
 
     // New fields
-    doctorTypes: [],
+    doctorType: "",
   });
   const [featuredImage, setFeaturedImage] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -123,16 +116,16 @@ export function DoctorFormScreen({ onNext }: Props) {
     handleInputChange("degrees", selectedDegrees);
   };
 
-  const handleSpecialistsChange = (specialists: Specialist[]) => {
+  const handleSpecialistsChange = (specialists: string[]) => {
     handleInputChange("specialists", specialists);
   };
 
-  const handleTreatmentsChange = (treatments: Treatment[]) => {
+  const handleTreatmentsChange = (treatments: string[]) => {
     handleInputChange("treatments", treatments);
   };
 
   const handleDoctorTypeChange = (selectedType: string) => {
-    handleInputChange("type", selectedType);
+    handleInputChange("doctorType", selectedType);
   };
 
   const handlePrefixChange = (selectedPrefix: string) => {
@@ -150,7 +143,7 @@ export function DoctorFormScreen({ onNext }: Props) {
         treatments: formData.treatments?.map((id) => ({ id })) || [],
         degrees: formData.degrees?.map((id) => ({ id })) || [],
         languages: formData.languages?.map((id) => ({ id })) || [],
-        doctorTypes: formData.doctorTypes?.map((id) => ({ id })) || [],
+        doctorType: formData.doctorType || [],
 
         // Fix hospitals and locations format
         hospitals: formData.hospitals?.map((id) => ({ id })) || [],
@@ -326,7 +319,7 @@ export function DoctorFormScreen({ onNext }: Props) {
         {/* Languages */}
         <div className="space-y-2">
           <LanguageSection
-            value={formData.languages}
+            selectedLanguages={formData.languages}
             onChange={handleLanguagesChange}
           />
         </div>
@@ -336,7 +329,7 @@ export function DoctorFormScreen({ onNext }: Props) {
         {/* Degree Section */}
         <div className="space-y-2">
           <DegreeSection
-            value={formData.degrees || []}
+            selectedDegrees={formData.degrees || []}
             onChange={handleDegreesChange}
           />
         </div>

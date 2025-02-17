@@ -3,7 +3,7 @@
 
 import Header from "@/app/Components/Header/page";
 import Sidebar from "@/app/Components/Sidebar/page";
-import { useSessionStore } from "@/store/sessionStore";
+import { AuthUser } from "@/types/auth";
 import { useSession } from "next-auth/react";
 import React, { useEffect, useState } from "react";
 
@@ -16,8 +16,8 @@ export default function FrontendLayout({
   const [isMobile, setIsMobile] = useState(false);
   const [desktopSidebarOpen, setDesktopSidebarOpen] = useState(true);
   const { data: sessionData, status } = useSession();
-  const { setUser } = useSessionStore();
   const [darkMode, setDarkMode] = useState(false);
+  const [user, setUser] = useState<AuthUser | null>(null);
 
   useEffect(() => {
     const handleResize = () => {
@@ -29,7 +29,6 @@ export default function FrontendLayout({
     handleResize();
     window.addEventListener("resize", handleResize);
 
-    // Check for user's preferred color scheme
     if (
       window.matchMedia &&
       window.matchMedia("(prefers-color-scheme: dark)").matches
@@ -41,12 +40,12 @@ export default function FrontendLayout({
   }, []);
 
   useEffect(() => {
-    if (sessionData) {
-      setUser(sessionData.user as User);
+    if (sessionData?.user) {
+      setUser(sessionData.user as AuthUser);
     } else if (status === "unauthenticated") {
       setUser(null);
     }
-  }, [sessionData, status, setUser]);
+  }, [sessionData, status]);
 
   const toggleSidebar = () => {
     if (isMobile) {

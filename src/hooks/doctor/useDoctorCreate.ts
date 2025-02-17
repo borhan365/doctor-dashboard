@@ -42,6 +42,7 @@ export const useDoctorCreate = () => {
 export function useDoctorForm() {
   const initialState: DoctorFormData = {
     name: "",
+    prefix: "",
     bmdcNumber: "",
     emailAddresses: [""],
     phoneNumbers: [""],
@@ -50,7 +51,18 @@ export function useDoctorForm() {
     degrees: [],
     specialists: [],
     treatments: [],
-    doctorTypes: [],
+    doctorType: "",
+    discountForHealthaUser: 0,
+    isFeatured: false,
+    isVerified: false,
+      experience: 0,
+    about: "",
+    educations: [],
+    awards: [],
+    services: [],
+    isSponsored: false,
+    hospitals: [],
+    locations: [],
   };
 
   const validateForm = (data: DoctorFormData) => {

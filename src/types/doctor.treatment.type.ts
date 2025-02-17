@@ -16,6 +16,7 @@ export interface Treatment {
     fileUrl: string;
   };
   selected?: boolean;
+  userId?: string;
 }
 
 export interface TreatmentsResponse {

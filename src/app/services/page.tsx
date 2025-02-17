@@ -1,25 +1,18 @@
 "use client";
 
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { FeaturesSection } from "./ui/Features.Section";
 
-export default function Services() {
-  const { data: session, status } = useSession();
-  const router = useRouter();
+import { CTASection } from "./ui/CTA.Section";
+import { HeroSection } from "./ui/Hero.Section";
+import { ServicesSection } from "./ui/Services.Section";
 
-  if (status === "loading") {
-    return <p>Loading...</p>;
-  }
-
-  if (status === "unauthenticated") {
-    router.push("/auth/login");
-    return null;
-  }
-
+export default function DoctorDigitalSolutions() {
   return (
-    <div>
-      <h1>Services</h1>
-      {/* Your services content here */}
-    </div>
+    <main className="min-h-screen bg-slate-50">
+      <HeroSection />
+      <FeaturesSection />
+      <ServicesSection />
+      <CTASection />
+    </main>
   );
 }

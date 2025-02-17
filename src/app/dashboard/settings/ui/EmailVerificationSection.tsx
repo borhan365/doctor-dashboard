@@ -8,7 +8,7 @@ import toast from "react-hot-toast";
 interface User {
   id: string;
   email: string;
-  emailVerified: DateTime | null;
+  emailVerified: Date | null;
   isVerified: boolean;
 }
 

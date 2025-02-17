@@ -130,7 +130,7 @@ function Diagnostics() {
     message.success("Diagnostic deleted successfully");
   };
 
-  const categories = ["All", ...new Set(diagnostics?.map(d => d.category) || [])];
+  const categories = ["All", ...Array.from(new Set(diagnostics?.map(d => d.category) || []))];
 
   const filteredDiagnostics = diagnostics?.filter(diagnostic => {
     const matchesSearch = diagnostic.name.toLowerCase().includes(searchTerm.toLowerCase()) ||

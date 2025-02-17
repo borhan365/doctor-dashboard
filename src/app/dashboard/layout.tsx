@@ -2,10 +2,10 @@
 // import { ReactNode } from "react";
 import DashboardSidebar from "./ui/DashboardSidebar";
 
+import Header from "@/components/Header";
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import Header from "../Components/Header/page";
 
 export default function ClientLayout({
   children,
@@ -60,8 +60,6 @@ export default function ClientLayout({
           <Header
             sidebarOpen={sidebarOpen}
             setSidebarOpen={setSidebarOpen}
-            darkMode={isDarkMode}
-            toggleDarkMode={setIsDarkMode}
             isMobile={
               typeof window !== "undefined" ? window.innerWidth < 1024 : false
             }

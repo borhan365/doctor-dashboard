@@ -73,7 +73,7 @@ function HospitalDoctorProfileCard() {
         </div>
 
         {/* Package Menu */}
-        <HospitalMenu />
+        <HospitalMenu slug={"hospital-doctors"} />
       </div>
     </>
   );

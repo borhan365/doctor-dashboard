@@ -11,6 +11,11 @@ function FooterNewsletter() {
   const [retryAfter, setRetryAfter] = useState<number | null>(null);
   const [isSubscribed, setIsSubscribed] = useState(false);
 
+  // Helper function to check if retry time has passed
+  const isRetryDisabled = () => {
+    return retryAfter ? Date.now() < retryAfter : false;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -51,6 +56,8 @@ function FooterNewsletter() {
     }
   };
 
+  const isDisabled = loading || isRetryDisabled();
+
   return (
     <div>
       <h3 className="mb-6 text-lg font-bold text-white">Stay Updated</h3>
@@ -65,11 +72,11 @@ function FooterNewsletter() {
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Enter your email"
             className="rounded-lg bg-slate-800/50 px-4 py-3 text-white transition-all duration-300 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            disabled={loading || (retryAfter && Date.now() < retryAfter)}
+            disabled={isDisabled}
           />
           <button
             type="submit"
-            disabled={loading || (retryAfter && Date.now() < retryAfter)}
+            disabled={isDisabled}
             className="group flex items-center justify-center space-x-2 rounded-lg bg-blue-600 px-6 py-3 text-white transition-colors duration-300 hover:bg-blue-700 disabled:opacity-50"
           >
             <span>{loading ? "Subscribing..." : "Subscribe"}</span>

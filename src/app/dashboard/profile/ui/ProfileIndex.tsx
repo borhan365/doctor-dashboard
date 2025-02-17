@@ -36,7 +36,7 @@ export function ProfileIndex({ initialData }: ProfileIndexProps) {
       image: "https://via.placeholder.com/150",
     },
   };
-  const { mutate: createDoctor, isLoading: isCreating } = useDoctorCreate();
+  const { mutate: createDoctor, isPending: isCreating } = useDoctorCreate();
   const { initialState, validateForm } = useDoctorForm();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isLoading, setIsLoading] = useState(false);

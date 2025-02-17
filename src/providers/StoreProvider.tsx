@@ -1,22 +1,25 @@
-'use client'
+"use client";
 
-import { useStore } from '@/store'
-import { createContext, useContext } from 'react'
+import { createContext, useContext } from "react";
 
-const StoreContext = createContext<ReturnType<typeof useStore> | null>(null)
+const store = {
+  user: {
+    name: "John Doe",
+  },
+};
+
+const StoreContext = createContext<typeof store | null>(null);
 
 export function StoreProvider({ children }: { children: React.ReactNode }) {
   return (
-    <StoreContext.Provider value={useStore}>
-      {children}
-    </StoreContext.Provider>
-  )
+    <StoreContext.Provider value={store}>{children}</StoreContext.Provider>     
+  );
 }
 
 export const useStoreContext = () => {
-  const context = useContext(StoreContext)
+  const context = useContext(StoreContext);
   if (!context) {
-    throw new Error('useStoreContext must be used within StoreProvider')
+    throw new Error("useStoreContext must be used within StoreProvider");
   }
-  return context
-} 
+  return context;
+};

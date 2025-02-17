@@ -1,15 +1,8 @@
 "use client";
 
+import { useLogout } from "@/app/hooks/useLogout";
 import ClickOutside from "@/components/ClickOutside";
-import { useLogout } from "@/hooks/useLogout";
-import {
-  Briefcase,
-  ChevronDown,
-  Home,
-  LogOut,
-  Settings,
-  User,
-} from "lucide-react";
+import { ChevronDown, Home, LogOut, Settings } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -82,30 +75,12 @@ const DropdownUser = () => {
                 className="flex items-center gap-3.5 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base"
               >
                 <MdAdminPanelSettings size={22} />
-                Admin Dashboard
+                Dashboard
               </Link>
             </li>
             <li>
               <Link
-                href="/doctor"
-                className="flex items-center gap-3.5 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base"
-              >
-                <Briefcase size={22} />
-                Doctor Dashboard
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/user"
-                className="flex items-center gap-3.5 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base"
-              >
-                <User size={22} />
-                User Dashboard
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/settings"
+                href="/dashboard/settings"
                 className="flex items-center gap-3.5 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base"
               >
                 <Settings size={22} />

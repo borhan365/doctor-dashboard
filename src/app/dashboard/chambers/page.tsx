@@ -20,7 +20,7 @@ import { toast } from "sonner";
 const mockChambers: Chamber[] = [
   {
     id: "1",
-    hospital: "City Medical Hospital",
+    hospitalId: "1",
     floorNumber: "3rd Floor",
     roomNumber: "Room 305",
     shift: "Evening",
@@ -79,7 +79,7 @@ const mockChambers: Chamber[] = [
   },
   {
     id: "2",
-    hospital: "Popular Diagnostic Center",
+    hospitalId: "1",
     floorNumber: "5th Floor",
     roomNumber: "Room 502",
     shift: "Morning",
@@ -131,7 +131,7 @@ const mockChambers: Chamber[] = [
   },
   {
     id: "3",
-    hospital: "Green Life Medical College Hospital",
+    hospitalId: "1",
     floorNumber: "2nd Floor",
     roomNumber: "Room 203",
     shift: "Afternoon",
@@ -221,7 +221,7 @@ const ChamberCard = ({ chamber }: { chamber: Chamber }) => {
       <div className="p-6">
         <div className="mb-4">
           <h3 className="text-lg font-medium text-slate-800 dark:text-slate-200">
-            {chamber.hospital}
+            {chamber.hospitalId}
           </h3>
           <div className="mt-2 flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
             <MapPin className="h-4 w-4" />

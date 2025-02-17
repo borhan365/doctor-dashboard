@@ -1,8 +1,8 @@
+import { Chamber, CreateChamberInput } from "@/types/chamber";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { toast } from "sonner";
-import { Chamber, CreateChamberInput } from "@/types/chamber";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 // Create a chamber
 export function useChambers() {
@@ -27,7 +27,7 @@ export function useChambers() {
 
       // Append all chamber data to formData
       Object.entries(chamberData).forEach(([key, value]) => {
-        if (key === 'contactNumbers' || key === 'availableDays') {
+        if (key === "contactNumbers" || key === "availableDays") {
           formData.append(key, JSON.stringify(value));
         } else {
           formData.append(key, String(value));

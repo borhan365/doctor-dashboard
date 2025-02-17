@@ -3,7 +3,6 @@
 import { useHospitals } from "@/app/hooks/useHospitals";
 import DaySection from "@/components/Doctor-Dashboard/DaySection";
 import { useChambers } from "@/hooks/doctor/chamber/useChambers";
-import { useSessionStore } from "@/store/sessionStore";
 import { CreateChamberInput, DaySchedule } from "@/types/chamber";
 import { Select } from "antd";
 import { ChevronDown, Plus } from "lucide-react";
@@ -14,9 +13,16 @@ import SelectHospital from "../ui/SelectHospital";
 export function CreateChamber() {
   const { createChamber } = useChambers();
   const { data: hospitals } = useHospitals();
-  const { user } = useSessionStore();
 
-  const doctorId = user?.doctorProfile?.id;
+  const session = {
+    user: {
+      doctorProfile: {
+        id: "cm6rqbx4a000a3jwz9fjtik03",
+      },
+    },
+  };
+
+  const doctorId = session?.user?.doctorProfile?.id;
 
   console.log("doctorId", doctorId); // got: cm6rqbx4a000a3jwz9fjtik03
 
@@ -24,12 +30,10 @@ export function CreateChamber() {
     slotDuration: 30,
     breakTime: 0,
     maxPatients: 1,
-    status: "draft",
     contactNumbers: [""],
     oldPatientFee: 0,
     followUpFee: 0,
     newPatientFee: 0,
-    doctorId: doctorId, // This is correct, but we need to ensure doctorId exists
     shift: "morning",
     availableDays: [
       {
@@ -38,6 +42,7 @@ export function CreateChamber() {
         toTime: "",
         isAvailable: false,
         timeSlots: [],
+        id: "",
       },
       {
         day: "Sunday",
@@ -45,6 +50,7 @@ export function CreateChamber() {
         toTime: "",
         isAvailable: false,
         timeSlots: [],
+        id: "",
       },
       {
         day: "Monday",
@@ -52,6 +58,7 @@ export function CreateChamber() {
         toTime: "",
         isAvailable: false,
         timeSlots: [],
+        id: "",
       },
       {
         day: "Tuesday",
@@ -59,6 +66,7 @@ export function CreateChamber() {
         toTime: "",
         isAvailable: false,
         timeSlots: [],
+        id: "",
       },
       {
         day: "Wednesday",
@@ -66,6 +74,7 @@ export function CreateChamber() {
         toTime: "",
         isAvailable: false,
         timeSlots: [],
+        id: "",
       },
       {
         day: "Thursday",
@@ -73,6 +82,7 @@ export function CreateChamber() {
         toTime: "",
         isAvailable: false,
         timeSlots: [],
+        id: "",
       },
       {
         day: "Friday",
@@ -80,6 +90,7 @@ export function CreateChamber() {
         toTime: "",
         isAvailable: false,
         timeSlots: [],
+        id: "",
       },
     ],
   });
@@ -105,7 +116,7 @@ export function CreateChamber() {
       }
 
       // Basic validation
-      if (!formData.hospital) {
+      if (!formData.hospitalId) {
         toast.error("Please select a hospital");
         return;
       }

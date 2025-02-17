@@ -56,4 +56,4 @@ export interface Chamber {
   };
 }
 
-export type CreateChamberInput = Omit<Chamber, 'id' | 'hospitalData'>;
+export type CreateChamberInput = Omit<Chamber, "id" | "hospitalData">;

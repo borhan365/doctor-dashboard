@@ -24,6 +24,7 @@ interface Prescription {
 const MOCK_PRESCRIPTIONS: Prescription[] = [
   {
     id: "1",
+    patientName: "John Doe",
     date: "2024-03-15",
     diagnosis: "Common Cold",
     medications: [
@@ -43,6 +44,7 @@ const MOCK_PRESCRIPTIONS: Prescription[] = [
   },
   {
     id: "2",
+    patientName: "Jane Smith",
     date: "2024-03-14",
     diagnosis: "Hypertension",
     medications: [

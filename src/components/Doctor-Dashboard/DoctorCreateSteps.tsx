@@ -1,6 +1,5 @@
 "use client";
 
-import { useStepParams } from "@/hooks/useStepParams";
 import { Step } from "@/types/step";
 import {
   Briefcase,
@@ -54,7 +53,7 @@ const steps: Step[] = [
 ];
 
 export default function DoctorCreateSteps() {
-  const { currentStep, setStep } = useStepParams();
+  const [currentStep, setStep] = useState<string>("general-info");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [completedSteps, setCompletedSteps] = useState<string[]>([]);
 
@@ -66,7 +65,7 @@ export default function DoctorCreateSteps() {
     // For general-info step, validate required fields including doctor types
     if (stepId === "general-info") {
       // Add any specific validation you need for doctor types
-      const formIsValid = validateForm(); // Implement this in your form validation logic
+      const formIsValid = true; // Implement this in your form validation logic
       if (!formIsValid) {
         toast.error("Please fill in all required fields");
         return;

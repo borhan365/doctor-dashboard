@@ -31,6 +31,25 @@ function ProfileCompleteSteps({
     city: "Dhaka",
     languages: ["English", "Bengali"],
     degrees: ["MBBS", "MD"],
+    bmdcNumber: "1234567890",
+    gender: "Male",
+    specialists: ["Cardiology", "Dermatology"],
+    chambers: [{
+      id: "1",
+      name: "Chamber 1",  
+    }],
+    treatments: ["Treatment 1", "Treatment 2"],
+    educations: [{
+      id: "1",
+      name: "Education 1",
+    }],
+    experiences: [{
+      id: "1",
+      name: "Experience 1",
+    }],
+    faqs: [{
+      id: "1",
+    }],
   };
 
   const steps = useMemo(() => {
@@ -102,7 +121,7 @@ function ProfileCompleteSteps({
         title: "Experience",
         description: "Work History",
         icon: Briefcase,
-        isComplete: !!(doctorProfile?.experience > 0),
+        isComplete: !!(doctorProfile?.experiences?.length > 0),
         weight: 5,
         link: "/doctor/experiences",
       },

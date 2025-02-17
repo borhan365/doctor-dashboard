@@ -96,7 +96,9 @@ function TreatmentSection({
       await deleteTreatmentMutation.mutateAsync(id);
       // Remove from selected if it was selected
       if (selectedTreatments.includes(id)) {
-        onChange(selectedTreatments.filter((treatmentId) => treatmentId !== id));
+        onChange(
+          selectedTreatments.filter((treatmentId) => treatmentId !== id),
+        );
       }
       toast.success("Treatment deleted successfully");
     } catch (error) {
@@ -116,7 +118,7 @@ function TreatmentSection({
     if (selectedTreatments.length === 0) return null;
 
     const selectedItems = treatments.filter((treatment) =>
-      selectedTreatments.includes(treatment.id)
+      selectedTreatments.includes(treatment.id),
     );
 
     return (
@@ -152,9 +154,7 @@ function TreatmentSection({
     return (
       <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
         {treatments.map((treatment) => {
-          const isSelected = selectedTreatments.some(
-            (t) => t === treatment.id,
-          );
+          const isSelected = selectedTreatments.some((t) => t === treatment.id);
 
           return (
             <div

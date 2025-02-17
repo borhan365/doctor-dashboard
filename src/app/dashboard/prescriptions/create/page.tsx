@@ -50,10 +50,10 @@ export default function CreatePrescription() {
   const durationTypeOptions = ["Days", "Months", "Years"];
 
   const handleInvestigationSelect = (investigation: string) => {
-    if (!formData.selectedInvestigations.includes(investigation)) {
+    if (!formData.selectedInvestigations.includes(investigation as never)) {
       setFormData({
         ...formData,
-        selectedInvestigations: [...formData.selectedInvestigations, investigation]
+        selectedInvestigations: [...formData.selectedInvestigations, investigation as never]
       });
     }
   };
@@ -69,7 +69,7 @@ export default function CreatePrescription() {
     if (formData.customInvestigations.trim()) {
       setFormData({
         ...formData,
-        selectedInvestigations: [...formData.selectedInvestigations, formData.customInvestigations.trim()],
+        selectedInvestigations: [...formData.selectedInvestigations, formData.customInvestigations.trim() as never],
         customInvestigations: ""
       });
     }

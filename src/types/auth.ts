@@ -17,13 +17,13 @@ export enum Status {
   BANNED = "BANNED",
 }
 
-export interface User extends NextAuthUser {
+export interface AuthUser extends Omit<NextAuthUser, "email"> {
   id: string;
   role: Role;
   status: Status;
   isVerified: boolean;
   name?: string | null;
-  email?: string | null;
+  email: string;
   image?: string | null;
 }
 
@@ -40,20 +40,24 @@ export interface Session {
 }
 
 export interface AuthResponse {
-  user: User;
+  user: AuthUser;
   token?: string;
   message?: string;
 }
 
 declare module "next-auth" {
   interface Session {
-    user: User;
+    user: AuthUser;
   }
-  interface User extends NextAuthUser {
+
+  interface User {
     id: string;
+    email: string;
     role: Role;
     status: Status;
     isVerified: boolean;
+    name?: string | null;
+    image?: string | null;
   }
 }
 

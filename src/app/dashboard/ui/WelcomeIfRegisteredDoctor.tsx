@@ -1,8 +1,8 @@
-import { useSessionStore } from "@/store/sessionStore";
+import { useSession } from "next-auth/react";
 import Image from "next/image";
 
 function WelcomeIfRegisteredDoctor() {
-  // const { user } = useSessionStore();
+  const { data: session } = useSession();
 
   const user = {
     name: "John Doe",

@@ -60,7 +60,7 @@ function BookmarkComponent({ articleId }: BookmarkComponentProps) {
       toast.success(isBookmarked ? "Bookmark removed" : "Article bookmarked");
     } catch (error) {
       console.error("Error updating bookmark:", error);
-      toast.error(error.message || "Error updating bookmark");
+      toast.error(error instanceof Error ? error.message : "Error updating bookmark");
     } finally {
       setIsLoading(false);
     }

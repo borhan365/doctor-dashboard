@@ -122,11 +122,13 @@ export interface DoctorFormData {
 
 export interface Doctor extends DoctorFormData {
   id: string;
-  featuredImage?: {
+  bmdcNumber: string;
+  doctorProfile?: {
     id: string;
-    fileUrl: string;
-    fileKey: string;
+    name: string | null;
+    email: string;
   } | null;
+  featuredImage?: string | null;
   user?: {
     id: string;
     name: string | null;

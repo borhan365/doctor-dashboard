@@ -20,7 +20,7 @@ type Chamber = {
   maxPatients: number;
 };
 
-export function Chamber() {
+export function Chamber( {onNext}: {onNext: () => void} ) {
   const [chambers, setChambers] = useState<Chamber[]>([
     {
       id: 1,
@@ -298,7 +298,7 @@ export function Chamber() {
                 </div>
               </div>
 
-              <DaySection />
+              <DaySection value={[]} onChange={() => {}} />
             </div>
           </div>
         ))}

@@ -1,10 +1,10 @@
-import ForDoctors from "@/app/for-doctors/page";
+import HomePage from "@/components/HomePage/page";
 import PublicLayout from "./PublicLayout";
 
 export default async function Home() {
   return (
     <PublicLayout>
-      <ForDoctors />
+      <HomePage />
     </PublicLayout>
   );
 }
