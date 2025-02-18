@@ -72,7 +72,7 @@ export default function Pages({ params }: PageProps) {
             {error instanceof Error ? error.message : "An error occurred"}
           </h3>
           <p className="text-slate-600">
-            We couldn't find the page you're looking for.
+            {`We couldn't find the page you're looking for.`}
           </p>
           <Link
             href="/"

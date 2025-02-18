@@ -275,7 +275,9 @@ const Messages: React.FC = () => {
                     <Menu className="h-6 w-6" />
                   </button>
                 )}
-                <img
+                <Image
+                  width={50}
+                  height={50}
                   src={activeUser.avatar}
                   alt={activeUser.name}
                   className="mr-4 h-10 w-10 rounded-full"

@@ -1,3 +1,5 @@
+import Image from "next/image"
+
 interface Clinic {
   id: string
   name: string
@@ -18,7 +20,7 @@ export function Clinics({ clinics }: { clinics: Clinic[] }) {
           <div key={clinic.id} className="border rounded-lg p-4">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
-                <img src={clinic.image || "/placeholder.svg"} alt="" className="w-12 h-12 rounded-lg" />
+                <Image width={100} height={100} src={clinic.image || "/placeholder.svg"} alt="" className="w-12 h-12 rounded-lg" />
                 <div>
                   <p className="font-medium">{clinic.name}</p>
                   <p className="text-blue-500">${clinic.price}</p>

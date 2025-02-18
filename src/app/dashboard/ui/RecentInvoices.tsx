@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 interface Invoice {
   id: string;
   name: string;
@@ -26,7 +28,9 @@ export function RecentInvoices({ invoices }: { invoices: Invoice[] }) {
           >
             <div className="flex items-center gap-4">
               {invoice.avatar ? (
-                <img
+                <Image
+                  width={100}
+                  height={100}
                   src={invoice.avatar}
                   alt={invoice.name}
                   className="h-10 w-10 rounded-full object-cover"

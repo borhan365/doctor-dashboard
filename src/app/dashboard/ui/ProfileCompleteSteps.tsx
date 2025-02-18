@@ -23,34 +23,46 @@ interface ProfileCompleteStepsProps {
 function ProfileCompleteSteps({
   doctorProfile: initialProfile,
 }: ProfileCompleteStepsProps) {
-  const doctorProfile = {
-    name: "John Doe",
-    emailAddresses: ["john.doe@example.com"],
-    phoneNumbers: ["+8801712345678"],
-    division: "Dhaka",
-    city: "Dhaka",
-    languages: ["English", "Bengali"],
-    degrees: ["MBBS", "MD"],
-    bmdcNumber: "1234567890",
-    gender: "Male",
-    specialists: ["Cardiology", "Dermatology"],
-    chambers: [{
+  const doctorProfile = useMemo(
+    () => ({
       id: "1",
-      name: "Chamber 1",  
-    }],
-    treatments: ["Treatment 1", "Treatment 2"],
-    educations: [{
-      id: "1",
-      name: "Education 1",
-    }],
-    experiences: [{
-      id: "1",
-      name: "Experience 1",
-    }],
-    faqs: [{
-      id: "1",
-    }],
-  };
+      name: "John Doe",
+      emailAddresses: ["john.doe@example.com"],
+      phoneNumbers: ["+8801712345678"],
+      division: "Dhaka",
+      city: "Dhaka",
+      languages: ["English", "Bengali"],
+      degrees: ["MBBS", "MD"],
+      bmdcNumber: "1234567890",
+      gender: "Male",
+      specialists: ["Cardiology", "Dermatology"],
+      chambers: [
+        {
+          id: "1",
+          name: "Chamber 1",
+        },
+      ],
+      treatments: ["Treatment 1", "Treatment 2"],
+      educations: [
+        {
+          id: "1",
+          name: "Education 1",
+        },
+      ],
+      experiences: [
+        {
+          id: "1",
+          name: "Experience 1",
+        },
+      ],
+      faqs: [
+        {
+          id: "1",
+        },
+      ],
+    }),
+    [],
+  ); // Empty dependency array since this is static data
 
   const steps = useMemo(() => {
     return [

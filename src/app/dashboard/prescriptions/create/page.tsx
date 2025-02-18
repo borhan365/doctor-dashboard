@@ -360,7 +360,7 @@ export default function CreatePrescription() {
         {/* Doctor's Notes */}
         <div>
           <label className="block font-medium text-slate-700">
-            Doctor's Notes:
+            {`Doctor's Notes:`}
           </label>
           <textarea
             className="mt-1 w-full rounded-md border border-slate-300 p-2 focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500"
