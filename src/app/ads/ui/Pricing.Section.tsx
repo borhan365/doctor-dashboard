@@ -193,9 +193,10 @@ export function PricingSection() {
             >
               <div className="mb-4 flex">
                 <QuoteIcon className="h-8 w-8 text-blue-500/20 dark:text-blue-400/20" />
-                <p className="ml-2 text-lg italic text-slate-600 dark:text-slate-300">
-                  "{testimonial.quote}"
-                </p>
+                <blockquote className="ml-2 text-lg italic text-slate-600 dark:text-slate-300">
+                  {`“${testimonial.quote}”`}
+                </blockquote>
+
               </div>
               <footer>
                 <div className="font-semibold text-slate-900 dark:text-white">

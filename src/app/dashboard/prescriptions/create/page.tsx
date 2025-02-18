@@ -259,7 +259,7 @@ export default function CreatePrescription() {
                   onClick={() => removeInvestigation(inv)}
                   className="text-slate-500 hover:text-slate-700"
                 >
-                  ×
+                  {`×`}
                 </button>
               </div>
             ))}
@@ -509,7 +509,7 @@ export default function CreatePrescription() {
           {/* Doctor's Notes */}
           {formData.notes && (
             <div>
-              <h2 className="font-medium text-slate-700">Doctor's Notes:</h2>
+              <h2 className="font-medium text-slate-700">{`Doctor's Notes:`}</h2>
               <div className="whitespace-pre-wrap text-slate-600">
                 {formData.notes}
               </div>

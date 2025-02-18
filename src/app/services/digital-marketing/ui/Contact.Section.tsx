@@ -57,7 +57,7 @@ export default function ContactSection() {
           <div className="mb-6 inline-flex items-center rounded-full bg-blue-50 px-6 py-2 dark:bg-blue-950/50">
             <span className="mr-2 inline-block h-2 w-2 rounded-full bg-blue-500"></span>
             <span className="text-sm font-medium text-blue-600 dark:text-blue-400">
-              Let's Connect
+              {`Let's Connect`}
             </span>
           </div>
           <h2 className="mb-4 text-4xl font-bold tracking-tight text-slate-900 dark:text-white">

@@ -169,7 +169,7 @@ function PricingTier({
                     className="max-w-xs rounded-lg bg-slate-900 px-3 py-2 text-xs text-white shadow-lg dark:bg-slate-800"
                     sideOffset={5}
                   >
-                    For the first year, installations, domain hosting, SSL and all mentioned features are free. After one year, you'll need to renew services like domain, hosting, SSL etc.
+                    {`For the first year, installations, domain hosting, SSL and all mentioned features are free. After one year, you'll need to renew services like domain, hosting, SSL etc.`}
                     <Tooltip.Arrow className="fill-slate-900 dark:fill-slate-800" />
                   </Tooltip.Content>
                 </Tooltip.Portal>
@@ -231,8 +231,8 @@ export function PricingSection() {
             Affordable Plans Tailored to Your Practice
           </h2>
           <p className="mx-auto mb-8 max-w-3xl text-lg text-slate-600 dark:text-slate-400">
-            Choose the perfect plan for your practice. Whether you're a solo
-            practitioner or running a large clinic, we've got you covered.
+            {`Choose the perfect plan for your practice. Whether you're a solo
+            practitioner or running a large clinic, we've got you covered.`}
           </p>
         </div>
 

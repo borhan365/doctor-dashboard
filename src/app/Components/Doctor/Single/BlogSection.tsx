@@ -48,7 +48,7 @@ function BlogSection() {
         <div className="mb-8 flex items-center justify-between">
           <div>
             <h2 className="text-2xl font-bold text-slate-900 sm:text-3xl">
-              Doctor's Blog
+              {`Doctor's Blog`}
             </h2>
             <p className="mt-2 text-slate-600">
               Latest insights and medical advice from{" "}

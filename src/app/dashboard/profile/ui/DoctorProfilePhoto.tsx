@@ -1,6 +1,7 @@
 "use client";
 
 import { Camera, User } from "lucide-react";
+import Image from "next/image";
 import { useRef } from "react";
 
 interface DoctorProfilePhotoProps {
@@ -30,7 +31,9 @@ function DoctorProfilePhoto({
       <div className="flex items-center space-x-6">
         <div className="h-20 w-20 overflow-hidden rounded-full bg-slate-100">
           {displayUrl ? (
-            <img
+            <Image
+              width={100}
+              height={100}
               src={displayUrl}
               alt="Preview"
               className="h-full w-full object-cover"

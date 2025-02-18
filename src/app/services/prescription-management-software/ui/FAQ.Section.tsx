@@ -74,7 +74,7 @@ export function FAQSection() {
           Frequently Asked Questions
         </h2>
         <p className="mb-8 text-center text-slate-600 dark:text-slate-400">
-          Have questions about Doctor Digital Solutions? We've got you covered!
+          {`Have questions about Doctor Digital Solutions? We've got you covered!`}
         </p>
 
         <div className="space-y-3">

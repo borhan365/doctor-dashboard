@@ -1,4 +1,5 @@
 import { CameraIcon } from "lucide-react";
+import Image from "next/image";
 
 function ProfileSettingsTab() {
   return (
@@ -7,7 +8,9 @@ function ProfileSettingsTab() {
         {/* Profile Photo */}
         <div className="flex items-center space-x-4">
           <div className="bg-gray-300 h-24 w-24 overflow-hidden rounded-full">
-            <img
+            <Image
+              width={900} 
+              height={300}
               src="/images/user/user-01.png"
               alt="Profile"
               className="h-full w-full object-cover"

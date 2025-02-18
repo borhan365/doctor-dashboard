@@ -169,9 +169,9 @@ function PricingTier({
                     className="max-w-xs rounded-lg bg-slate-900 px-3 py-2 text-xs text-white shadow-lg dark:bg-slate-800"
                     sideOffset={5}
                   >
-                    For the first year, installations, domain hosting, SSL and
+                   {` For the first year, installations, domain hosting, SSL and
                     all mentioned features are free. After one year, you'll need
-                    to renew services like domain, hosting, SSL etc.
+                    to renew services like domain, hosting, SSL etc.`}
                     <Tooltip.Arrow className="fill-slate-900 dark:fill-slate-800" />
                   </Tooltip.Content>
                 </Tooltip.Portal>
@@ -233,9 +233,9 @@ export function PricingSection() {
             Affordable and Transparent Pricing
           </h2>
           <p className="mx-auto mb-8 max-w-3xl text-lg text-slate-600 dark:text-slate-400">
-            At Healtha, we offer flexible pricing plans to cater to the unique
+            {`At Healtha, we offer flexible pricing plans to cater to the unique
             needs of every doctor. Whether you're starting your digital journey
-            or looking to scale your practice, we have a plan for you.
+            or looking to scale your practice, we have a plan for you.`}
           </p>
         </div>
 

@@ -50,7 +50,7 @@ function ChamberSection() {
   return (
     <div id="chambers" className="rounded-xl bg-white p-4 shadow-sm sm:p-6">
       <h2 className="mb-6 text-2xl font-bold text-slate-900">
-        Doctor's Chambers
+        {`Doctor's Chambers`}
       </h2>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">

@@ -776,7 +776,7 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
                   }`}
                 >
                   <BsQuestionCircle className="size-5" />
-                  FAQ's
+                  {"FAQ's"}
                 </Link>
               </li>
               {/* <!-- Menu Item faqs --> */}

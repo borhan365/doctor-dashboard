@@ -80,7 +80,7 @@ export default function AppointmentDetails() {
             Clinic Location
           </h3>
           <p className="mt-2 text-base font-medium text-slate-900">
-            Adrian's Dentistry
+           {` Adrian's Dentistry`}
           </p>
         </div>
         <div>

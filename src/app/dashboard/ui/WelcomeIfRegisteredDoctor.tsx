@@ -37,7 +37,7 @@ function WelcomeIfRegisteredDoctor() {
             <span className="text-blue-600"> Dr. {user?.name}</span>
           </h1>
           <p className="text-sm text-slate-600 dark:text-slate-400">
-            Here's what's happening with your practice today
+            {`Here's what's happening with your practice today`}
           </p>
         </div>
       </div>

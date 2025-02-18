@@ -106,9 +106,10 @@ export default function WhyChooseUsSection() {
               </div>
             </div>
             <div className="md:w-2/3">
-              <blockquote className="mb-4 text-xl font-medium text-white">
-                "{testimonial.quote}"
-              </blockquote>
+            <blockquote className="mb-4 text-xl font-medium text-white">
+              {`“${testimonial.quote}”`}
+            </blockquote>
+
               <div className="text-white">
                 <div className="font-semibold">{testimonial.author}</div>
                 <div className="text-white/80">

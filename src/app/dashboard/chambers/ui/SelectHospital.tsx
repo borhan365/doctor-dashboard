@@ -85,7 +85,7 @@ function SelectHospital({
       {hospitals?.hospitals?.length === 0 && (
         <div className="mt-4">
           <p className="mt-4 text-sm text-slate-500">
-            If you can't find your hospital. Please{" "}
+            {`If you can't find your hospital. Please `}
             <span className="cursor-pointer font-medium text-blue-500">
               Add a hospital manually
             </span>

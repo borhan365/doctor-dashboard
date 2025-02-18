@@ -204,8 +204,8 @@ export function PricingSection() {
             Affordable Plans to Empower Your Practice
           </h2>
           <p className="mx-auto mb-8 max-w-3xl text-lg text-slate-600 dark:text-slate-400">
-            Choose a plan that fits your clinic's size, budget, and needs. All
-            plans include a 30-day money-back guarantee.
+            {`Choose a plan that fits your clinic's size, budget, and needs. All
+            plans include a 30-day money-back guarantee.`}
           </p>
 
           <div className="mb-8 flex items-center justify-center gap-3">

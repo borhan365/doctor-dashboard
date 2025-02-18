@@ -68,8 +68,8 @@ export function Payment({ onNext }: { onNext: () => void }) {
             Enhanced Visibility
           </h3>
           <p className="text-sm text-slate-600">
-            Join Bangladesh's largest healthcare platform and receive thousands
-            of profile views monthly.
+            {`Join Bangladesh's largest healthcare platform and receive thousands
+            of profile views monthly.`}
           </p>
         </div>
       </div>

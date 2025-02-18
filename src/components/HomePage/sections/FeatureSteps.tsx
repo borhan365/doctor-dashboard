@@ -149,9 +149,9 @@ export default function FeatureSteps() {
                 <Lightbulb className="h-5 w-5 text-blue-600 dark:text-blue-400" />
               </div>
               <p className="text-base text-slate-600 dark:text-slate-400 sm:text-lg">
-                Does your profile have all the information? We'll remind you
+                {`Does your profile have all the information? We'll remind you
                 about all the minute details that can make a huge difference
-                impact on your online presence.
+                impact on your online presence.`}
               </p>
             </div>
           </div>

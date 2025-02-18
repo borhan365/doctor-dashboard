@@ -297,10 +297,10 @@ export function DoctorFormScreen({ onNext }: Props) {
               Doctor Personal Information
             </p>
             <p className="mb-4 text-sm text-slate-500">
-              Note: Don't worry! your personal information will not be shared
+              {`Note: Don't worry! your personal information will not be shared
               with anyone, it will only be used for internal purposes like
               sending you updates, verfication, any account related
-              communication.
+              communication.`}
             </p>
           </div>
           <div>

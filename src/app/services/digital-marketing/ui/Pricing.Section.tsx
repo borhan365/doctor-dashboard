@@ -230,9 +230,9 @@ export function PricingSection() {
             Digital Marketing Plans for Healthcare Providers
           </h2>
           <p className="mx-auto mb-8 max-w-3xl text-lg text-slate-600 dark:text-slate-400">
-            Choose the perfect digital marketing package for your practice. From
+            {`Choose the perfect digital marketing package for your practice. From
             local SEO to comprehensive multi-channel campaigns, we've got you
-            covered.
+            covered.`}
           </p>
 
           <div className="mb-8 flex items-center justify-center gap-3">

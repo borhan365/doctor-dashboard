@@ -64,7 +64,7 @@ export default function UnsubscribePage() {
             Unsubscribe from Newsletter
           </h2>
           <p className="text-lg text-slate-600 mb-8 text-center">
-            We're sorry to see you go. Please enter your email address to unsubscribe from our newsletter.
+            {`We're sorry to see you go. Please enter your email address to unsubscribe from our newsletter.`}
           </p>
           <form onSubmit={handleUnsubscribe} className="space-y-6">
             <div>

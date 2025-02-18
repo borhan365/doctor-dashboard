@@ -77,9 +77,9 @@ export function HeroSection() {
 
           {/* Subheading */}
           <p className="mb-8 max-w-3xl text-lg text-slate-600 dark:text-slate-400">
-            Reach thousands of patients every day on Bangladesh's #1 doctor
+            {`Reach thousands of patients every day on Bangladesh's #1 doctor
             directory website. Secure a top spot in search results and grow your
-            practice like never before.
+            practice like never before.`}
           </p>
 
           {/* Features Grid */}

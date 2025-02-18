@@ -1,6 +1,7 @@
 "use client";
 
 import { Menu, Phone, Search, Send, Video, X } from "lucide-react";
+import Image from "next/image";
 import React, { useEffect, useRef, useState } from "react";
 
 interface User {
@@ -224,7 +225,9 @@ const Messages: React.FC = () => {
                   <div className="grid grid-cols-[1fr_9fr_3fr] gap-3">
                     <div className="relative">
                       <div className="h-10 w-10">
-                        <img
+                        <Image
+                          width={100}
+                          height={100}
                           src={user.avatar}
                           alt={user.name}
                           className="h-10 w-10 rounded-full"

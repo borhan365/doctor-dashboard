@@ -133,8 +133,8 @@ export default function ContactSection() {
             Boost Your Medical Practice Online
           </h2>
           <p className="text-lg text-slate-600 dark:text-slate-400">
-            Get more visibility and patients by advertising your practice on
-            Healtha - Bangladesh's Leading Healthcare Platform
+           {` Get more visibility and patients by advertising your practice on
+            Healtha - Bangladesh's Leading Healthcare Platform`}
           </p>
         </div>
 
@@ -254,8 +254,8 @@ export default function ContactSection() {
                         Thank You!
                       </h3>
                       <p className="text-slate-600 dark:text-slate-400">
-                        Your advertisement request has been submitted
-                        successfully. <br /> We'll contact you soon!
+                        {`Your advertisement request has been submitted successfully. `}
+                        <br />{`We'll contact you soon!`}
                       </p>
                     </div>
                   </div>

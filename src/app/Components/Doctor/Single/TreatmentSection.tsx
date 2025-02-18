@@ -17,7 +17,7 @@ function TreatmentSection() {
   return (
     <div id="treatments" className="rounded-xl bg-white p-6 shadow-sm sm:p-8">
       <h2 className="mb-6 text-2xl font-bold text-slate-900 border-b border-slate-100 pb-4">
-        Doctor's Expertise in Treatments & Services
+        {`Doctor's Expertise in Treatments & Services`}
       </h2>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">

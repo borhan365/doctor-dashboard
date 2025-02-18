@@ -268,7 +268,7 @@ function MediaModal({
               <div className="flex items-start justify-between rounded-t border-b border-solid border-slate-200 p-5">
                 <h3 className="text-2xl font-semibold">Confirm Deletion</h3>
                 <button
-                  className="float-right ml-auto border-0 bg-transparent p-1 text-3xl font-semibold leading-none text-black opacity-5 outline-none focus:outline-none"
+                  className="float-right ml-auto border-0 bg-transparent p-1 text-3xl font-semibold l eading-none text-black opacity-5 outline-none focus:outline-none"
                   onClick={hideDeleteModal}
                 >
                   <span className="block h-6 w-6 bg-transparent text-2xl text-black opacity-5 outline-none focus:outline-none">
@@ -277,10 +277,10 @@ function MediaModal({
                 </button>
               </div>
               <div className="relative flex-auto p-6 py-4">
-                <p className="my-4 text-lg leading-relaxed text-slate-500">
-                  Are you sure you want to delete the file "{modalImage.name}"?
-                  This action cannot be undone.
-                </p>
+              <p className="my-4 text-lg leading-relaxed text-slate-500">
+                {`Are you sure you want to delete the file "/${modalImage.name}"?
+                This action cannot be undone.`}
+              </p>
               </div>
               <div className="flex items-center justify-end rounded-b border-t border-solid border-slate-200 p-6 py-4">
                 <button
