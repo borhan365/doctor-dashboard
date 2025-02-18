@@ -1,4 +1,5 @@
 export interface TimeSlot {
+  id?: string;
   startTime: string;
   endTime: string;
   isAvailable: boolean;
@@ -6,6 +7,7 @@ export interface TimeSlot {
 }
 
 export interface DaySchedule {
+  id?: string;
   day: string;
   fromTime: string;
   toTime: string;
@@ -35,20 +37,7 @@ export interface Chamber {
   slotDuration: number;
   breakTime: number;
   maxPatients: number;
-  availableDays: {
-    id: string;
-    day: string;
-    fromTime: string;
-    toTime: string;
-    isAvailable: boolean;
-    timeSlots: {
-      id: string;
-      startTime: string;
-      endTime: string;
-      isAvailable: boolean;
-      maxPatients: number;
-    }[];
-  }[];
+  availableDays: DaySchedule[];
   doctor?: {
     name: string;
     bnName?: string;
@@ -56,4 +45,6 @@ export interface Chamber {
   };
 }
 
-export type CreateChamberInput = Omit<Chamber, "id" | "hospitalData">;
+export type CreateChamberInput = Omit<Chamber, "id" | "hospitalData"> & {
+  doctorId: string;
+};

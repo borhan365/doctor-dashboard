@@ -10,7 +10,7 @@ import { useState } from "react";
 import { toast } from "react-hot-toast";
 import SelectHospital from "../ui/SelectHospital";
 
-export function CreateChamber() {
+function CreateChamberPage() {
   const { createChamber } = useChambers();
   const { data: hospitals } = useHospitals();
 
@@ -111,7 +111,9 @@ export function CreateChamber() {
     try {
       // Add doctorId validation
       if (!doctorId) {
-        toast.error("Doctor ID is required. Please complete your profile first.");
+        toast.error(
+          "Doctor ID is required. Please complete your profile first.",
+        );
         return;
       }
 
@@ -167,7 +169,7 @@ export function CreateChamber() {
   console.log("formData", formData);
 
   return (
-    <form onSubmit={handleSubmit} className="mx-auto max-w-5xl py-10 px-4">
+    <form onSubmit={handleSubmit} className="mx-auto max-w-5xl px-4 py-10">
       <h2 className="mb-4 text-2xl font-semibold text-slate-800">
         Create Chamber
       </h2>
@@ -438,4 +440,4 @@ export function CreateChamber() {
   );
 }
 
-export default CreateChamber;
+export default CreateChamberPage;

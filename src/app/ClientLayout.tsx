@@ -1,10 +1,9 @@
 "use client";
 
-import { cn } from "@/lib/utils";
-import { usePathname } from "next/navigation";
-import React, { useEffect, useState } from "react";
 import Footer from "@/app/Components/Footer/page";
-import Header from "@/app/Components/Header/page";
+import Header from "@/components/Header";
+import { cn } from "@/lib/utils";
+import React, { useEffect, useState } from "react";
 
 export default function ClientLayout({
   children,
@@ -12,8 +11,6 @@ export default function ClientLayout({
   children: React.ReactNode;
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [isDarkMode, setIsDarkMode] = useState(false);
-  const pathname = usePathname();
 
   // Handle responsive sidebar
   useEffect(() => {
@@ -40,23 +37,13 @@ export default function ClientLayout({
       )}
     >
       <div className="relative flex">
-        
-
         <div
           className={cn(
             "min-h-screen flex-1",
-            "transition-all duration-300 ease-in-out pl-0",
+            "pl-0 transition-all duration-300 ease-in-out",
           )}
         >
-          <Header
-            sidebarOpen={sidebarOpen}
-            setSidebarOpen={setSidebarOpen}
-            darkMode={isDarkMode}
-            toggleDarkMode={setIsDarkMode}
-            isMobile={
-              typeof window !== "undefined" ? window.innerWidth < 1024 : false
-            }
-          />
+          <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
           <main>{children}</main>
 
