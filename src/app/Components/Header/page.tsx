@@ -3,25 +3,26 @@
 
 import { cn } from "@/lib/utils";
 import { ChevronLeft, ChevronRight, Moon, Sun } from "lucide-react";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 import ProfileDropdown from "./ProfileDropdown";
 
 interface HeaderProps {
   sidebarOpen: boolean;
   setSidebarOpen: (open: boolean) => void;
-  isMobile: boolean;
-  darkMode: boolean;
-  toggleDarkMode: (value: boolean) => void;
+  isMobile?: boolean;
+  darkMode?: boolean;
+  toggleDarkMode?: (value: boolean) => void;
 }
 
-const Header: React.FC<HeaderProps> = ({
+function Header({
   sidebarOpen,
   setSidebarOpen,
   isMobile,
   darkMode,
   toggleDarkMode,
-}) => {
-  // Don't show loading state for quick transitions
+}: HeaderProps) {
+  const { status } = useSession();
   const isLoading = status === "loading";
 
   return (
@@ -52,20 +53,22 @@ const Header: React.FC<HeaderProps> = ({
         </div>
 
         <div className="flex items-center gap-3 md:gap-7">
-          <button
-            onClick={() => toggleDarkMode(!darkMode)}
-            className={cn(
-              "rounded-full p-2",
-              "hover:bg-slate-100 dark:hover:bg-slate-800",
-              "transition-colors duration-200",
-            )}
-          >
-            {darkMode ? (
-              <Sun className="h-5 w-5 text-white" />
-            ) : (
-              <Moon className="h-5 w-5" />
-            )}
-          </button>
+          {toggleDarkMode && (
+            <button
+              onClick={() => toggleDarkMode(!darkMode)}
+              className={cn(
+                "rounded-full p-2",
+                "hover:bg-slate-100 dark:hover:bg-slate-800",
+                "transition-colors duration-200",
+              )}
+            >
+              {darkMode ? (
+                <Sun className="h-5 w-5 text-white" />
+              ) : (
+                <Moon className="h-5 w-5" />
+              )}
+            </button>
+          )}
 
           <div className="relative">
             <div className="flex items-center gap-4">
@@ -74,25 +77,27 @@ const Header: React.FC<HeaderProps> = ({
                   Dashboard
                 </span>
               </Link>
-              <div className="flex items-center gap-2">
-                <Link
-                  href="/auth/login"
-                  className={cn(
-                    "text-slate-600 hover:text-blue-500",
-                    "dark:text-white dark:hover:text-blue-400",
-                    "transition-colors duration-200",
-                  )}
-                >
-                  Sign In
-                </Link>
-              </div>
-              <ProfileDropdown />
+              {!isLoading && status === "unauthenticated" && (
+                <div className="flex items-center gap-2">
+                  <Link
+                    href="/auth/login"
+                    className={cn(
+                      "text-slate-600 hover:text-blue-500",
+                      "dark:text-white dark:hover:text-blue-400",
+                      "transition-colors duration-200",
+                    )}
+                  >
+                    Sign In
+                  </Link>
+                </div>
+              )}
+              {status === "authenticated" && <ProfileDropdown />}
             </div>
           </div>
         </div>
       </div>
     </header>
   );
-};
+}
 
 export default Header;
