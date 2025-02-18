@@ -1,5 +1,3 @@
-import { Upload } from "@prisma/client";
-
 export interface Degree {
   id: string;
   title: string;
