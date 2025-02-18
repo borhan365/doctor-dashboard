@@ -1,4 +1,3 @@
-// Header.tsx
 "use client";
 
 import { cn } from "@/lib/utils";
@@ -15,7 +14,7 @@ interface HeaderProps {
   toggleDarkMode?: (value: boolean) => void;
 }
 
-function Header({
+export function Header({
   sidebarOpen,
   setSidebarOpen,
   isMobile,
@@ -99,5 +98,3 @@ function Header({
     </header>
   );
 }
-
-export default Header;

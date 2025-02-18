@@ -1,5 +1,5 @@
 import { useSession } from 'next-auth/react';
-import { AuthUser, Role, Status } from '@/types/auth';
+import { Role, Status } from '@/types/auth';
 
 interface User {
   id: string;
