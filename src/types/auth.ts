@@ -17,25 +17,19 @@ export enum Status {
   BANNED = "BANNED",
 }
 
-export interface AuthUser extends Omit<NextAuthUser, "email"> {
+export interface AuthUser {
   id: string;
+  name: string | null;
+  email: string;
+  emailVerified: Date | null;
+  image: string | null;
   role: Role;
   status: Status;
   isVerified: boolean;
-  name?: string | null;
-  email: string;
-  image?: string | null;
 }
 
 export interface Session {
-  user: {
-    id: string;
-    email: string;
-    name?: string;
-    image?: string;
-    role: Role;
-    status: Status;
-  };
+  user: AuthUser;
   expires: string;
 }
 
@@ -53,11 +47,12 @@ declare module "next-auth" {
   interface User {
     id: string;
     email: string;
+    name: string | null;
+    emailVerified: Date | null;
+    image: string | null;
     role: Role;
     status: Status;
     isVerified: boolean;
-    name?: string | null;
-    image?: string | null;
   }
 }
 
@@ -69,5 +64,5 @@ export interface LoginCredentials {
 export interface RegisterCredentials {
   email: string;
   password: string;
-  name: string;
+  name: string | null;
 }

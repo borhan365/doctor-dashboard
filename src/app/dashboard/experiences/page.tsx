@@ -5,11 +5,30 @@ import { Building2, Calendar, MapPin, Plus } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
+interface Experience {
+  id: string;
+  position: string;
+  institution: string;
+  location: string;
+  period: string;
+  description: string;
+  current: boolean;
+}
+
+interface DoctorProfileResponse {
+  doctorProfile: {
+    experiences: Experience[];
+  } | null;
+}
+
 function Experiences() {
   const user = {
     id: "1",
   };
-  const { data, isLoading, error } = useDoctorProfileByUser(user?.id);
+
+  const { data, isLoading, error } = useDoctorProfileByUser();
+  const doctorProfile = data as DoctorProfileResponse;
+
   const [isDeleting, setIsDeleting] = useState(false);
   const [experiences, setExperiences] = useState([
     {
@@ -77,7 +96,8 @@ function Experiences() {
     );
   }
 
-  const selectedExperiences = data?.doctorProfile?.experiences || experiences;
+  const selectedExperiences =
+    doctorProfile?.doctorProfile?.experiences || experiences;
 
   // Empty State
   if (selectedExperiences?.length === 0) {
@@ -144,7 +164,7 @@ function Experiences() {
           {/* Timeline line */}
           <div className="absolute left-4 top-0 h-full w-0.5 bg-blue-200 md:left-1/2" />
 
-          {selectedExperiences.map((experience, index) => (
+          {selectedExperiences.map((experience: Experience, index: number) => (
             <div
               key={experience.id}
               className={`mb-4 flex flex-col md:flex-row ${

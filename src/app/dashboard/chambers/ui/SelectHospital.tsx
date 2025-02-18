@@ -1,3 +1,4 @@
+import { CreateChamberInput } from "@/types/chamber";
 import { Select } from "antd";
 import { ChevronDown } from "lucide-react";
 import Image from "next/image";
@@ -6,17 +7,20 @@ interface Hospital {
   id: string;
   name: string;
   address: string;
-  featuredImage: string | null;
+  featuredImage: {
+    id: string;
+    url: string;
+  } | null;
 }
 
 interface SelectHospitalProps {
-  hospitals: {
-    hospitals: Hospital[];
-  } | undefined;
-  formData: {
-    hospital: string;
-  };
-  handleInputChange: (field: string, value: any) => void;
+  hospitals:
+    | {
+        hospitals: Hospital[];
+      }
+    | undefined;
+  formData: Partial<CreateChamberInput>;
+  handleInputChange: (field: keyof CreateChamberInput, value: any) => void;
 }
 
 function SelectHospital({
@@ -26,7 +30,7 @@ function SelectHospital({
 }: SelectHospitalProps) {
   // Find selected hospital
   const selectedHospital = hospitals?.hospitals?.find(
-    (hospital) => hospital.id === formData.hospital
+    (hospital) => hospital.id === formData.hospitalId,
   );
 
   return (
@@ -38,8 +42,8 @@ function SelectHospital({
           value: hospital.id,
         }))}
         showSearch
-        value={formData.hospital}
-        onChange={(value) => handleInputChange("hospital", value)}
+        value={formData.hospitalId}
+        onChange={(value) => handleInputChange("hospitalId", value)}
         suffixIcon={<ChevronDown className="h-5 w-5 text-slate-400" />}
         placeholder="Select hospital"
         style={{ height: "42px" }}
@@ -56,7 +60,7 @@ function SelectHospital({
           <div className="h-[50px] w-[50px] overflow-hidden rounded-full">
             {selectedHospital.featuredImage ? (
               <Image
-                src={selectedHospital.featuredImage}
+                src={selectedHospital.featuredImage.url}
                 alt={`${selectedHospital.name} logo`}
                 width={50}
                 height={50}
@@ -72,29 +76,20 @@ function SelectHospital({
             <h3 className="text-base font-medium text-slate-700">
               {selectedHospital.name}
             </h3>
-            <p className="text-sm text-slate-500">
-              {selectedHospital.address}
-            </p>
+            <p className="text-sm text-slate-500">{selectedHospital.address}</p>
           </div>
         </div>
       )}
 
       {/* if hospital is not found from in the dropdown, show this message */}
-      {hospitals?.hospitals?.length && (
+      {hospitals?.hospitals?.length === 0 && (
         <div className="mt-4">
-        <p className="mt-4 text-sm text-slate-500">
-          If you can't find your hospital. Please{" "}
-          <span className="font-medium text-blue-500 cursor-pointer">
-            Add a hospital manually
-          </span>
-          .
+          <p className="mt-4 text-sm text-slate-500">
+            If you can't find your hospital. Please{" "}
+            <span className="cursor-pointer font-medium text-blue-500">
+              Add a hospital manually
+            </span>
           </p>
-
-          {/* if user click on add a hospital manually, show this form */}
-          <div className="mt-4 flex items-center justify-start gap-4 rounded-lg border border-slate-200 bg-blue-50 p-4">
-            <input className="w-full rounded-md border border-slate-200 p-2" type="text" placeholder="Hospital Name" />
-            <input className="w-full rounded-md border border-slate-200 p-2" type="text" placeholder="Hospital Address" />
-          </div>
         </div>
       )}
     </div>

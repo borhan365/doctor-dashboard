@@ -55,14 +55,15 @@ export function useDoctorForm() {
     discountForHealthaUser: 0,
     isFeatured: false,
     isVerified: false,
-      experience: 0,
+    experience: 0,
     about: "",
     educations: [],
-    awards: [],
-    services: [],
     isSponsored: false,
     hospitals: [],
     locations: [],
+    chambers: [], // Added missing field
+    experiences: [], // Added missing field
+    faqs: [] // Added missing field
   };
 
   const validateForm = (data: DoctorFormData) => {

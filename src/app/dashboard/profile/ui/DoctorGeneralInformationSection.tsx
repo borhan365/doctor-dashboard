@@ -97,7 +97,10 @@ function DoctorGeneralInformationSection({
       {/* Gender, Experience and Doctor Type */}
       <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-3">
         <div className="space-y-2">
-          <label htmlFor="gender" className="text-sm font-medium text-slate-700">
+          <label
+            htmlFor="gender"
+            className="text-sm font-medium text-slate-700"
+          >
             Gender
           </label>
           <Select
@@ -144,7 +147,7 @@ function DoctorGeneralInformationSection({
             Doctor Type
           </label>
           <DoctorTypeSelect
-            selectedType={formData.doctorType}
+            selectedType={formData.doctorType as string}
             onChange={handleDoctorTypeChange}
           />
         </div>

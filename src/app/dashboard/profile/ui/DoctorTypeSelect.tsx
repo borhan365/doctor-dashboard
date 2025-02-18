@@ -46,8 +46,8 @@ export function DoctorTypeSelect({
 
   const options =
     data?.types
-      ?.filter((type: DoctorType) => type.status === "published")
-      ?.map((type: DoctorType) => ({
+      ?.filter((type) => type.status === "published")
+      ?.map((type) => ({
         value: type.id,
         label: type.bnTitle ? `${type.title} / ${type.bnTitle}` : type.title,
       })) || [];

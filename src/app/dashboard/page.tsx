@@ -1,18 +1,21 @@
 "use client";
 
+import { AuthUser } from "@/types/auth";
+import { useSession } from "next-auth/react";
 import { EmailVerificationSection } from "./settings/ui/EmailVerificationSection";
 import PaymentCompleteSteps from "./ui/PaymentCompleteSteps";
 import ProfileCompleteSteps from "./ui/ProfileCompleteSteps";
 import WelcomeIfRegisteredDoctor from "./ui/WelcomeIfRegisteredDoctor";
 
 function DoctorDashboard() {
-  // const { user } = useSessionStore();
+  const { data: session } = useSession();
 
-  const user = {
-    name: "John Doe",
-    email: "john.doe@example.com",
-    image: "/images/user/default-user.webp",
-  };
+  const user: AuthUser | null = session?.user
+    ? {
+        ...session.user,
+        emailVerified: session.user.emailVerified || null,
+      }
+    : null;
 
   return (
     <>

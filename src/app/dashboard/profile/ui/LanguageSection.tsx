@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Checkbox } from "antd";
 import axios from "axios";
 import { Search, X } from "lucide-react";
+import { useSession } from "next-auth/react";
 import { useState } from "react";
 
 interface Language {
@@ -32,6 +33,7 @@ function LanguageSection({
   selectedLanguages = [],
   onChange,
 }: LanguageSectionProps) {
+  const { data: session } = useSession();
   const [searchTerm, setSearchTerm] = useState("");
 
   const { data, isLoading } = useQuery<LanguageResponse>({
@@ -51,7 +53,7 @@ function LanguageSection({
   const defaultLanguages =
     data?.languages?.filter((lang) => !lang.userId) || [];
   const customLanguages =
-    data?.languages?.filter((lang) => lang.userId === user?.id) || [];
+    data?.languages?.filter((lang) => lang.userId === session?.user?.id) || [];
 
   const handleToggleSelect = (id: string, checked: boolean) => {
     if (checked) {
