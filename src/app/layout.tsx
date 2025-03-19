@@ -1,5 +1,8 @@
 import "@/css/style.css";
-import { AppProviders } from "@/providers/AppProviders";
+import { AuthHydration } from "@/providers/AuthHydration";
+import QueryProvider from "@/providers/QueryProvider";
+import { SessionProvider } from "@/providers/SessionProvider";
+import { Toaster } from "react-hot-toast";
 
 export default function RootLayout({
   children,
@@ -9,7 +12,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="antialiased">
-        <AppProviders>{children}</AppProviders>
+        <QueryProvider>
+          <AuthHydration>
+            <SessionProvider>{children}</SessionProvider>
+          </AuthHydration>
+        </QueryProvider>
+        <Toaster position="top-right" />
       </body>
     </html>
   );

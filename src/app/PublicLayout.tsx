@@ -1,6 +1,6 @@
 "use client";
 
-import Footer from "@/app/Components/Footer/page";
+import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
@@ -49,6 +49,9 @@ export default function ClientLayout({
           <Header
             sidebarOpen={sidebarOpen}
             setSidebarOpen={setSidebarOpen}
+            isMobile={
+              typeof window !== "undefined" ? window.innerWidth < 1024 : false
+            }
           />
 
           <main>{children}</main>

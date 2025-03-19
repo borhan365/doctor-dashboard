@@ -150,7 +150,7 @@ function ProfileCompleteSteps({
         description: "Common Treatments",
         icon: BookOpen,
         isComplete: !!(doctorProfile?.treatments?.length > 0),
-        weight: 15,
+        weight: 10,
         link: "/doctor/profile",
       },
     ];

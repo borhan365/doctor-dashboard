@@ -7,29 +7,26 @@ interface DynamicPhonesProps {
 }
 
 function DynamicPhones({
-  phones,
+  phones = [""], // Initialize with one empty string by default
   onChange,
   maxPhones = 5,
 }: DynamicPhonesProps) {
-  // Initialize with one empty string if no phones provided
-  const phoneList = phones?.length ? phones : [""];
-
   const handlePhoneChange = (index: number, value: string) => {
-    const newPhones = [...phoneList];
+    const newPhones = [...phones];
     newPhones[index] = value.trim();
     onChange(newPhones.filter((phone) => phone)); // Remove empty phones
   };
 
   const addPhone = () => {
-    if (phoneList.length < maxPhones) {
-      onChange([...phoneList, ""]);
+    if (phones.length < maxPhones) {
+      onChange([...phones, ""]);
     }
   };
 
   const removePhone = (index: number) => {
-    if (phoneList.length > 1) {
+    if (phones.length > 1) {
       // Keep at least one phone field
-      const newPhones = phoneList.filter((_, i) => i !== index);
+      const newPhones = phones.filter((_, i) => i !== index);
       onChange(newPhones);
     }
   };
@@ -40,7 +37,7 @@ function DynamicPhones({
         <label className="block text-sm font-medium text-slate-700">
           Phone Numbers <span className="text-red-500">*</span>
         </label>
-        {phoneList.length < maxPhones && (
+        {phones.length < maxPhones && (
           <button
             type="button"
             onClick={addPhone}
@@ -52,7 +49,7 @@ function DynamicPhones({
         )}
       </div>
       <div className="space-y-3">
-        {phoneList.map((phone, index) => (
+        {phones.map((phone, index) => (
           <div key={index} className="flex items-center gap-2">
             <div className="relative flex-1 rounded-md">
               <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
@@ -68,7 +65,7 @@ function DynamicPhones({
                 pattern="[0-9]{10,}"
               />
             </div>
-            {phoneList.length > 1 && (
+            {phones.length > 1 && (
               <button
                 type="button"
                 onClick={() => removePhone(index)}

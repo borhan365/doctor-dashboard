@@ -1,4 +1,3 @@
-import type { User } from "@/types/user"; // Updated import using absolute path
 
 export interface PageType {
   id: string;
@@ -14,7 +13,15 @@ export interface PageType {
   bnDescription?: string;
   bnExcerpt?: string;
   subTitle?: string;
-  author?: User;
+  author?: {
+    id: string;
+    name: string;
+    email: string;
+    image: string;
+    role: string;
+    createdAt: Date;
+    updatedAt: Date;
+  };
   createdAt: Date;
   updatedAt: Date;
   published: boolean;

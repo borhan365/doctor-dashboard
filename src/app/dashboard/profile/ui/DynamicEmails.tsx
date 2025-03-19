@@ -7,29 +7,26 @@ interface DynamicEmailsProps {
 }
 
 function DynamicEmails({
-  emails,
+  emails = [""], // Initialize with one empty string by default
   onChange,
   maxEmails = 5,
 }: DynamicEmailsProps) {
-  // Initialize with one empty string if no emails provided
-  const emailList = emails?.length ? emails : [""];
-
   const handleEmailChange = (index: number, value: string) => {
-    const newEmails = [...emailList];
+    const newEmails = [...emails];
     newEmails[index] = value.trim();
     onChange(newEmails.filter((email) => email)); // Remove empty emails
   };
 
   const addEmail = () => {
-    if (emailList.length < maxEmails) {
-      onChange([...emailList, ""]);
+    if (emails.length < maxEmails) {
+      onChange([...emails, ""]);
     }
   };
 
   const removeEmail = (index: number) => {
-    if (emailList.length > 1) {
+    if (emails.length > 1) {
       // Keep at least one email field
-      const newEmails = emailList.filter((_, i) => i !== index);
+      const newEmails = emails.filter((_, i) => i !== index);
       onChange(newEmails);
     }
   };
@@ -40,7 +37,7 @@ function DynamicEmails({
         <label className="block text-sm font-medium text-slate-700">
           Email Addresses <span className="text-red-500">*</span>
         </label>
-        {emailList.length < maxEmails && (
+        {emails.length < maxEmails && (
           <button
             type="button"
             onClick={addEmail}
@@ -52,7 +49,7 @@ function DynamicEmails({
         )}
       </div>
       <div className="space-y-3">
-        {emailList.map((email, index) => (
+        {emails.map((email, index) => (
           <div key={index} className="flex items-center gap-2">
             <div className="relative flex-1 rounded-md">
               <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
@@ -67,7 +64,7 @@ function DynamicEmails({
                 required={index === 0}
               />
             </div>
-            {emailList.length > 1 && (
+            {emails.length > 1 && (
               <button
                 type="button"
                 onClick={() => removeEmail(index)}

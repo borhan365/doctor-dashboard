@@ -1,9 +1,11 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
+import { ApiUrl } from "@/app/Variables";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Select } from "antd";
 import axios from "axios";
 import { ChevronDown } from "lucide-react";
+import { toast } from "sonner";
 
 interface DoctorPrefix {
   id: string;
@@ -23,8 +25,8 @@ interface DoctorPrefixResponse {
 }
 
 interface DoctorPrefixSelectProps {
-  value?: string;
-  onChange?: (value: string) => void;
+  value: string | null;
+  onChange: (value: string | null) => void;
   placeholder?: string;
   className?: string;
   disabled?: boolean;
@@ -37,10 +39,23 @@ export function DoctorPrefixSelect({
   className = "",
   disabled = false,
 }: DoctorPrefixSelectProps) {
+  // Return early if no query client is available
+  try {
+    useQueryClient();
+  } catch (error) {
+    console.warn(
+      "QueryClient not found. Make sure to wrap your app with QueryClientProvider.",
+    );
+    toast.error(
+      "System not properly initialized. Please ensure QueryClientProvider is properly set up.",
+    );
+    return null;
+  }
+
   const { data, isLoading } = useQuery<DoctorPrefixResponse>({
     queryKey: ["prefixes"],
     queryFn: async () => {
-      const response = await axios.get("/api/doctors/prefixes", {
+      const response = await axios.get(`${ApiUrl}/doctors/prefixes/get-all`, {
         params: {
           status: "published",
           limit: 100,
@@ -50,17 +65,20 @@ export function DoctorPrefixSelect({
     },
   });
 
-  const options = data?.prefixes
-    ?.filter((prefix) => prefix.status === "published")
-    ?.map((prefix) => ({
-      value: prefix.id,
-      label: prefix.bnTitle ? `${prefix.title} / ${prefix.bnTitle}` : prefix.title,
-    })) || [];
+  const options =
+    data?.prefixes
+      ?.filter((prefix) => prefix.status === "published")
+      ?.map((prefix) => ({
+        value: prefix.id,
+        label: prefix.bnTitle
+          ? `${prefix.title} / ${prefix.bnTitle}`
+          : prefix.title,
+      })) || [];
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-1">
       <label htmlFor="prefix" className="text-sm font-medium text-slate-700">
-        Doctor Prefix
+        Doctor Prefix <span className="text-red-500">*</span>
       </label>
       <Select
         id="prefix"

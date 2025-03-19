@@ -1,6 +1,6 @@
 "use client";
 
-import { useParentLocations } from "@/hooks/location/useLocations";
+import { useParentLocations } from "@/hooks/useLocations";
 import { Select } from "antd";
 import { ChevronDown } from "lucide-react";
 import { useMemo, useState } from "react";

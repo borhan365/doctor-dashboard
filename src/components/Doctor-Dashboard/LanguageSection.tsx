@@ -34,7 +34,7 @@ function LanguageSection({
   const { data, isLoading } = useQuery<LanguageResponse>({
     queryKey: ["languages"],
     queryFn: async () => {
-      const response = await axios.get("/api/doctors/languages", {
+      const response = await axios.get("/api/doctors/languages/get-all", {
         params: {
           status: "published",
           limit: 100,

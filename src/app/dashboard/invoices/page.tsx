@@ -221,7 +221,7 @@ function Invoices() {
             <option value="pending">Pending</option>
             <option value="overdue">Overdue</option>
           </select>
-          <Link href="/doctor/invoices/create">
+          <Link href="/dashboard/invoices/create">
             <button className="inline-flex h-9 items-center justify-center gap-2 rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-400">
               <Plus className="h-4 w-4" /> New Invoice
             </button>

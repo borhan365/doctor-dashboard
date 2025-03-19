@@ -23,7 +23,6 @@ import {
   ListOrdered,
   Pilcrow,
   Quote,
-  Sparkles,
   Strikethrough,
   Table as TableIcon,
   Underline as UnderlineIcon,
@@ -263,13 +262,6 @@ const FloatingMenuBar = ({
             {button.icon}
           </button>
         ))}
-        <button
-          onClick={onOpenAIPopup}
-          className="mr-2 flex items-center rounded-md border border-white bg-green-700 px-3 py-2 text-sm font-medium text-white shadow-sm hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-2"
-        >
-          <Sparkles size={16} />
-          <span className="ml-2">Improve</span>
-        </button>
       </div>
     </div>
   );
@@ -281,15 +273,8 @@ const TextEditor: React.FC<TextEditorProps> = ({
   onChange,
   height,
 }) => {
-  const [isAIPopupOpen, setAIPopupOpen] = useState(false);
-  const [selectedText, setSelectedText] = useState("");
-
-  const handleAISubmit = (generatedContent: string) => {
-    if (editor && onChange) {
-      editor.commands.setContent(generatedContent);
-      onChange(generatedContent);
-    }
-  };
+  const [selectedText, setSelectedText] = useState<string>("");
+  const [isAIPopupOpen, setAIPopupOpen] = useState<boolean>(false);
 
   const editor = useEditor({
     extensions: [
@@ -312,9 +297,11 @@ const TextEditor: React.FC<TextEditorProps> = ({
       }
     },
     onSelectionUpdate: ({ editor }) => {
-      const { from, to } = editor.state.selection;
-      const selectedContent = editor.state.doc.textBetween(from, to, " ");
-      setSelectedText(selectedContent);
+      if (editor) {
+        const { from, to } = editor.state.selection;
+        const selectedContent = editor.state.doc.textBetween(from, to, " ");
+        setSelectedText(selectedContent);
+      }
     },
   });
 
@@ -327,8 +314,10 @@ const TextEditor: React.FC<TextEditorProps> = ({
   const openAIPopup = () => {
     if (editor) {
       const { from, to } = editor.state.selection;
-      const selectedContent = editor.state.doc.textBetween(from, to, " ");
-      setSelectedText(selectedContent);
+      if (from !== to) {
+        const selectedContent = editor.state.doc.textBetween(from, to, " ");
+        setSelectedText(selectedContent);
+      }
     }
     setAIPopupOpen(true);
   };
@@ -346,19 +335,24 @@ const TextEditor: React.FC<TextEditorProps> = ({
         <EditorContent
           editor={editor}
           placeholder="Write something..."
-          className={`prose tiptap-custom-editor min-h-[200px]`}
+          className={`prose tiptap-custom-editor ${height ? height : "min-h-[200px]"}`}
         />
         {editor && (
           <FloatingMenuBar editor={editor} onOpenAIPopup={openAIPopup} />
         )}
       </div>
-      <ImproveContentSidebar
-        isOpen={isAIPopupOpen}
-        onClose={() => setAIPopupOpen(false)}
-        onSubmit={handleAISubmit}
-        selectedText={selectedText}
-        existingContent={value}
-      />
+      {isAIPopupOpen && (
+        <ImproveContentSidebar
+          selectedText={selectedText}
+          onClose={() => setAIPopupOpen(false)}
+          onImprove={(improvedContent) => {
+            if (editor) {
+              // Handle the improved content
+              editor.commands.setContent(improvedContent);
+            }
+          }}
+        />
+      )}
     </div>
   );
 };

@@ -1,10 +1,7 @@
 "use client";
 
-import { DoctorFormData } from "@/types/doctor";
-import { Select } from "antd";
-import { Calendar, ChevronDown, Clipboard, User } from "lucide-react";
+import { DoctorFormData } from "@/types/doctors";
 import DoctorPrefixSelect from "./DoctorPrefixSelect";
-import DoctorTypeSelect from "./DoctorTypeSelect";
 
 interface DoctorGeneralInformationSectionProps {
   formData: DoctorFormData;
@@ -15,18 +12,23 @@ function DoctorGeneralInformationSection({
   formData,
   onInputChange,
 }: DoctorGeneralInformationSectionProps) {
-  const genderOptions = [
-    { value: "male", label: "Male" },
-    { value: "female", label: "Female" },
-    { value: "other", label: "Other" },
-  ];
-
-  const handlePrefixChange = (value: string) => {
-    onInputChange("prefix", value);
+  // Ensure all form values are defined with default values
+  const safeFormData = {
+    name: formData.name || "",
+    bnName: formData.bnName || "",
+    bmdcNumber: formData.bmdcNumber || "",
+    experience: formData.experience || 0,
+    website: formData.website || "",
+    videoUrl: formData.videoUrl || "",
+    discountForHealthaUser: formData.discountForHealthaUser || 0,
+    discountForHealthaUserNote: formData.discountForHealthaUserNote || "",
+    discountForHealthaUserNoteBn: formData.discountForHealthaUserNoteBn || "",
+    prefixId: formData.prefixId || null,
+    doctorTypeId: formData.doctorTypeId || null,
   };
 
-  const handleDoctorTypeChange = (value: string) => {
-    onInputChange("doctorType", value);
+  const handlePrefixChange = (value: string | null) => {
+    onInputChange("prefixId", value);
   };
 
   return (
@@ -40,115 +42,186 @@ function DoctorGeneralInformationSection({
         </p>
       </div>
 
-      {/* Prefix and Name Fields */}
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-        <DoctorPrefixSelect
-          value={formData.prefix}
-          onChange={handlePrefixChange}
-          placeholder="Select prefix"
-        />
-
-        <div className="space-y-2">
-          <label htmlFor="name" className="text-sm font-medium text-slate-700">
-            Name (English) <span className="text-red-500">*</span>
-          </label>
-          <div className="relative">
-            <div className="absolute inset-y-0 left-0 flex items-center pl-3">
-              <User className="h-5 w-5 text-slate-400" />
-            </div>
-            <input
-              type="text"
-              name="name"
-              id="name"
-              value={formData.name}
-              onChange={(e) => onInputChange("name", e.target.value)}
-              className="block w-full rounded-lg border border-slate-200 py-3 pl-10 pr-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
-              placeholder="John Doe"
-              required
-            />
-          </div>
-        </div>
-
-        {/* BMDC Number */}
-        <div className="space-y-2">
-          <label htmlFor="bmdc" className="text-sm font-medium text-slate-700">
-            BMDC Number <span className="text-red-500">*</span>
-          </label>
-          <div className="relative">
-            <div className="absolute inset-y-0 left-0 flex items-center pl-3">
-              <Clipboard className="h-5 w-5 text-slate-400" />
-            </div>
-            <input
-              type="text"
-              name="bmdc"
-              id="bmdc"
-              value={formData.bmdcNumber}
-              onChange={(e) =>
-                onInputChange("bmdcNumber", e.target.value.toUpperCase())
-              }
-              className="block w-full rounded-lg border border-slate-200 py-3 pl-10 pr-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
-              placeholder="A-42309"
-              required
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* Gender, Experience and Doctor Type */}
-      <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-3">
-        <div className="space-y-2">
-          <label
-            htmlFor="gender"
-            className="text-sm font-medium text-slate-700"
-          >
-            Gender
-          </label>
-          <Select
-            options={genderOptions}
-            value={formData.gender}
-            onChange={(value) => onInputChange("gender", value)}
-            suffixIcon={<ChevronDown className="size-5" />}
-            style={{ width: "100%" }}
-            placeholder="Select Gender"
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        {/* Prefix */}
+        <div>
+          <DoctorPrefixSelect
+            value={safeFormData.prefixId}
+            onChange={handlePrefixChange}
+            placeholder="Select Prefix"
           />
         </div>
 
-        <div className="space-y-2">
+        {/* Name */}
+        <div>
           <label
-            htmlFor="experience"
-            className="text-sm font-medium text-slate-700"
+            htmlFor="name"
+            className="mb-1 block text-sm font-medium text-slate-700"
           >
-            Years of Experience
+            Name <span className="text-red-500">*</span>
           </label>
-          <div className="relative">
-            <div className="absolute inset-y-0 left-0 flex items-center pl-3">
-              <Calendar className="h-5 w-5 text-slate-400" />
-            </div>
-            <input
-              type="number"
-              name="experience"
-              id="experience"
-              value={formData.experience}
-              onChange={(e) =>
-                onInputChange("experience", Number(e.target.value))
-              }
-              className="block w-full rounded-lg border border-slate-200 py-3 pl-10 pr-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
-              placeholder="10"
-            />
-          </div>
+          <input
+            type="text"
+            id="name"
+            value={safeFormData.name}
+            onChange={(e) => onInputChange("name", e.target.value)}
+            className="block w-full rounded-lg border border-slate-200 px-4 py-3 text-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+            placeholder="Dr. John Doe"
+          />
         </div>
 
-        {/* Doctor Type Select */}
-        <div className="space-y-2">
+        {/* Bengali Name */}
+        <div>
           <label
-            htmlFor="doctorType"
-            className="text-sm font-medium text-slate-700"
+            htmlFor="bnName"
+            className="mb-1 block text-sm font-medium text-slate-700"
           >
-            Doctor Type
+            Bengali Name
           </label>
-          <DoctorTypeSelect
-            selectedType={formData.doctorType as string}
-            onChange={handleDoctorTypeChange}
+          <input
+            type="text"
+            id="bnName"
+            value={safeFormData.bnName}
+            onChange={(e) => onInputChange("bnName", e.target.value)}
+            className="block w-full rounded-lg border border-slate-200 px-4 py-3 text-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+            placeholder="ডাঃ জন ডো"
+          />
+        </div>
+
+        {/* BMDC Number */}
+        <div>
+          <label
+            htmlFor="bmdcNumber"
+            className="mb-1 block text-sm font-medium text-slate-700"
+          >
+            BMDC Number <span className="text-red-500">*</span>
+          </label>
+          <input
+            type="text"
+            id="bmdcNumber"
+            value={safeFormData.bmdcNumber}
+            onChange={(e) => onInputChange("bmdcNumber", e.target.value)}
+            className="block w-full rounded-lg border border-slate-200 px-4 py-3 text-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+            placeholder="A-12345"
+          />
+        </div>
+
+        {/* Experience */}
+        <div>
+          <label
+            htmlFor="experience"
+            className="mb-1 block text-sm font-medium text-slate-700"
+          >
+            Experience (years)
+          </label>
+          <input
+            type="number"
+            id="experience"
+            value={safeFormData.experience}
+            onChange={(e) =>
+              onInputChange("experience", parseInt(e.target.value) || 0)
+            }
+            className="block w-full rounded-lg border border-slate-200 px-4 py-3 text-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+            placeholder="10"
+          />
+        </div>
+
+        {/* Website */}
+        <div>
+          <label
+            htmlFor="website"
+            className="mb-1 block text-sm font-medium text-slate-700"
+          >
+            Website
+          </label>
+          <input
+            type="url"
+            id="website"
+            value={safeFormData.website}
+            onChange={(e) => onInputChange("website", e.target.value)}
+            className="block w-full rounded-lg border border-slate-200 px-4 py-3 text-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+            placeholder="https://example.com"
+          />
+        </div>
+
+        {/* Video URL */}
+        <div>
+          <label
+            htmlFor="videoUrl"
+            className="mb-1 block text-sm font-medium text-slate-700"
+          >
+            Video URL
+          </label>
+          <input
+            type="url"
+            id="videoUrl"
+            value={safeFormData.videoUrl}
+            onChange={(e) => onInputChange("videoUrl", e.target.value)}
+            className="block w-full rounded-lg border border-slate-200 px-4 py-3 text-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+            placeholder="https://youtube.com/watch?v=..."
+          />
+        </div>
+
+        {/* Discount for Healtha User */}
+        <div>
+          <label
+            htmlFor="discountForHealthaUser"
+            className="mb-1 block text-sm font-medium text-slate-700"
+          >
+            Discount for Healtha User (%)
+          </label>
+          <input
+            type="number"
+            id="discountForHealthaUser"
+            value={safeFormData.discountForHealthaUser}
+            onChange={(e) =>
+              onInputChange(
+                "discountForHealthaUser",
+                parseInt(e.target.value) || 0,
+              )
+            }
+            className="block w-full rounded-lg border border-slate-200 px-4 py-3 text-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+            placeholder="10"
+          />
+        </div>
+
+        {/* Discount Note */}
+        <div>
+          <label
+            htmlFor="discountForHealthaUserNote"
+            className="mb-1 block text-sm font-medium text-slate-700"
+          >
+            Discount Note
+          </label>
+          <input
+            type="text"
+            id="discountForHealthaUserNote"
+            value={safeFormData.discountForHealthaUserNote}
+            onChange={(e) =>
+              onInputChange("discountForHealthaUserNote", e.target.value)
+            }
+            className="block w-full rounded-lg border border-slate-200 px-4 py-3 text-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+            placeholder="10% discount for Healtha users"
+          />
+        </div>
+
+        {/* Bengali Discount Note */}
+        <div>
+          <label
+            htmlFor="discountForHealthaUserNoteBn"
+            className="mb-1 block text-sm font-medium text-slate-700"
+          >
+            Bengali Discount Note
+          </label>
+          <input
+            type="text"
+            id="discountForHealthaUserNoteBn"
+            value={safeFormData.discountForHealthaUserNoteBn}
+            onChange={(e) =>
+              onInputChange("discountForHealthaUserNoteBn", e.target.value)
+            }
+            className="block w-full rounded-lg border border-slate-200 px-4 py-3 text-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+            placeholder="হেলথা ব্যবহারকারীদের জন্য ১০% ছাড়"
           />
         </div>
       </div>

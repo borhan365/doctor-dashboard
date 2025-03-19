@@ -1,9 +1,9 @@
-'use client'
+"use client";
 
-import { useLogout } from '@/app/hooks/useLogout'
+import { useLogout } from "@/hooks/useLogout";
 
 export default function LogoutPage() {
-  const { logout } = useLogout()
+  const { logout } = useLogout();
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center">
@@ -16,11 +16,11 @@ export default function LogoutPage() {
         </p>
         <button
           onClick={logout}
-          className="w-full bg-red-700 hover:bg-red-800 text-white py-2 rounded-md text-center font-medium px-4 "
+          className="w-full rounded-md bg-red-700 px-4 py-2 text-center font-medium text-white hover:bg-red-800 "
         >
           Sign Out
         </button>
       </div>
     </div>
-  )
+  );
 }

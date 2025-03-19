@@ -1,3 +1,4 @@
+import { ApiUrl } from "@/app/Variables";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
@@ -43,7 +44,9 @@ export function useLocations(params?: {
       if (params?.language) searchParams.set("language", params.language);
       if (params?.isFeatured) searchParams.set("isFeatured", "true");
 
-      const { data } = await axios.get(`/api/locations?${searchParams.toString()}`);
+      const { data } = await axios.get(
+        `${ApiUrl}/locations/get-all?${searchParams.toString()}`,
+      );
       return data;
     },
   });
@@ -53,20 +56,25 @@ export function useLocation(slug: string) {
   return useQuery({
     queryKey: ["location", slug],
     queryFn: async () => {
-      const { data } = await axios.get(`/api/locations/${slug}`);
+      const { data } = await axios.get(
+        `${ApiUrl}/locations/get-single/${slug}`,
+      );
       return data;
     },
   });
 }
 
-// location wise hospitals
-export function useHospitalsByLocation(slug: string, params?: {
-  page?: number;
-  limit?: number;
-  search?: string;
-}) {
+// location wise doctors
+export function useDoctorsByLocation(
+  slug: string,
+  params?: {
+    page?: number;
+    limit?: number;
+    search?: string;
+  },
+) {
   return useQuery({
-    queryKey: ["locationHospitals", slug, params],
+    queryKey: ["locationDoctors", slug, params],
     queryFn: async () => {
       const searchParams = new URLSearchParams();
       searchParams.set("slug", slug);
@@ -75,7 +83,7 @@ export function useHospitalsByLocation(slug: string, params?: {
       if (params?.search) searchParams.set("search", params.search);
 
       const { data } = await axios.get(
-        `/api/locations/frontend/hospitals?${searchParams.toString()}`
+        `${ApiUrl}/locations/frontend/doctors?${searchParams.toString()}`,
       );
       return data;
     },

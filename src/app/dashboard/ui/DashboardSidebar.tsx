@@ -122,18 +122,21 @@ const DashboardSidebar = ({
       link: "/dashboard/sms-settings",
       icon: MessageSquare,
     },
-    { label: "Stuffs", link: "/dashboard/stuffs", icon: Users },
+    { label: "Assistants", link: "/dashboard/assistants", icon: Users },
     { label: "Settings", link: "/dashboard/settings", icon: Settings },
   ];
 
   // promotion button
   const promotionButton = (
-    <Link href="/dashboard/ads">
-      <button className="mt-4 flex w-full items-center gap-2 rounded-md bg-blue-700 px-4 py-2.5 text-white transition-colors duration-300 hover:bg-blue-800">
+    <div className="w-full">
+      <Link
+        href="/dashboard/ads"
+        className=" mt-4 flex w-full items-center gap-2 rounded-md bg-blue-700 px-4 py-2.5 text-white transition-colors duration-300 hover:bg-blue-800"
+      >
         <Rocket className="h-5 w-5" />
         <span className="text-base font-medium">Advertise With Us</span>
-      </button>
-    </Link>
+      </Link>
+    </div>
   );
 
   // don't show sidebar in doctor profile page
@@ -162,28 +165,10 @@ const DashboardSidebar = ({
       >
         <div className="flex h-full flex-col">
           {/* Sidebar content */}
-          <nav className="mt-5 px-4 py-4 !pt-0 lg:mt-9 lg:px-6">
-            {/* Logo */}
-            <div className="mb-6 ml-4 flex items-center justify-start border-b border-slate-100 pb-4 dark:border-slate-800">
-              <Link href="/" className="flex items-center">
-                <span className="text-2xl font-bold text-slate-800 dark:text-white">
-                  Healtha<span className="text-blue-500">.</span>
-                </span>
-              </Link>
-            </div>
+          <nav className="relative mt-3 px-4 py-4 !pt-0 lg:mt-9 lg:px-6">
+            {/* Doctor Menu */}
             {/* Doctor Menu */}
             <div>
-              {/* {sidebarOpen && (
-                <h3
-                  className={cn(
-                    "mb-4 ml-4 text-sm font-semibold uppercase tracking-wider",
-                    darkMode ? "text-slate-200" : "text-slate-600",
-                  )}
-                >
-                  Doctor
-                </h3>
-              )} */}
-
               <ul
                 className={cn(
                   "flex flex-col gap-1",
@@ -383,8 +368,8 @@ const DashboardSidebar = ({
                   );
                 })}
               </ul>
-              {promotionButton}
             </div>
+            {promotionButton}
           </nav>
         </div>
       </aside>

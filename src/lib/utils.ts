@@ -22,3 +22,20 @@ export function slugify(text: string): string {
     .replace(/^-+/, "") // Trim - from start of text
     .replace(/-+$/, ""); // Trim - from end of text
 }
+
+/**
+ * Format a number as currency
+ * @param amount The amount to format
+ * @param currency The currency code (e.g., 'BDT', 'USD')
+ * @returns Formatted currency string
+ */
+export function formatCurrency(
+  amount: number,
+  currency: string = "BDT",
+): string {
+  return new Intl.NumberFormat("bn-BD", {
+    style: "currency",
+    currency: currency,
+    minimumFractionDigits: 0,
+  }).format(amount);
+}

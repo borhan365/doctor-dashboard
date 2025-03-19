@@ -4,10 +4,11 @@ import {
   useDeleteTreatment,
   useTreatments,
   useUpdateTreatment,
-} from "@/hooks/doctor/treatment/useDoctorTreatments";
-import { Treatment } from "@/types/doctor.treatment.type";
+} from "@/hooks/useDoctorTreatments";
+import { Treatment } from "@/types/doctorTreatments";
 import { Checkbox } from "antd";
 import { Check, Edit2, Plus, Search, Trash2, X } from "lucide-react";
+import { useSession } from "next-auth/react";
 import { useCallback, useState } from "react";
 import { toast } from "react-hot-toast";
 
@@ -26,18 +27,11 @@ function TreatmentSection({
   const [editValue, setEditValue] = useState("");
   const [page, setPage] = useState(1);
   const limit = 10;
+  // const { data: session } = useSession();
+
   const session = {
     user: {
-      id: "1234567890",
-      name: "John Doe",
-      email: "john.doe@example.com",
-      image: "https://via.placeholder.com/150",
-      doctorProfile: {
-        id: "1234567890",
-        name: "John Doe",
-        email: "john.doe@example.com",
-        image: "https://via.placeholder.com/150",
-      },
+      id: "123",
     },
   };
 

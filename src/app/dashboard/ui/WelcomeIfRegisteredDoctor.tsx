@@ -1,8 +1,13 @@
-import { useSession } from "next-auth/react";
 import Image from "next/image";
 
 function WelcomeIfRegisteredDoctor() {
-  const { data: session } = useSession();
+  // const { data: session } = useSession();
+
+  const session = {
+    user: {
+      id: "1",
+    },
+  };
 
   const user = {
     name: "John Doe",
