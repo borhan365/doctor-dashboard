@@ -9,7 +9,7 @@ export default function AppointmentDetailsPage() {
       <div className="mx-auto max-w-7xl">
         <div className="mb-6 flex items-center gap-2">
           <Link
-            href="/doctor/appointments"
+            href="/dashboard/appointments"
             className="inline-flex items-center text-gray-600 hover:text-gray-900"
           >
             <ArrowLeft className="mr-2 h-5 w-5" />

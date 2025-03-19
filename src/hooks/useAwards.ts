@@ -1,5 +1,5 @@
 import { ApiUrl } from "@/app/Variables";
-import { DoctorAward } from "@/types/awards";
+import { AwardFormData, DoctorAward } from "@/types/awards";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-hot-toast";
 
@@ -25,48 +25,54 @@ export const useAwards = (doctorId?: string) => {
   });
 
   const { mutateAsync: createAward, isPending: isCreating } = useMutation({
-    mutationFn: async (data: { doctorId: string; awards: any[] }) => {
-      const res = await fetch(`${ApiUrl}/doctors/awards/create`, {
+    mutationFn: async (data: AwardFormData) => {
+      const response = await fetch(`${ApiUrl}/doctors/awards/create`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
 
-      const responseData = await res.json();
-      if (!res.ok) {
-        throw new Error(responseData.error || "Failed to create award");
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to create award");
       }
-      return responseData;
+
+      return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["awards"] });
       toast.success("Award created successfully");
     },
+    onError: (error) => {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to create award",
+      );
+    },
   });
 
   const { mutateAsync: updateAward, isPending: isUpdating } = useMutation({
-    mutationFn: async ({
-      id,
-      data,
-    }: {
-      id: string;
-      data: { doctorId: string; awards: any[] };
-    }) => {
-      const res = await fetch(`${ApiUrl}/doctors/awards/update/${id}`, {
+    mutationFn: async ({ id, data }: { id: string; data: AwardFormData }) => {
+      const response = await fetch(`${ApiUrl}/doctors/awards/update/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
 
-      const responseData = await res.json();
-      if (!res.ok) {
-        throw new Error(responseData.error || "Failed to update award");
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to update award");
       }
-      return responseData;
+
+      return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["awards"] });
       toast.success("Award updated successfully");
+    },
+    onError: (error) => {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to update award",
+      );
     },
   });
 

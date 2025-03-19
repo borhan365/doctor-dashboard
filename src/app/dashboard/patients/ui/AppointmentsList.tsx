@@ -112,7 +112,7 @@ export function AppointmentsList() {
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <Link href={`/doctor/appointments/${appointment.id}`}>
+                  <Link href={`/dashboard/appointments/${appointment.id}`}>
                     <span className="font-medium text-gray-900">
                       {appointment.patient.name}
                     </span>

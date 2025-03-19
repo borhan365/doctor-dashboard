@@ -1,39 +1,6 @@
-import { ApiUrl } from "@/app/Variables";
+import { DiagnosticSearchResponse } from "@/types/diagnostics";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-
-export interface DiagnosticSearchResponse {
-  diagnostics: HospitalDiagnosticTest[];
-  meta: {
-    total: number;
-    page: number;
-    limit: number;
-    totalPages: number;
-  };
-}
-
-export interface HospitalDiagnosticTest {
-  id?: string;
-  name: string;
-  bnName?: string;
-  price: number;
-  description?: string;
-  bnDescription?: string;
-  hospitalId: string;
-  categoryId?: string;
-  diagnosticId?: string;
-  category?: {
-    id: string;
-    name: string;
-    bnName?: string;
-  };
-  diagnostic?: {
-    id: string;
-    name: string;
-    bnName?: string;
-  };
-  isExisting?: boolean;
-}
 
 interface UseDiagnosticsProps {
   searchTerm?: string;
@@ -62,7 +29,7 @@ export function useDiagnostics({
       page,
       limit,
     ],
-    queryFn: async (): Promise<DiagnosticSearchResponse> => {
+    queryFn: async () => {
       const params = new URLSearchParams({
         ...(searchTerm && { search: searchTerm }),
         ...(categoryId && { categoryId }),
@@ -72,10 +39,10 @@ export function useDiagnostics({
         limit: limit.toString(),
       });
 
-      const response = await axios.get(
-        `${ApiUrl}/hospitals/diagnostics/search?${params}`,
+      const { data } = await axios.get<{ data: DiagnosticSearchResponse }>(
+        `/api/hospitals/diagnostics/search?${params}`,
       );
-      return response.data.data;
+      return data.data;
     },
   });
 }

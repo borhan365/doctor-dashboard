@@ -7,12 +7,17 @@ export interface Award {
   category?: string;
   description?: string;
   bnDescription?: string;
-  isExpanded?: boolean;
 }
 
 export interface AwardFormData {
   doctorId: string;
-  awards: Award[];
+  title: string;
+  bnTitle?: string;
+  awardYear: number;
+  awardedBy: string;
+  category?: string;
+  description?: string;
+  bnDescription?: string;
 }
 
 export interface AwardFormProps {
@@ -24,14 +29,21 @@ export interface AwardFormProps {
 export interface DoctorAward {
   id: string;
   doctorId: string;
-  awards: Award[];
+  title: string;
+  bnTitle?: string;
+  awardYear: number;
+  awardedBy: string;
+  category?: string;
+  description?: string;
+  bnDescription?: string;
   doctor?: {
     id: string;
     name: string;
+    bnName?: string;
     featuredImage?: {
       fileUrl?: string;
     };
   };
-  createdAt: string;
-  updatedAt: string;
+  createdAt?: string | Date;
+  updatedAt?: string | Date;
 }

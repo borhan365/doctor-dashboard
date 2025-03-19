@@ -1,4 +1,5 @@
-import { DoctorEducation } from "@/types/educations";
+import { ApiUrl } from "@/app/Variables";
+import { DoctorEducation, Education } from "@/types/educations";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-hot-toast";
 
@@ -14,7 +15,7 @@ export const useEducations = (doctorId?: string) => {
     queryKey: ["educations", doctorId],
     queryFn: async () => {
       const url = new URL(
-        "/api/doctors/educations/get-all",
+        `${ApiUrl}/doctors/educations/get-all`,
         window.location.origin,
       );
       if (doctorId) url.searchParams.append("doctorId", doctorId);
@@ -26,60 +27,68 @@ export const useEducations = (doctorId?: string) => {
 
   // Create education
   const { mutateAsync: createEducation, isPending: isCreating } = useMutation({
-    mutationFn: async (data: { doctorId: string; educations: any[] }) => {
-      const res = await fetch("/api/doctors/educations/create", {
+    mutationFn: async (data: { doctorId: string; education: Education }) => {
+      const response = await fetch(`${ApiUrl}/doctors/educations/create`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        body: JSON.stringify({
+          doctorId: data.doctorId,
+          ...data.education,
+        }),
       });
 
-      const responseData = await res.json();
-
-      if (!res.ok) {
-        throw new Error(responseData.error || "Failed to create education");
+      if (!response.ok) {
+        throw new Error("Failed to create education");
       }
 
-      return responseData;
+      return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["educations"] });
-      toast.success("Education created successfully");
+      toast.success("Education record created successfully");
+    },
+    onError: (error) => {
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Failed to create education record",
+      );
     },
   });
 
   // Update education
   const { mutateAsync: updateEducation, isPending: isUpdating } = useMutation({
-    mutationFn: async ({
-      id,
-      data,
-    }: {
-      id: string;
-      data: { doctorId: string; educations: any[] };
-    }) => {
-      const res = await fetch(`/api/doctors/educations/update/${id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
+    mutationFn: async ({ id, data }: { id: string; data: Education }) => {
+      const response = await fetch(
+        `${ApiUrl}/doctors/educations/update/${id}`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        },
+      );
 
-      const responseData = await res.json();
-
-      if (!res.ok) {
-        throw new Error(responseData.error || "Failed to update education");
+      if (!response.ok) {
+        throw new Error("Failed to update education");
       }
 
-      return responseData;
+      return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["educations"] });
       toast.success("Education updated successfully");
+    },
+    onError: (error) => {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to update education",
+      );
     },
   });
 
   // Delete education
   const { mutateAsync: deleteEducation, isPending: isDeleting } = useMutation({
     mutationFn: async (id: string) => {
-      const res = await fetch(`/api/doctors/educations/delete/${id}`, {
+      const res = await fetch(`${ApiUrl}/doctors/educations/delete/${id}`, {
         method: "DELETE",
       });
 

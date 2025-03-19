@@ -162,7 +162,7 @@ export default function RecentAppointments() {
                 </td>
                 <td className="px-4 py-2 text-sm text-gray-900">
                   <Link
-                    href={`/doctor/appointments/${appointment.id}`}
+                    href={`/dashboard/appointments/${appointment.id}`}
                     className="rounded-full p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500"
                   >
                     <Eye className="h-5 w-5" />

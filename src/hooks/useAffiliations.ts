@@ -1,5 +1,5 @@
 import { ApiUrl } from "@/app/Variables";
-import { DoctorAffiliation } from "@/types/affiliations";
+import { AffiliationFormData, DoctorAffiliation } from "@/types/affiliations";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-hot-toast";
 
@@ -26,22 +26,30 @@ export const useAffiliations = (doctorId?: string) => {
 
   const { mutateAsync: createAffiliation, isPending: isCreating } = useMutation(
     {
-      mutationFn: async (data: { doctorId: string; affiliations: any[] }) => {
-        const res = await fetch(`${ApiUrl}/doctors/affiliations/create`, {
+      mutationFn: async (data: AffiliationFormData) => {
+        const response = await fetch(`${ApiUrl}/doctors/affiliations/create`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(data),
         });
 
-        const responseData = await res.json();
-        if (!res.ok) {
-          throw new Error(responseData.error || "Failed to create affiliation");
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || "Failed to create affiliation");
         }
-        return responseData;
+
+        return response.json();
       },
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ["affiliations"] });
         toast.success("Affiliation created successfully");
+      },
+      onError: (error) => {
+        toast.error(
+          error instanceof Error
+            ? error.message
+            : "Failed to create affiliation",
+        );
       },
     },
   );
@@ -53,23 +61,34 @@ export const useAffiliations = (doctorId?: string) => {
         data,
       }: {
         id: string;
-        data: { doctorId: string; affiliations: any[] };
+        data: AffiliationFormData;
       }) => {
-        const res = await fetch(`${ApiUrl}/doctors/affiliations/update/${id}`, {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data),
-        });
+        const response = await fetch(
+          `${ApiUrl}/doctors/affiliations/update/${id}`,
+          {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+          },
+        );
 
-        const responseData = await res.json();
-        if (!res.ok) {
-          throw new Error(responseData.error || "Failed to update affiliation");
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || "Failed to update affiliation");
         }
-        return responseData;
+
+        return response.json();
       },
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ["affiliations"] });
         toast.success("Affiliation updated successfully");
+      },
+      onError: (error) => {
+        toast.error(
+          error instanceof Error
+            ? error.message
+            : "Failed to update affiliation",
+        );
       },
     },
   );
@@ -82,9 +101,11 @@ export const useAffiliations = (doctorId?: string) => {
         });
 
         const responseData = await res.json();
+
         if (!res.ok) {
           throw new Error(responseData.error || "Failed to delete affiliation");
         }
+
         return responseData;
       },
       onSuccess: () => {

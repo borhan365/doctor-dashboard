@@ -11,6 +11,7 @@ import { Notifications } from "./ui/Notifications";
 import PaymentPendingForApproval from "./ui/PaymentPendingForApproval";
 import PaymentReqestSection from "./ui/PaymentReqestSection";
 import { RecentInvoices } from "./ui/RecentInvoices";
+import IconLoading from "@/components/Loader/IconLoading";
 
 export default function DoctorDashboard() {
   const { data: doctor, isLoading, isError } = useDoctorDetails();
@@ -56,7 +57,7 @@ export default function DoctorDashboard() {
 
   return (
     <>
-      {isLoading && <HealthaLoader />}
+      {isLoading && <IconLoading />}
       <div className="min-h-screen bg-slate-50 p-4 dark:bg-slate-900 lg:p-8">
         {/* Show pending payment approval section if there's a PENDING payment */}
         {pendingRegistrationPayment && (

@@ -1,4 +1,5 @@
-import { DoctorPublication } from "@/types/publications";
+import { ApiUrl } from "@/app/Variables";
+import { DoctorPublication, PublicationFormData } from "@/types/publications";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-hot-toast";
 
@@ -13,7 +14,7 @@ export const usePublications = (doctorId?: string) => {
     queryKey: ["publications", doctorId],
     queryFn: async () => {
       const url = new URL(
-        "/api/doctors/publications/get-all",
+        `${ApiUrl}/doctors/publications/get-all`,
         window.location.origin,
       );
       if (doctorId) url.searchParams.append("doctorId", doctorId);
@@ -25,22 +26,30 @@ export const usePublications = (doctorId?: string) => {
 
   const { mutateAsync: createPublication, isPending: isCreating } = useMutation(
     {
-      mutationFn: async (data: { doctorId: string; publications: any[] }) => {
-        const res = await fetch("/api/doctors/publications/create", {
+      mutationFn: async (data: PublicationFormData) => {
+        const response = await fetch(`${ApiUrl}/doctors/publications/create`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(data),
         });
 
-        const responseData = await res.json();
-        if (!res.ok) {
-          throw new Error(responseData.error || "Failed to create publication");
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || "Failed to create publication");
         }
-        return responseData;
+
+        return response.json();
       },
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ["publications"] });
         toast.success("Publication created successfully");
+      },
+      onError: (error) => {
+        toast.error(
+          error instanceof Error
+            ? error.message
+            : "Failed to create publication",
+        );
       },
     },
   );
@@ -52,23 +61,35 @@ export const usePublications = (doctorId?: string) => {
         data,
       }: {
         id: string;
-        data: { doctorId: string; publications: any[] };
+        data: Partial<PublicationFormData>;
       }) => {
-        const res = await fetch(`/api/doctors/publications/update/${id}`, {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data),
-        });
+        const response = await fetch(
+          `${ApiUrl}/doctors/publications/update/${id}`,
+          {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+          },
+        );
 
-        const responseData = await res.json();
-        if (!res.ok) {
-          throw new Error(responseData.error || "Failed to update publication");
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || "Failed to update publication");
         }
-        return responseData;
+
+        return response.json();
       },
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ["publications"] });
-        toast.success("Publication updated successfully");
+      },
+      onError: (error) => {
+        toast.error(
+          error instanceof Error
+            ? error.message
+            : "Failed to update publication",
+        );
       },
     },
   );
@@ -76,14 +97,16 @@ export const usePublications = (doctorId?: string) => {
   const { mutateAsync: deletePublication, isPending: isDeleting } = useMutation(
     {
       mutationFn: async (id: string) => {
-        const res = await fetch(`/api/doctors/publications/delete/${id}`, {
+        const res = await fetch(`${ApiUrl}/doctors/publications/delete/${id}`, {
           method: "DELETE",
         });
 
         const responseData = await res.json();
+
         if (!res.ok) {
           throw new Error(responseData.error || "Failed to delete publication");
         }
+
         return responseData;
       },
       onSuccess: () => {

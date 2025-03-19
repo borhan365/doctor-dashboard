@@ -3,6 +3,7 @@ export interface Education {
   instituteName: string;
   yearOfCompletion: number;
   degreeType: string;
+  degreeTitle?: string;
   specialization: string;
   country?: string;
   isExpanded?: boolean;
@@ -22,10 +23,16 @@ export interface EducationFormProps {
 export interface DoctorEducation {
   id: string;
   doctorId: string;
-  educations: Education[];
+  instituteName: string;
+  yearOfCompletion: number;
+  degreeType: string;
+  degreeTitle?: string;
+  specialization: string;
+  country?: string;
   doctor?: {
     id: string;
     name: string;
+    bnName?: string;
     featuredImage?: {
       fileUrl?: string;
     };

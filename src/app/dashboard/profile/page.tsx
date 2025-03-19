@@ -1,6 +1,6 @@
 "use client";
 
-import HealthaLoader from "@/components/Loader/HealthaLoader";
+import IconLoading from "@/components/Loader/IconLoading";
 import { useDoctorProfile } from "@/hooks/useDoctors";
 import { useAuth } from "@/store/useAuth";
 import { DoctorFormData } from "@/types/doctors";
@@ -273,7 +273,7 @@ export default function ManageDoctorProfile() {
   return (
     <div className="min-h-screen">
       {(isLoading || isLoadingDoctor || status === "loading") && (
-        <HealthaLoader />
+        <IconLoading />
       )}
       <form onSubmit={(e) => e.preventDefault()} className="space-y-2">
         {/* Header */}

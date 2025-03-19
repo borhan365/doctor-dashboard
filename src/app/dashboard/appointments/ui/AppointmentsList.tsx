@@ -273,7 +273,7 @@ export function AppointmentsList() {
           </div>
 
           <div className="flex items-center gap-2">
-            <PrimaryButton text="New Appointment" href="/doctor/appointments/create" />
+            <PrimaryButton text="New Appointment" href="/dashboard/appointments/create" />
             <button className="rounded-lg border border-slate-300 bg-white p-2 hover:bg-slate-50">
               <List className="h-5 w-5 text-slate-500" />
             </button>
@@ -308,7 +308,7 @@ export function AppointmentsList() {
                     </div>
                     <div>
                       <div className="flex items-center gap-2">
-                        <Link href={`/doctor/appointments/${appointment.id}`}>
+                        <Link href={`/dashboard/appointments/${appointment.id}`}>
                           <span className="font-medium text-slate-900">
                             {appointment.patient.name}
                           </span>

@@ -5,31 +5,33 @@ export interface Publication {
   url: string;
   description?: string;
   bnDescription?: string;
-  isExpanded?: boolean;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+export interface DoctorPublication extends Publication {
+  doctorId: string;
+  doctor?: {
+    id: string;
+    name: string;
+    bnName?: string;
+    featuredImage?: {
+      fileUrl?: string;
+    };
+  };
 }
 
 export interface PublicationFormData {
   doctorId: string;
-  publications: Publication[];
+  title: string;
+  bnTitle?: string;
+  url: string;
+  description?: string;
+  bnDescription?: string;
 }
 
 export interface PublicationFormProps {
   formData: PublicationFormData;
   setFormData: React.Dispatch<React.SetStateAction<PublicationFormData>>;
   isEditing?: boolean;
-}
-
-export interface DoctorPublication {
-  id: string;
-  doctorId: string;
-  publications: Publication[];
-  doctor?: {
-    id: string;
-    name: string;
-    featuredImage?: {
-      fileUrl?: string;
-    };
-  };
-  createdAt: string;
-  updatedAt: string;
 }

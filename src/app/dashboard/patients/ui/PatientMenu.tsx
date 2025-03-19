@@ -9,19 +9,19 @@ function PatientMenu({ patientId }: { patientId: string }) {
   const menuItems = [
     {
       label: "Appointments",
-      href: `/doctor/patients/${patientId}/appointments`,
+      href: `/dashboard/patients/${patientId}/appointments`,
     },
     {
       label: "Prescriptions",
-      href: `/doctor/patients/${patientId}/prescriptions`,
+      href: `/dashboard/patients/${patientId}/prescriptions`,
     },
     {
       label: "Medical Records",
-      href: `/doctor/patients/${patientId}/medical-records`,
+      href: `/dashboard/patients/${patientId}/medical-records`,
     },
     {
       label: "Invoices",
-      href: `/doctor/patients/${patientId}/invoices`,
+      href: `/dashboard/patients/${patientId}/invoices`,
     },
   ];
 
@@ -29,7 +29,7 @@ function PatientMenu({ patientId }: { patientId: string }) {
   const hasActiveItem = menuItems.some(
     (item) =>
       pathname === item.href ||
-      (item.href === `/doctor/patients/${patientId}` &&
+      (item.href === `/dashboard/patients/${patientId}` &&
         pathname.endsWith("#general-info")),
   );
 
@@ -39,7 +39,7 @@ function PatientMenu({ patientId }: { patientId: string }) {
         {menuItems.map((item) => {
           const isActive = hasActiveItem
             ? pathname === item.href ||
-              (item.href === `/doctor/patients/${patientId}` &&
+              (item.href === `/dashboard/patients/${patientId}` &&
                 pathname.endsWith("#general-info"))
             : item.label === "Overview"; // Set Overview as active if no other item is active
 

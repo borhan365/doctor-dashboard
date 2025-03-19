@@ -4,14 +4,20 @@ export interface Affiliation {
   hospitalName: string;
   bnTitle?: string;
   role?: string;
-  startDate: Date;
-  endDate?: Date;
-  isExpanded?: boolean; // UI state
+  startDate: string | Date;
+  endDate?: string | Date | null;
+  isCurrent?: boolean; // UI state
 }
 
 export interface AffiliationFormData {
   doctorId: string;
-  affiliations: Affiliation[];
+  title: string;
+  hospitalName: string;
+  bnTitle?: string;
+  role?: string;
+  startDate: string | Date;
+  endDate?: string | Date | null;
+  isCurrent?: boolean;
 }
 
 export interface AffiliationFormProps {
@@ -20,17 +26,16 @@ export interface AffiliationFormProps {
   isEditing?: boolean;
 }
 
-export interface DoctorAffiliation {
-  id: string;
+export interface DoctorAffiliation extends Affiliation {
   doctorId: string;
-  affiliations: Affiliation[];
   doctor?: {
     id: string;
     name: string;
+    bnName?: string;
     featuredImage?: {
       fileUrl?: string;
     };
   };
-  createdAt: string;
-  updatedAt: string;
+  createdAt?: string | Date;
+  updatedAt?: string | Date;
 }

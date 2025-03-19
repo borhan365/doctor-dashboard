@@ -147,7 +147,7 @@ export default function Appointments() {
 
             <div className="flex items-center justify-end">
               <Link
-                href={`/doctor/appointments/${appointment.id}`}
+                href={`/dashboard/appointments/${appointment.id}`}
                 className="rounded-full p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500"
               >
                 <Eye className="h-5 w-5" />

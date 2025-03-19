@@ -1,5 +1,5 @@
 import { ApiUrl } from "@/app/Variables";
-import { DoctorExperience } from "@/types/experiences";
+import { DoctorExperience, Experience } from "@/types/experiences";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-hot-toast";
 
@@ -23,29 +23,34 @@ export const useExperiences = (doctorId?: string) => {
       if (!res.ok) throw new Error("Failed to fetch experiences");
       return res.json();
     },
-    enabled: !!doctorId, // Only run the query if doctorId is available
   });
 
   // Create experience
   const { mutateAsync: createExperience, isPending: isCreating } = useMutation({
-    mutationFn: async (data: { doctorId: string; experiences: any[] }) => {
-      const res = await fetch(`${ApiUrl}/doctors/experiences/create`, {
+    mutationFn: async (data: Partial<Experience> & { doctorId: string }) => {
+      const response = await fetch(`${ApiUrl}/doctors/experiences/create`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
 
-      const responseData = await res.json();
-
-      if (!res.ok) {
-        throw new Error(responseData.error || "Failed to create experience");
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to create experience");
       }
 
-      return responseData;
+      return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["experiences"] });
-      toast.success("Experience created successfully");
+      toast.success("Experience record created successfully");
+    },
+    onError: (error) => {
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Failed to create experience record",
+      );
     },
   });
 
@@ -56,25 +61,33 @@ export const useExperiences = (doctorId?: string) => {
       data,
     }: {
       id: string;
-      data: { doctorId: string; experiences: any[] };
+      data: Partial<Experience> & { doctorId: string };
     }) => {
-      const res = await fetch(`${ApiUrl}/doctors/experiences/update/${id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
+      const response = await fetch(
+        `${ApiUrl}/doctors/experiences/update/${id}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        },
+      );
 
-      const responseData = await res.json();
-
-      if (!res.ok) {
-        throw new Error(responseData.error || "Failed to update experience");
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to update experience");
       }
 
-      return responseData;
+      return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["experiences"] });
-      toast.success("Experience updated successfully");
+    },
+    onError: (error) => {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to update experience",
+      );
     },
   });
 
@@ -99,20 +112,6 @@ export const useExperiences = (doctorId?: string) => {
     },
   });
 
-  // Check if doctor has existing experience
-  const checkExistingExperience = async (doctorId: string) => {
-    try {
-      const res = await fetch(
-        `${ApiUrl}/doctors/experiences/check?doctorId=${doctorId}`,
-      );
-      if (!res.ok) return { exists: false };
-      return res.json();
-    } catch (error) {
-      console.error("Error checking experience:", error);
-      return { exists: false };
-    }
-  };
-
   return {
     experiences: experiences?.experiences || [],
     meta: experiences?.meta,
@@ -124,6 +123,5 @@ export const useExperiences = (doctorId?: string) => {
     isUpdating,
     deleteExperience,
     isDeleting,
-    checkExistingExperience,
   };
 };
