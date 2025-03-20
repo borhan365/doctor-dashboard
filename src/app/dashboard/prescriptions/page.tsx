@@ -197,7 +197,7 @@ function Prescriptions() {
             <option value="completed">Completed</option>
             <option value="pending">Pending</option>
           </select>
-          <Link href="/dashboard/prescriptions/create">
+          <Link href="/dashboard/prescriptions/manage">
             <button className="inline-flex h-9 items-center justify-center gap-2 rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-400">
               <Plus className="h-4 w-4" /> New Prescription
             </button>

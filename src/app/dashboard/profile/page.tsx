@@ -9,6 +9,7 @@ import dynamic from "next/dynamic";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
+import ChamberTable from "../chambers/ui/ChamberTable";
 import { ProfileForm } from "./ui/ProfileForm";
 
 // Dynamically import components
@@ -338,6 +339,11 @@ export default function ManageDoctorProfile() {
           )}
         </div>
       </form>
+
+      <div>
+        <h2>My Chambers</h2>
+        <ChamberTable doctorId={doctorSlug} />
+      </div>
     </div>
   );
 }

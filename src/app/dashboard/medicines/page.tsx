@@ -1,374 +1,250 @@
 "use client";
 
-import PrimaryButton from "@/components/Buttons/PrimaryButton";
-import { useQuery } from "@tanstack/react-query";
-import { Eye, Loader2, Search } from "lucide-react";
+import ErrorMessage from "@/components/common/Messages/errorMessage";
+import Pagination from "@/components/common/Pagination";
+import IconLoading from "@/components/Loader/IconLoading";
+import { useGetMedicines } from "@/hooks/useMedicines";
+import { Medicine } from "@/types/medicines";
+import { debounce } from "lodash";
+import { Package } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { useState } from "react";
+import { FiEdit, FiEye } from "react-icons/fi";
+import { GrPowerReset } from "react-icons/gr";
+import { PiSmileySadLight } from "react-icons/pi";
 
-interface Medicine {
-  id: string;
-  basicInfo: {
-    name: string;
-    excerpt?: string;
-    specification?: string;
-    description?: string;
-  };
-  common: {
-    basicInfo: {
-      price?: string;
-      discountPrice?: string;
-      stock?: string;
-      postStatus?: string;
-      strength?: string;
-      packSize?: string;
-      isFeatured?: boolean;
-      isVerified?: boolean;
-      isSponsored?: boolean;
-      thumb?: string;
-      dosageForm?: string;
-      publisher?: {
-        name: string;
-      };
-      generic?: {
-        name: string;
-      };
-      medicineType?: {
-        name: string;
-      };
-      medicineCompany?: {
-        name: string;
-      };
-    };
-  };
-}
-
-// Mock data
-const mockMedicines: Medicine[] = [
-  {
-    id: "1",
-    basicInfo: { name: "Paracetamol" },
-    common: {
-      basicInfo: {
-        price: "5.99",
-        stock: "500",
-        postStatus: "active",
-        strength: "500mg",
-        thumb: "https://5.imimg.com/data5/SELLER/Default/2022/11/GU/NH/GM/8255379/paracetamol-tablet-500x500.jpeg",
-        medicineCompany: { name: "Johnson & Johnson" },
-        generic: { name: "Acetaminophen" },
-        dosageForm: "Tablet"
-      }
-    }
-  },
-  {
-    id: "2",
-    basicInfo: { name: "Amoxicillin" },
-    common: {
-      basicInfo: {
-        price: "12.99",
-        stock: "200",
-        postStatus: "active",
-        strength: "250mg",
-        medicineCompany: { name: "Pfizer" },
-        generic: { name: "Amoxicillin" },
-        dosageForm: "Capsule"
-      }
-    }
-  },
-  {
-    id: "3",
-    basicInfo: { name: "Ibuprofen" },
-    common: {
-      basicInfo: {
-        price: "7.99",
-        stock: "350",
-        postStatus: "active",
-        strength: "400mg",
-        thumb: "https://ellanjey.com/wp-content/uploads/2018/12/GESIC_ELL_P.jpg",
-        medicineCompany: { name: "GSK" },
-        generic: { name: "Ibuprofen" },
-        dosageForm: "Capsule"
-      }
-    }
-  },
-  {
-    id: "4",
-    basicInfo: { name: "Omeprazole" },
-    common: {
-      basicInfo: {
-        price: "15.99",
-        stock: "150",
-        postStatus: "inactive",
-        strength: "20mg",
-        medicineCompany: { name: "AstraZeneca" },
-        generic: { name: "Omeprazole" },
-        dosageForm: "Capsule"
-      }
-    }
-  },
-  {
-    id: "5",
-    basicInfo: { name: "Metformin" },
-    common: {
-      basicInfo: {
-        price: "8.99",
-        stock: "250",
-        postStatus: "active",
-        strength: "500mg",
-        thumb: "https://www.krishlarpharma.com/wp-content/uploads/2019/12/KRITFEN-P-2-tablet.jpg",
-        medicineCompany: { name: "Merck" },
-        generic: { name: "Metformin HCl" },
-        dosageForm: "Tablet"
-      }
-    }
-  },
-  {
-    id: "6",
-    basicInfo: { name: "Lisinopril" },
-    common: {
-      basicInfo: {
-        price: "11.99",
-        stock: "180",
-        postStatus: "active",
-        strength: "10mg",
-        medicineCompany: { name: "Novartis" },
-        generic: { name: "Lisinopril" },
-        dosageForm: "Tablet"
-      }
-    }
-  },
-  {
-    id: "7",
-    basicInfo: { name: "Simvastatin" },
-    common: {
-      basicInfo: {
-        price: "13.99",
-        stock: "200",
-        postStatus: "active",
-        strength: "20mg",
-        thumb: "https://example.com/simvastatin.jpg",
-        medicineCompany: { name: "Roche" },
-        generic: { name: "Simvastatin" },
-        dosageForm: "Capsule"
-      }
-    }
-  },
-  {
-    id: "8",
-    basicInfo: { name: "Aspirin" },
-    common: {
-      basicInfo: {
-        price: "4.99",
-        stock: "600",
-        postStatus: "active",
-        strength: "81mg",
-        medicineCompany: { name: "Bayer" },
-        generic: { name: "Acetylsalicylic Acid" },
-        dosageForm: "Tablet"
-      }
-    }
-  },
-  {
-    id: "9",
-    basicInfo: { name: "Losartan" },
-    common: {
-      basicInfo: {
-        price: "9.99",
-        stock: "0",
-        postStatus: "inactive",
-        strength: "50mg",
-        thumb: "https://example.com/losartan.jpg",
-        medicineCompany: { name: "Sandoz" },
-        generic: { name: "Losartan Potassium" },
-        dosageForm: "Tablet"
-      }
-    }
-  },
-  {
-    id: "10",
-    basicInfo: { name: "Metoprolol" },
-    common: {
-      basicInfo: {
-        price: "10.99",
-        stock: "300",
-        postStatus: "active",
-        strength: "25mg",
-        medicineCompany: { name: "Teva" },
-        generic: { name: "Metoprolol Tartrate" },
-        dosageForm: "Tablet"
-      }
-    }
-  }
-];
-
-function Medicines() {
-  const [searchTerm, setSearchTerm] = useState("");
+export default function AllMedicinesPage() {
+  const [search, setSearch] = useState("");
+  const [genericId, setGenericId] = useState<string>("");
+  const [manufacturerId, setManufacturerId] = useState<string>("");
+  const [medicineTypeId, setMedicineTypeId] = useState<string>("");
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
 
-  // Using mock data instead of API call
-  const { data: medicines, isLoading } = useQuery<Medicine[]>({
-    queryKey: ["medicines"],
-    queryFn: async () => {
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      return mockMedicines;
-    },
+  const { data, isLoading, error } = useGetMedicines({
+    page: currentPage,
+    limit: 10,
+    search,
+    genericId,
+    manufacturerId,
+    medicineTypeId,
   });
 
-  const filteredMedicines = medicines?.filter((medicine) =>
-    medicine.basicInfo.name.toLowerCase().includes(searchTerm.toLowerCase())
+  // Debounced search
+  const debouncedSearch = debounce((value: string) => {
+    setSearch(value);
+    setCurrentPage(1);
+  }, 500);
+
+  const handleReset = () => {
+    setSearch("");
+    setGenericId("");
+    setManufacturerId("");
+    setMedicineTypeId("");
+    setCurrentPage(1);
+  };
+
+  const renderMedicineRow = (medicine: Medicine) => (
+    <tr
+      key={medicine.id}
+      className="border-b border-slate-200 hover:bg-slate-50 dark:border-strokedark dark:hover:bg-meta-4"
+    >
+      <td className="px-4 py-4">
+        <div className="flex items-center justify-start gap-4">
+          <div>
+            {medicine.featuredImage ? (
+              <div className="relative h-10 w-10">
+                <Image
+                  src={medicine.featuredImage}
+                  alt={medicine.name}
+                  width={50}
+                  height={50}
+                  className="h-full w-full rounded-lg object-cover"
+                />
+              </div>
+            ) : (
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-200 dark:bg-boxdark">
+                <Package className="h-5 w-5 text-slate-500 dark:text-slate-400" />
+              </div>
+            )}
+          </div>
+          <div>
+            <h5 className="text-sm font-medium text-black dark:text-white">
+              {medicine.name}
+            </h5>
+            <p className="text-sm text-slate-500 dark:text-slate-400">
+              {medicine.medicineId}
+            </p>
+          </div>
+        </div>
+      </td>
+      <td className="px-4 py-4">
+        <p className="text-sm text-slate-600 dark:text-slate-300">
+          {medicine?.generic?.name}
+        </p>
+      </td>
+      <td className="px-4 py-4">
+        <p className="text-sm text-slate-600 dark:text-slate-300">
+          {medicine?.manufacturer?.name}
+        </p>
+      </td>
+      <td className="px-4 py-4">
+        <div className="flex flex-wrap gap-1">
+          {medicine?.dosageForms?.map((form) => (
+            <span
+              key={form.id}
+              className="inline-flex rounded-full bg-slate-100 px-2 py-1 text-xs font-medium text-slate-600 dark:bg-meta-4 dark:text-slate-300"
+            >
+              {form.name}
+            </span>
+          ))}
+        </div>
+      </td>
+      <td className="px-4 py-4">
+        {medicine?.details?.[0] && (
+          <div className="space-y-1">
+            <p className="text-sm font-medium text-slate-900 dark:text-white">
+              ৳{medicine?.details?.[0]?.unitPrice}
+            </p>
+            <p className="text-xs text-slate-500 dark:text-slate-400">
+              Stock: {medicine.details[0].stockQuantity}
+            </p>
+          </div>
+        )}
+      </td>
+      <td className="px-4 py-4">
+        <div className="flex items-center gap-3">
+          <Link
+            href={`/medicines/${medicine.slug}`}
+            className="rounded-md p-2 text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-meta-4"
+          >
+            <FiEye className="h-5 w-5" />
+          </Link>
+          <Link
+            href={`/dashboard/medicines/manage?slug=${medicine.slug}`}
+            className="rounded-md p-2 text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-meta-4"
+          >
+            <FiEdit className="h-5 w-5" />
+          </Link>
+        </div>
+      </td>
+    </tr>
   );
 
-  const totalPages = Math.ceil((filteredMedicines?.length || 0) / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const currentMedicines = filteredMedicines?.slice(startIndex, endIndex);
-
   return (
-    <div className="container mx-auto p-6">
-      <div className="mb-4 flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-slate-800">Medicines</h1>
-        <div className="flex items-center gap-2 justify-end">
+    <div className="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
+      <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h2 className="text-2xl font-semibold text-black dark:text-white">
+            All Medicines
+          </h2>
+          <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">
+            Manage and view all medicines in the system
+          </p>
+        </div>
+
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
           <div className="relative">
             <input
               type="text"
               placeholder="Search medicines..."
-              className="rounded-lg border border-slate-300 pl-10 pr-4 py-2 focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full rounded-lg border border-stroke bg-white px-4 py-2 pl-4 pr-6 text-sm outline-none focus:border-primary dark:border-strokedark dark:bg-boxdark dark:text-white"
+              onChange={(e) => debouncedSearch(e.target.value)}
             />
-            <Search className="absolute left-3 top-2.5 h-5 w-5 text-slate-400" />
-        </div>
-          <PrimaryButton text="Add Medicine" />
+          </div>
+
+          <button
+            onClick={handleReset}
+            className="inline-flex items-center justify-center gap-2.5 rounded-lg border border-stroke bg-white px-4 py-2 hover:bg-slate-50 dark:border-strokedark dark:bg-boxdark dark:hover:bg-meta-4"
+          >
+            <GrPowerReset />
+            <span>Reset</span>
+          </button>
+
+          <Link
+            href="/dashboard/medicines/manage"
+            className="inline-flex items-center justify-center rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-opacity-90"
+          >
+            Create Medicine
+          </Link>
         </div>
       </div>
 
       {isLoading ? (
-        <div className="flex h-[50vh] items-center justify-center">
-          <Loader2 className="h-8 w-8 animate-spin text-purple-500" />
+        <IconLoading />
+      ) : error ? (
+        <ErrorMessage message={(error as Error).message} />
+      ) : !data?.medicines.length ? (
+        <div className="mt-4 flex min-h-[400px] flex-col items-center justify-center rounded-lg border border-stroke bg-white p-6 dark:border-strokedark dark:bg-boxdark">
+          <PiSmileySadLight className="size-16 text-slate-400" />
+          <h3 className="mt-4 text-xl font-medium text-black dark:text-white">
+            No medicines found
+          </h3>
+          <p className="mt-1 text-slate-500 dark:text-slate-400">
+            Get started by creating a new medicine or reset filters.
+          </p>
+          <div className="mt-4 flex items-center gap-3">
+            <Link
+              href="/dashboard/medicines/manage"
+              className="rounded-md bg-primary px-4 py-2 text-sm text-white hover:bg-opacity-90"
+            >
+              Add New Medicine
+            </Link>
+            <button
+              onClick={handleReset}
+              className="rounded-md border border-stroke bg-white px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 dark:border-strokedark dark:bg-boxdark dark:text-slate-300 dark:hover:bg-meta-4"
+            >
+              Reset Filters
+            </button>
+          </div>
         </div>
       ) : (
         <>
-          <div className="rounded-lg border border-slate-100 bg-white p-4 shadow-xs">
-            <div className="overflow-x-auto">
-              <table className="w-full border border-slate-100 rounded-lg">
+          <div className="rounded-lg border border-stroke bg-white dark:border-strokedark dark:bg-boxdark">
+            <div className="max-w-full overflow-x-auto">
+              <table className="w-full table-auto">
                 <thead>
-                  <tr className="bg-slate-50">
-                    <th className="px-6 py-3 text-left text-base font-medium text-slate-700">
-                      Medicine
+                  <tr className="border-b border-slate-200 dark:border-strokedark">
+                    <th className="px-4 py-5 text-left text-sm font-medium text-black dark:text-white">
+                      Details
                     </th>
-                    <th className="px-6 py-3 text-left text-base font-medium text-slate-700">
-                      Company
-                    </th>
-                    <th className="px-6 py-3 text-left text-base font-medium text-slate-700">
+                    <th className="px-4 py-5 text-left text-sm font-medium text-black dark:text-white">
                       Generic
                     </th>
-                    <th className="px-6 py-3 text-left text-base font-medium text-slate-700">
-                      Price
+                    <th className="px-4 py-5 text-left text-sm font-medium text-black dark:text-white">
+                      Manufacturer
                     </th>
-                    <th className="px-6 py-3 text-left text-base font-medium text-slate-700">
-                      Stock
+                    <th className="px-4 py-5 text-left text-sm font-medium text-black dark:text-white">
+                      Dosage Forms
                     </th>
-                    <th className="px-6 py-3 text-left text-base font-medium text-slate-700">
-                      Status
+                    <th className="px-4 py-5 text-left text-sm font-medium text-black dark:text-white">
+                      Price & Stock
                     </th>
-                    <th className="px-6 py-3 text-left text-base font-medium text-slate-700">Action</th>
+                    <th className="px-4 py-5 text-left text-sm font-medium text-black dark:text-white">
+                      Actions
+                    </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-200">
-                  {currentMedicines?.map((medicine) => (
-                    <tr key={medicine.id}>
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-2">
-                          {medicine.common.basicInfo.thumb ? (
-                            <Image
-                              src={medicine.common.basicInfo.thumb}
-                              alt={medicine.basicInfo.name}
-                              width={40}
-                              height={40}
-                              className="mr-3 rounded-md object-cover"
-                            />
-                          ) : (
-                            <div className="mr-3 h-10 w-10 rounded-md bg-slate-200 flex items-center justify-center">
-                              <span className="text-slate-500 text-xs">No img</span>
-                            </div>
-                          )}
-                          <div>
-                            <div className="font-medium text-slate-700">
-                              {medicine.basicInfo.name}
-                            </div>
-                            <div className="text-sm text-slate-500">
-                              {medicine.common.basicInfo.strength} - {medicine.common.basicInfo.dosageForm}
-                            </div>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 text-base text-slate-600">
-                        {medicine.common.basicInfo.medicineCompany?.name}
-                      </td>
-                      <td className="px-6 py-4 text-base text-slate-600">
-                        {medicine.common.basicInfo.generic?.name}
-                      </td>
-                      <td className="px-6 py-4 text-base text-slate-600">
-                        ${medicine.common.basicInfo.price}
-                      </td>
-                      <td className="px-6 py-4 text-base text-slate-600">
-                        {medicine.common.basicInfo.stock}
-                      </td>
-                      <td className="px-6 py-4">
-                        <span
-                          className={`inline-flex rounded-full px-3 py-1 capitalize text-sm font-medium ${
-                            medicine.common.basicInfo.postStatus === "active"
-                              ? "bg-green-50 text-green-600"
-                              : "bg-red-50 text-red-600"
-                          }`}
-                        >
-                          {medicine.common.basicInfo.postStatus}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-2">
-                          <button className="rounded-md p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600">
-                            <Eye className="h-5 w-5" />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
+                <tbody>
+                  {data.medicines.map((medicine) =>
+                    renderMedicineRow(medicine as Medicine),
+                  )}
                 </tbody>
               </table>
             </div>
           </div>
 
-          {/* Pagination */}
-          <div className="mt-4 flex items-center justify-between">
-            <div className="text-sm text-slate-600">
-              Showing {startIndex + 1} to {Math.min(endIndex, filteredMedicines?.length || 0)} of{" "}
-              {filteredMedicines?.length} entries
+          {data.meta && (
+            <div className="mt-6">
+              <Pagination
+                currentPage={currentPage}
+                totalPages={data.meta.totalPages}
+                onPageChange={setCurrentPage}
+              />
             </div>
-            <div className="flex space-x-2">
-              <button
-                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                disabled={currentPage === 1}
-                className="rounded-md border border-slate-300 px-3 py-1 text-sm disabled:opacity-50"
-              >
-                Previous
-              </button>
-              <button
-                onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-                disabled={currentPage === totalPages}
-                className="rounded-md border border-slate-300 px-3 py-1 text-sm disabled:opacity-50"
-              >
-                Next
-              </button>
-            </div>
-          </div>
+          )}
         </>
       )}
     </div>
   );
 }
-
-export default Medicines;

@@ -1,3 +1,4 @@
+import { ApiUrl } from "@/app/Variables";
 import {
   HospitalDiagnostic,
   HospitalDiagnosticsResponse,
@@ -51,7 +52,7 @@ export const useHospitalDiagnostics = ({
         });
 
         const response = await axios.get(
-          `/api/hospitals/diagnostics/get-all?${params}`,
+          `${ApiUrl}/hospitals/diagnostics/get-all?${params}`,
         );
         return response.data;
       },
@@ -64,11 +65,11 @@ export const useHospitalDiagnostics = ({
       if (id) {
         const slug = formData.get("slug") as string;
         return axios.patch(
-          `/api/hospitals/diagnostics/update/${slug}`,
+          `${ApiUrl}/hospitals/diagnostics/update/${slug}`,
           formData,
         );
       }
-      return axios.post("/api/hospitals/diagnostics/create", formData);
+      return axios.post(`${ApiUrl}/hospitals/diagnostics/create`, formData);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["hospital-diagnostics"] });
@@ -85,7 +86,7 @@ export const useHospitalDiagnostics = ({
   const deleteMutation = useMutation({
     mutationFn: async (diagnostic: HospitalDiagnostic) => {
       return axios.delete(
-        `/api/hospitals/diagnostics/single-delete/${diagnostic.slug}`,
+        `${ApiUrl}/hospitals/diagnostics/single-delete/${diagnostic.slug}`,
       );
     },
     onSuccess: () => {
@@ -102,7 +103,7 @@ export const useHospitalDiagnostics = ({
   // Bulk delete mutation
   const bulkDeleteMutation = useMutation({
     mutationFn: async (ids: string[]) => {
-      return axios.post("/api/hospitals/diagnostics/bulk-delete", { ids });
+      return axios.post(`${ApiUrl}/hospitals/diagnostics/bulk-delete`, { ids });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["hospital-diagnostics"] });
@@ -120,7 +121,7 @@ export const useHospitalDiagnostics = ({
     slug: string,
   ): Promise<HospitalDiagnostic> => {
     const response = await axios.get(
-      `/api/hospitals/diagnostics/get-single/${slug}`,
+      `${ApiUrl}/hospitals/diagnostics/get-single/${slug}`,
     );
     return response.data.data;
   };

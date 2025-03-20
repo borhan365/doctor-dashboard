@@ -1,434 +1,266 @@
 "use client";
 
-import PrimaryButton from "@/components/Buttons/PrimaryButton";
-import { useQuery, useMutation } from "@tanstack/react-query";
-import { ChevronLeft, ChevronRight, Loader2, Search, Trash2, Edit2, Edit } from "lucide-react";
-import { useState } from "react";
-import { Drawer, Form, Input, InputNumber, Select, Upload, message } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
+import ErrorMessage from "@/components/common/Messages/errorMessage";
+import Pagination from "@/components/common/Pagination";
+import IconLoading from "@/components/Loader/IconLoading";
+import { useHospitalDiagnostics } from "@/hooks/useHospitalDiagnostics";
+import { HospitalDiagnostic } from "@/types/hospitalDiagnostics";
+import { debounce } from "lodash";
+import { Package } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
+import { useState } from "react";
+import { FiEdit, FiEye } from "react-icons/fi";
+import { GrPowerReset } from "react-icons/gr";
+import { PiSmileySadLight } from "react-icons/pi";
 
-interface Diagnostic {
-  id: string;
-  name: string;
-  price: number;
-  description: string;
-  category: string;
-  status: "available" | "unavailable";
-  turnaroundTime: string;
-  sampleType: string;
-  reportFormat: string;
-  featuredImage?: string;
-}
-
-// Mock data
-const initialDiagnostics: Diagnostic[] = [
-  {
-    id: "1",
-    name: "2D Echo",
-    price: 1500,
-    description: "Two-dimensional echocardiography examination",
-    category: "Cardiology",
-    status: "available",
-    turnaroundTime: "1-2 hours", 
-    sampleType: "Non-invasive",
-    reportFormat: "Digital + Print",
-    featuredImage: "https://hdclbd.com/Images/uploads/diagnostic-dpt-img/img_diagnostic_dpt_202014163645_Laboratory_hdclbd_dpt.jpg"
-  },
-  {
-    id: "2",
-    name: "3D Echo",
-    price: 1000,
-    description: "Three-dimensional echocardiography examination",
-    category: "Cardiology",
-    status: "available",
-    turnaroundTime: "1-2 hours", 
-    sampleType: "Non-invasive",
-    reportFormat: "Digital + Print",
-    featuredImage: "https://www.praavahealth.com/media-images/vYLbJCJlLtRIHt0sgDhP88J2kbQ=/14/fill-844x557-c0%7Cformat-webp/Rectangle_7051_1_0W1aiuN.png"
-  },
-  {
-    id: "3",
-    name: "CT Scan",
-    price: 1000,
-    description: "Computerized tomography scan",
-    category: "Radiology",
-    status: "available",
-    turnaroundTime: "1-2 hours", 
-    sampleType: "Non-invasive",
-    reportFormat: "Digital + Print",
-    featuredImage: "https://www.praavahealth.com/media-images/vYLbJCJlLtRIHt0sgDhP88J2kbQ=/14/fill-844x557-c0%7Cformat-webp/Rectangle_7051_1_0W1aiuN.png"
-  },
-  {
-    id: "4",
-    name: "MRI",
-    price: 1000,
-    description: "Magnetic resonance imaging",
-    category: "Radiology",
-    status: "available",
-    turnaroundTime: "1-2 hours", 
-    sampleType: "Non-invasive",
-    reportFormat: "Digital + Print",
-    featuredImage: "https://www.praavahealth.com/media-images/vYLbJCJlLtRIHt0sgDhP88J2kbQ=/14/fill-844x557-c0%7Cformat-webp/Rectangle_7051_1_0W1aiuN.png"
-  },
-  {
-    id: "5",
-    name: "Ultrasound",
-    price: 1000,
-    description: "Ultrasound examination",
-    category: "Radiology",
-    status: "available",
-    turnaroundTime: "1-2 hours", 
-    sampleType: "Non-invasive",
-    reportFormat: "Digital + Print",
-    featuredImage: "https://www.praavahealth.com/media-images/vYLbJCJlLtRIHt0sgDhP88J2kbQ=/14/fill-844x557-c0%7Cformat-webp/Rectangle_7051_1_0W1aiuN.png"
-  }
-];
-
-function Diagnostics() {
-  const [searchTerm, setSearchTerm] = useState("");
+export default function DiagnosticsPage() {
+  const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [selectedCategory, setSelectedCategory] = useState("All");
-  const [drawerVisible, setDrawerVisible] = useState(false);
-  const [editingDiagnostic, setEditingDiagnostic] = useState<Diagnostic | null>(null);
-  const [diagnosticsList, setDiagnosticsList] = useState(initialDiagnostics);
-  const [form] = Form.useForm();
-  const itemsPerPage = 5;
+  const [categoryId, setCategoryId] = useState<string>("");
+  const [status, setStatus] = useState<string>("");
+  const [priceSort, setPriceSort] = useState<"asc" | "desc">();
 
-  const { data: diagnostics, isLoading } = useQuery({
-    queryKey: ["diagnostics"],
-    queryFn: async () => {
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      return diagnosticsList;
-    },
+  const { diagnostics, meta, isLoading, error } = useHospitalDiagnostics({
+    page: currentPage,
+    limit: 10,
+    search,
+    categoryId,
+    status,
+    priceSort,
   });
 
-  const handleCreate = (values: Omit<Diagnostic, "id">) => {
-    const newDiagnostic = {
-      ...values,
-      id: Math.random().toString(36).substr(2, 9),
-    };
-    setDiagnosticsList(prev => [...prev, newDiagnostic]);
-    message.success("Diagnostic created successfully");
-    setDrawerVisible(false);
-    form.resetFields();
+  // Debounced search
+  const debouncedSearch = debounce((value: string) => {
+    setSearch(value);
+    setCurrentPage(1);
+  }, 500);
+
+  const handleReset = () => {
+    setSearch("");
+    setCategoryId("");
+    setStatus("");
+    setPriceSort(undefined);
+    setCurrentPage(1);
   };
 
-  const handleUpdate = (values: Diagnostic) => {
-    setDiagnosticsList(prev => 
-      prev.map(item => item.id === editingDiagnostic?.id ? { ...values, id: item.id } : item)
-    );
-    message.success("Diagnostic updated successfully");
-    setDrawerVisible(false);
-    setEditingDiagnostic(null);
-    form.resetFields();
-  };
-
-  const handleDelete = (id: string) => {
-    setDiagnosticsList(prev => prev.filter(item => item.id !== id));
-    message.success("Diagnostic deleted successfully");
-  };
-
-  const categories = ["All", ...Array.from(new Set(diagnostics?.map(d => d.category) || []))];
-
-  const filteredDiagnostics = diagnostics?.filter(diagnostic => {
-    const matchesSearch = diagnostic.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      diagnostic.category.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedCategory === "All" || diagnostic.category === selectedCategory;
-    return matchesSearch && matchesCategory;
-  }) || [];
-
-  const totalPages = Math.ceil(filteredDiagnostics.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedDiagnostics = filteredDiagnostics.slice(startIndex, startIndex + itemsPerPage);
-
-  const handlePrevPage = () => {
-    setCurrentPage(prev => Math.max(prev - 1, 1));
-  };
-
-  const handleNextPage = () => {
-    setCurrentPage(prev => Math.min(prev + 1, totalPages));
-  };
-
-  const handleEdit = (diagnostic: Diagnostic) => {
-    setEditingDiagnostic(diagnostic);
-    form.setFieldsValue(diagnostic);
-    setDrawerVisible(true);
-  };
-
-  const handleSubmit = (values: any) => {
-    if (editingDiagnostic) {
-      handleUpdate({ ...values, id: editingDiagnostic.id });
-    } else {
-      handleCreate(values);
-    }
-  };
+  const renderDiagnosticRow = (diagnostic: HospitalDiagnostic) => (
+    <tr
+      key={diagnostic.id}
+      className="border-b border-slate-200 hover:bg-slate-50 dark:border-strokedark dark:hover:bg-meta-4"
+    >
+      <td className="px-4 py-4">
+        <div className="flex items-center gap-4 justify-start">
+          <div>
+            {diagnostic.featuredImage ? (
+              <div className="relative h-10 w-10">
+                <Image
+                  src={diagnostic.featuredImage.fileUrl}
+                  alt={diagnostic.name}
+                  width={50}
+                  height={50}
+                  className="h-full w-full rounded-lg object-cover"
+                />
+              </div>
+            ) : (
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-200 dark:bg-boxdark">
+                <Package className="h-5 w-5 text-slate-500 dark:text-slate-400" />
+              </div>
+            )}
+          </div>
+          <div>
+            <h5 className="text-sm font-medium text-black dark:text-white">
+              {diagnostic.name}
+            </h5>
+            <p className="text-sm text-slate-500 dark:text-slate-400">
+              {diagnostic.excerpt}
+            </p>
+          </div>
+        </div>
+      </td>
+      <td className="px-4 py-4">
+        <div className="flex flex-wrap gap-1">
+          {diagnostic.categories?.map((category) => (
+            <span
+              key={category.id}
+              className="inline-flex rounded-full bg-slate-100 px-2 py-1 text-xs font-medium text-slate-600 dark:bg-meta-4 dark:text-slate-300"
+            >
+              {category.name}
+            </span>
+          ))}
+        </div>
+      </td>
+      <td className="px-4 py-4">
+        <p className="text-sm font-medium text-slate-900 dark:text-white">
+          ৳{diagnostic.price}
+        </p>
+        {diagnostic.sampleCollectionFee && (
+          <p className="text-xs text-slate-500 dark:text-slate-400">
+            Collection Fee: ৳{diagnostic.sampleCollectionFee}
+          </p>
+        )}
+      </td>
+      <td className="px-4 py-4">
+        <span
+          className={`inline-flex rounded-full px-2 py-1 text-xs font-medium ${
+            diagnostic.status === "published"
+              ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
+              : "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"
+          }`}
+        >
+          {diagnostic.status}
+        </span>
+      </td>
+      <td className="px-4 py-4">
+        <div className="flex items-center gap-3">
+          <Link
+            href={`/diagnostics/${diagnostic.slug}`}
+            className="rounded-md p-2 text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-meta-4"
+          >
+            <FiEye className="h-5 w-5" />
+          </Link>
+          <Link
+            href={`/dashboard/diagnostics/manage?slug=${diagnostic.slug}`}
+            className="rounded-md p-2 text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-meta-4"
+          >
+            <FiEdit className="h-5 w-5" />
+          </Link>
+        </div>
+      </td>
+    </tr>
+  );
 
   return (
-    <div className="p-6">
-      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <h1 className="text-2xl font-semibold text-slate-900">Diagnostic Tests</h1>
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-          <select
-            value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
-            className="rounded-lg border border-slate-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-          >
-            {categories.map(category => (
-              <option key={category} value={category}>{category}</option>
-            ))}
-          </select>
+    <div className="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
+      <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h2 className="text-2xl font-semibold text-black dark:text-white">
+            All Diagnostics
+          </h2>
+          <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">
+            Manage and view all diagnostic tests
+          </p>
+        </div>
+
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
           <div className="relative">
             <input
               type="text"
               placeholder="Search diagnostics..."
-              className="rounded-lg border border-slate-300 pl-10 pr-4 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full rounded-lg border border-stroke bg-white px-4 py-2 pl-4 pr-6 text-sm outline-none focus:border-primary dark:border-strokedark dark:bg-boxdark dark:text-white"
+              onChange={(e) => debouncedSearch(e.target.value)}
             />
-            <Search className="absolute left-3 top-2.5 h-5 w-5 text-slate-400" />
           </div>
-          <PrimaryButton text="Add Diagnostic" onClick={() => setDrawerVisible(true)} />
+
+          <select
+            value={status}
+            onChange={(e) => setStatus(e.target.value)}
+            className="rounded-lg border border-stroke bg-white px-3 py-2 text-sm outline-none focus:border-primary dark:border-strokedark dark:bg-boxdark dark:text-white"
+          >
+            <option value="">All Status</option>
+            <option value="published">Published</option>
+            <option value="draft">Draft</option>
+          </select>
+
+          <select
+            value={priceSort || ""}
+            onChange={(e) => setPriceSort(e.target.value as "asc" | "desc")}
+            className="rounded-lg border border-stroke bg-white px-3 py-2 text-sm outline-none focus:border-primary dark:border-strokedark dark:bg-boxdark dark:text-white"
+          >
+            <option value="">Sort by Price</option>
+            <option value="asc">Price: Low to High</option>
+            <option value="desc">Price: High to Low</option>
+          </select>
+
+          <button
+            onClick={handleReset}
+            className="inline-flex items-center justify-center gap-2.5 rounded-lg border border-stroke bg-white px-4 py-2 hover:bg-slate-50 dark:border-strokedark dark:bg-boxdark dark:hover:bg-meta-4"
+          >
+            <GrPowerReset />
+            <span>Reset</span>
+          </button>
+
+          <Link
+            href="/dashboard/diagnostics/manage"
+            className="inline-flex items-center justify-center rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-opacity-90"
+          >
+            Create Diagnostic
+          </Link>
         </div>
       </div>
 
       {isLoading ? (
-        <div className="flex h-[50vh] items-center justify-center">
-          <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
-        </div>
-      ) : paginatedDiagnostics.length === 0 ? (
-        <div className="flex h-[50vh] items-center justify-center">
-          <div className="text-center">
-            <p className="text-lg font-medium text-slate-900">No diagnostics found</p>
-            <p className="mt-1 text-sm text-slate-500">
-              {searchTerm || selectedCategory !== "All" 
-                ? "Try adjusting your search or filter criteria"
-                : "Start by adding a new diagnostic test"}
-            </p>
+        <IconLoading />
+      ) : error ? (
+        <ErrorMessage message={(error as Error).message} />
+      ) : !diagnostics?.length ? (
+        <div className="mt-4 flex min-h-[400px] flex-col items-center justify-center rounded-lg border border-stroke bg-white p-6 dark:border-strokedark dark:bg-boxdark">
+          <PiSmileySadLight className="size-16 text-slate-400" />
+          <h3 className="mt-4 text-xl font-medium text-black dark:text-white">
+            No diagnostics found
+          </h3>
+          <p className="mt-1 text-slate-500 dark:text-slate-400">
+            Get started by creating a new diagnostic test or reset filters.
+          </p>
+          <div className="mt-4 flex items-center gap-3">
+            <Link
+              href="/dashboard/diagnostics/manage"
+              className="rounded-md bg-primary px-4 py-2 text-sm text-white hover:bg-opacity-90"
+            >
+              Add New Diagnostic
+            </Link>
+            <button
+              onClick={handleReset}
+              className="rounded-md border border-stroke bg-white px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 dark:border-strokedark dark:bg-boxdark dark:text-slate-300 dark:hover:bg-meta-4"
+            >
+              Reset Filters
+            </button>
           </div>
         </div>
       ) : (
         <>
-          <div className="rounded-lg border border-slate-100 bg-white shadow-sm p-4">
-            <div className="overflow-x-auto">
-              <table className="w-full border border-slate-100">
+          <div className="rounded-lg border border-stroke bg-white dark:border-strokedark dark:bg-boxdark">
+            <div className="max-w-full overflow-x-auto">
+              <table className="w-full table-auto">
                 <thead>
-                  <tr className="bg-slate-50">
-                    <th className="px-6 py-3 text-left text-base font-medium text-slate-700">Name</th>
-                    <th className="px-6 py-3 text-left text-base font-medium text-slate-700">Category</th>
-                    <th className="px-6 py-3 text-left text-base font-medium text-slate-700">Price</th>
-                    <th className="px-6 py-3 text-left text-base font-medium text-slate-700">Status</th>
-                    <th className="px-6 py-3 text-left text-base font-medium text-slate-700">Turnaround Time</th>
-                    <th className="px-6 py-3 text-left text-base font-medium text-slate-700">Actions</th>
+                  <tr className="border-b border-slate-200 dark:border-strokedark">
+                    <th className="px-4 py-5 text-left text-sm font-medium text-black dark:text-white">
+                      Details
+                    </th>
+                    <th className="px-4 py-5 text-left text-sm font-medium text-black dark:text-white">
+                      Categories
+                    </th>
+                    <th className="px-4 py-5 text-left text-sm font-medium text-black dark:text-white">
+                      Price
+                    </th>
+                    <th className="px-4 py-5 text-left text-sm font-medium text-black dark:text-white">
+                      Status
+                    </th>
+                    <th className="px-4 py-5 text-left text-sm font-medium text-black dark:text-white">
+                      Actions
+                    </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-200">
-                  {paginatedDiagnostics.map((diagnostic) => (
-                    <tr key={diagnostic.id}>
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-2">
-                          {diagnostic.featuredImage ? (
-                            <Image
-                              src={diagnostic.featuredImage}
-                              alt={diagnostic.name}
-                              width={40}
-                              height={40}
-                              className="mr-3 rounded-md object-cover"
-                            />
-                          ) : (
-                            <div className="mr-3 h-10 w-10 rounded-md bg-slate-100 flex items-center justify-center">
-                              <span className="text-slate-400 text-xs">No image</span>
-                            </div>
-                          )}
-                          <div>
-                            <div className="font-medium text-slate-900">{diagnostic.name}</div>
-                            <div className="text-sm text-slate-500">{diagnostic.description}</div>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 text-base text-slate-600">{diagnostic.category}</td>
-                      <td className="px-6 py-4 text-base text-slate-600">${diagnostic.price}</td>
-                      <td className="px-6 py-4">
-                        <span className={`inline-flex rounded-full px-3 py-1 capitalize text-sm font-medium ${
-                          diagnostic.status === "available" 
-                            ? "bg-green-50 text-green-600"
-                            : "bg-red-50 text-red-600"
-                        }`}>
-                          {diagnostic.status}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 text-base text-slate-600">{diagnostic.turnaroundTime}</td>
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-2">
-                          <button
-                            onClick={() => handleEdit(diagnostic)}
-                            className="rounded-md p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600"
-                          >
-                            <Edit className="h-5 w-5" />
-                          </button>
-                          <button
-                            onClick={() => handleDelete(diagnostic.id)}
-                            className="rounded-md p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600"
-                          >
-                            <Trash2 className="h-5 w-5" />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
+                <tbody>
+                  {diagnostics.map((diagnostic) =>
+                    renderDiagnosticRow(diagnostic as HospitalDiagnostic),
+                  )}
                 </tbody>
               </table>
             </div>
           </div>
 
-          {/* Pagination */}
-          <div className="mt-4 flex items-center justify-between">
-            <div className="text-sm text-slate-600">
-              Showing {startIndex + 1} to {Math.min(startIndex + itemsPerPage, filteredDiagnostics.length)} of {filteredDiagnostics.length} results
+          {meta && (
+            <div className="mt-6">
+              <Pagination
+                currentPage={currentPage}
+                totalPages={meta.totalPages}
+                onPageChange={setCurrentPage}
+              />
             </div>
-            <div className="flex items-center space-x-2">
-              <button
-                onClick={handlePrevPage}
-                disabled={currentPage === 1}
-                className="inline-flex items-center rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                <ChevronLeft className="mr-1 h-4 w-4" />
-                Previous
-              </button>
-              <button
-                onClick={handleNextPage}
-                disabled={currentPage === totalPages}
-                className="inline-flex items-center rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                Next
-                <ChevronRight className="ml-1 h-4 w-4" />
-              </button>
-            </div>
-          </div>
+          )}
         </>
       )}
-
-      <Drawer
-        title={editingDiagnostic ? "Edit Diagnostic" : "Add New Diagnostic"}
-        placement="right"
-        width={500}
-        onClose={() => {
-          setDrawerVisible(false);
-          setEditingDiagnostic(null);
-          form.resetFields();
-        }}
-        open={drawerVisible}
-      >
-        <Form
-          form={form}
-          layout="vertical"
-          onFinish={handleSubmit}
-        >
-          <Form.Item
-            name="featuredImage"
-            label="Featured Image"
-          >
-            <Upload
-              listType="picture-card"
-              maxCount={1}
-              beforeUpload={() => false}
-            >
-              <div>
-                <PlusOutlined />
-                <div style={{ marginTop: 8 }}>Upload</div>
-              </div>
-            </Upload>
-          </Form.Item>
-
-          <Form.Item
-            name="name"
-            label="Name"
-            rules={[{ required: true, message: 'Please enter the name' }]}
-          >
-            <Input />
-          </Form.Item>
-
-          <Form.Item
-            name="description"
-            label="Description"
-            rules={[{ required: true, message: 'Please enter the description' }]}
-          >
-            <Input.TextArea rows={4} />
-          </Form.Item>
-
-          <Form.Item
-            name="category"
-            label="Category"
-            rules={[{ required: true, message: 'Please select the category' }]}
-          >
-            <Select>
-              {categories.filter(cat => cat !== "All").map(category => (
-                <Select.Option key={category} value={category}>
-                  {category}
-                </Select.Option>
-              ))}
-            </Select>
-          </Form.Item>
-
-          <Form.Item
-            name="price"
-            label="Price"
-            rules={[{ required: true, message: 'Please enter the price' }]}
-          >
-            <InputNumber
-              min={0}
-              prefix="$"
-              style={{ width: '100%' }}
-            />
-          </Form.Item>
-
-          <Form.Item
-            name="status"
-            label="Status"
-            rules={[{ required: true, message: 'Please select the status' }]}
-          >
-            <Select>
-              <Select.Option value="available">Available</Select.Option>
-              <Select.Option value="unavailable">Unavailable</Select.Option>
-            </Select>
-          </Form.Item>
-
-          <Form.Item
-            name="turnaroundTime"
-            label="Turnaround Time"
-            rules={[{ required: true, message: 'Please enter the turnaround time' }]}
-          >
-            <Input />
-          </Form.Item>
-
-          <Form.Item
-            name="sampleType"
-            label="Sample Type"
-            rules={[{ required: true, message: 'Please enter the sample type' }]}
-          >
-            <Input />
-          </Form.Item>
-
-          <Form.Item
-            name="reportFormat"
-            label="Report Format"
-            rules={[{ required: true, message: 'Please enter the report format' }]}
-          >
-            <Input />
-          </Form.Item>
-
-          <Form.Item>
-            <PrimaryButton
-              text={editingDiagnostic ? "Update Diagnostic" : "Create Diagnostic"}
-              type="submit"
-              className="w-full"
-            />
-          </Form.Item>
-        </Form>
-      </Drawer>
     </div>
   );
 }
-
-export default Diagnostics;

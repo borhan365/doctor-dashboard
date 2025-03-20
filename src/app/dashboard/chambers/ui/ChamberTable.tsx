@@ -1,71 +1,18 @@
 "use client";
 
 import { ApiUrl } from "@/app/Variables";
+import { useAuth } from "@/store/useAuth";
+import { FetchChambersResponse } from "@/types/chambers";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import debounce from "lodash/debounce";
 import { Edit, Eye, Search, Trash2 } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useState } from "react";
 
-interface Chamber {
-  id: string;
-  customHospitalName?: string;
-  customAddress?: string;
-  customCity?: string;
-  floorNumber: string;
-  roomNumber: string;
-  contactNumbers: string[];
-  newPatientFee: number;
-  followUpFee: number;
-  followUpFeeNote?: string;
-  status: string;
-  doctor: {
-    id: string;
-    name: string;
-    slug: string;
-    featuredImage?: {
-      fileUrl: string;
-    };
-    prefix?: {
-      id: string;
-      name: string;
-    };
-  };
-  hospital: {
-    id: string;
-    name: string;
-    slug: string;
-    address: string;
-    city: string;
-  };
-  availableDays: {
-    id: string;
-    day: string;
-    fromTime: string;
-    toTime: string;
-    timeSlots: {
-      id: string;
-      startTime: string;
-      endTime: string;
-      isAvailable: boolean;
-    }[];
-  }[];
-}
-
-interface FetchChambersResponse {
-  success: boolean;
-  data: Chamber[];
-  meta: {
-    total: number;
-    page: number;
-    limit: number;
-    totalPages: number;
-  };
-}
-
 function ChamberTable() {
+  const { user } = useAuth();
+  const doctorId = user?.doctorId;
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [searchText, setSearchText] = useState("");
@@ -73,10 +20,10 @@ function ChamberTable() {
   const [status, setStatus] = useState<string>("");
 
   const { data, isLoading, error } = useQuery<FetchChambersResponse>({
-    queryKey: ["chambers", page, pageSize, searchText, status],
+    queryKey: ["chambers", doctorId, page, pageSize, searchText, status],
     queryFn: async () => {
       const response = await axios.get(
-        `${ApiUrl}/doctors/chambers/get-all?page=${page}&limit=${pageSize}&search=${searchText}&status=${status}`,
+        `${ApiUrl}/doctors/chambers/chambers-by-doctorid/${doctorId}`,
       );
       return response.data;
     },

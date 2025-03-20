@@ -271,13 +271,6 @@ export function AppointmentsList() {
               <option value="pending">Pending</option>
             </select>
           </div>
-
-          <div className="flex items-center gap-2">
-            <PrimaryButton text="New Appointment" href="/dashboard/appointments/create" />
-            <button className="rounded-lg border border-slate-300 bg-white p-2 hover:bg-slate-50">
-              <List className="h-5 w-5 text-slate-500" />
-            </button>
-          </div>
         </div>
       </div>
 

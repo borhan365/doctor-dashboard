@@ -1,5 +1,5 @@
 import React from 'react'
-import AppointmentsPage from './appointments/page'
+import AppointmentsPage from '../../appointments/page'
 
 function Page() {
   return (

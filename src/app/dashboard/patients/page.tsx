@@ -1,5 +1,7 @@
 "use client";
 
+import { ApiUrl } from "@/app/Variables";
+import ConfirmModal from "@/components/Modals/ConfirmModal";
 import { cn } from "@/lib/utils";
 import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu";
 import { useQuery } from "@tanstack/react-query";
@@ -11,9 +13,11 @@ import {
   Search,
   Trash2,
 } from "lucide-react";
+import moment from "moment";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useState } from "react";
+import { toast } from "react-hot-toast";
 
 // Dropdown Menu Components
 const DropdownMenu = DropdownMenuPrimitive.Root;
@@ -53,86 +57,31 @@ DropdownMenuItem.displayName = DropdownMenuPrimitive.Item.displayName;
 
 interface Patient {
   id: string;
-  name: string;
-  email: string;
-  phone: string;
-  age: number;
-  gender: string;
-  lastVisit: string;
-  image?: string;
-  bloodGroup?: string;
-  address?: string;
-  medicalHistory?: string;
+  patientId: string | null;
+  name: string | null;
+  email: string | null;
+  phone: string | null;
+  age: number | null;
+  gender: string | null;
+  bloodGroup: string | null;
+  address: string | null;
+  lastVisitDate: string | null;
+  medicalConditions: string | null;
+  user: {
+    id: string;
+    image: string | null;
+  } | null;
 }
 
-// Mock Data
-const MOCK_PATIENTS: Patient[] = [
-  {
-    id: "1",
-    name: "John Doe",
-    email: "john@example.com",
-    phone: "+1234567890",
-    age: 35,
-    gender: "male",
-    lastVisit: "2024-03-15",
-    image:
-      "https://media.nngroup.com/media/people/photos/2022-portrait-page-3.jpg.600x600_q75_autocrop_crop-smart_upscale.jpg",
-    bloodGroup: "A+",
-    address: "123 Main St, City",
-    medicalHistory: "Hypertension",
-  },
-  {
-    id: "2",
-    name: "Jane Smith",
-    email: "jane@example.com",
-    phone: "+1234567891",
-    age: 28,
-    gender: "female",
-    lastVisit: "2024-03-14",
-    image:
-      "https://media.licdn.com/dms/image/v2/D5603AQEcId9_iMpD9Q/profile-displayphoto-shrink_400_400/B56ZNunOu4GoAg-/0/1732727598444?e=2147483647&v=beta&t=oQrqOi-qkq2U4bOwHaxlGBbG6oRCy8fv88gTmcyC8nw",
-    bloodGroup: "B-",
-    address: "456 Oak St, Town",
-    medicalHistory: "Diabetes",
-  },
-  {
-    id: "3",
-    name: "Robert Johnson",
-    email: "robert@example.com",
-    phone: "+1234567892",
-    age: 45,
-    gender: "male",
-    lastVisit: "2024-03-13",
-    bloodGroup: "O+",
-    address: "789 Pine St, Village",
-    medicalHistory: "Asthma",
-  },
-  {
-    id: "4",
-    name: "Sarah Williams",
-    email: "sarah@example.com",
-    phone: "+1234567893",
-    age: 32,
-    gender: "female",
-    lastVisit: "2024-03-12",
-    image: "https://avatars.sched.co/8/90/1938608/avatar.jpg.320x320px.jpg?e62",
-    bloodGroup: "AB+",
-    address: "321 Elm St, County",
-    medicalHistory: "None",
-  },
-  {
-    id: "5",
-    name: "Michael Brown",
-    email: "michael@example.com",
-    phone: "+1234567894",
-    age: 41,
-    gender: "male",
-    lastVisit: "2024-03-11",
-    bloodGroup: "A-",
-    address: "654 Maple St, State",
-    medicalHistory: "Arthritis",
-  },
-];
+interface PatientsResponse {
+  patients: Patient[];
+  meta: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  };
+}
 
 // Pagination Component
 const Pagination = ({
@@ -171,239 +120,309 @@ function Patients() {
   const [searchQuery, setSearchQuery] = useState("");
   const [filterBy, setFilterBy] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5; // Number of items per page
-
-  // Fetch patients data with mock implementation
-  const {
-    data: patients,
-    isLoading,
-    isError,
-    error,
-  } = useQuery<Patient[], Error>({
-    queryKey: ["patients"],
-    queryFn: async () => {
-      // Simulate API delay
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      return MOCK_PATIENTS;
-    },
+  const itemsPerPage = 10;
+  const [deleteModal, setDeleteModal] = useState({
+    isOpen: false,
+    patientId: "",
+    patientName: "",
   });
 
-  // Filter and search functionality
-  const filteredPatients = patients?.filter((patient) => {
-    const matchesSearch = patient.name
-      .toLowerCase()
-      .includes(searchQuery.toLowerCase());
-    const matchesFilter =
-      filterBy === "all" || patient.gender.toLowerCase() === filterBy;
-    return matchesSearch && matchesFilter;
-  });
+  // Fetch patients data
+  const { data, isLoading, isError, error, refetch } =
+    useQuery<PatientsResponse>({
+      queryKey: ["patients", currentPage, searchQuery, filterBy],
+      queryFn: async () => {
+        const params = new URLSearchParams({
+          page: currentPage.toString(),
+          limit: itemsPerPage.toString(),
+          search: searchQuery,
+          gender: filterBy,
+        });
 
-  // Pagination logic
-  const totalPages = Math.ceil((filteredPatients?.length || 0) / itemsPerPage);
-  const paginatedPatients = filteredPatients?.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage,
-  );
+        const response = await fetch(
+          `${ApiUrl}/doctors/patients/get-all?${params}`,
+          {
+            credentials: "include",
+          },
+        );
 
-  // Handle page change
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.message || "Failed to fetch patients");
+        }
+
+        return response.json();
+      },
+    });
+
+  const handleDelete = async (id: string) => {
+    try {
+      const response = await fetch(
+        `${ApiUrl}/doctors/patients/single-delete/${id}`,
+        {
+          method: "DELETE",
+          credentials: "include",
+        },
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to delete patient");
+      }
+
+      toast.success(data.message || "Patient deleted successfully");
+      setDeleteModal({ isOpen: false, patientId: "", patientName: "" });
+      refetch();
+    } catch (error) {
+      console.error("Error:", error);
+      toast.error(error instanceof Error ? error.message : "An error occurred");
+    }
   };
 
   return (
     <div className="container mx-auto px-4 py-6">
-      {/* Header Section */}
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-slate-900">All Patients</h1>
-        <p className="mt-1 text-slate-500">
-          Manage and view all your patient records
-        </p>
+      {/* Header Section - Make it stack on mobile */}
+      <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+            All Patients
+          </h1>
+          <p className="mt-1 text-slate-500 dark:text-slate-400">
+            Manage and view all your patient records
+          </p>
+        </div>
+        <Link
+          href="/dashboard/patients/manage"
+          className="inline-flex items-center justify-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
+        >
+          <Plus className="h-5 w-5" />
+          Add Patient
+        </Link>
       </div>
 
-      {/* Actions Row */}
+      {/* Actions Row - Already responsive with flex-col */}
       <div className="mb-6 flex flex-col gap-4 sm:flex-row">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
           <input
             type="text"
             placeholder="Search patients..."
-            className="flex h-9 w-full rounded-md border border-slate-200 bg-white px-3 py-1 pl-10 text-sm shadow-sm transition-colors placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-400 disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex h-9 w-full rounded-md border border-slate-200 bg-white px-3 py-1 pl-10 text-sm shadow-sm transition-colors placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-400 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:placeholder:text-slate-400 dark:focus-visible:ring-slate-500"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
-        <div className="flex gap-3">
-          <select
-            value={filterBy}
-            onChange={(e) => setFilterBy(e.target.value)}
-            className="h-9 rounded-md border border-slate-200 bg-white px-3 py-1 text-sm shadow-sm transition-colors placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-400 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            <option value="all">All Patients</option>
-            <option value="male">Male</option>
-            <option value="female">Female</option>
-          </select>
-          <Link href="/dashboard/patients/create">
-            <button className="inline-flex h-9 items-center justify-center gap-2 rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-400 disabled:pointer-events-none disabled:opacity-50">
-              <Plus className="h-4 w-4" /> Add Patient
-            </button>
-          </Link>
-        </div>
+        <select
+          value={filterBy}
+          onChange={(e) => setFilterBy(e.target.value)}
+          className="h-9 rounded-md border border-slate-200 bg-white px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-400 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
+        >
+          <option value="all">All Patients</option>
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+        </select>
       </div>
 
-      {/* Patients Table */}
-      <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white">
+      {/* Table Section with Responsive Scroll */}
+      <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800">
         {isLoading ? (
-          // Loading state
-          <div className="p-4">
-            <div className="space-y-4">
-              {[...Array(3)].map((_, i) => (
-                <div
-                  key={i}
-                  className="h-16 animate-pulse rounded-lg bg-slate-100"
-                />
-              ))}
-            </div>
+          <div className="p-4 text-center text-slate-500 dark:text-slate-400">
+            Loading...
           </div>
         ) : isError ? (
-          // Error state
           <div className="p-4">
-            <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-center text-red-600">
-              <p>Error: {error.message}</p>
+            <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-center text-red-600 dark:border-red-900 dark:bg-red-900/20 dark:text-red-400">
+              <p>
+                Error:{" "}
+                {error instanceof Error ? error.message : "Unknown error"}
+              </p>
               <button
-                className="mt-2 inline-flex h-9 items-center justify-center rounded-md border border-slate-200 bg-white px-4 py-2 text-sm font-medium transition-colors hover:bg-slate-100 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-400 disabled:pointer-events-none disabled:opacity-50"
-                onClick={() => window.location.reload()}
+                className="mt-2 rounded-md border border-slate-200 bg-white px-4 py-2 text-sm font-medium hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700"
+                onClick={() => refetch()}
               >
                 Try Again
               </button>
             </div>
           </div>
-        ) : paginatedPatients?.length === 0 ? (
-          // Empty state
-          <div className="p-4 text-center text-slate-500">
+        ) : !data?.patients.length ? (
+          <div className="p-4 text-center text-slate-500 dark:text-slate-400">
             No patients found
           </div>
         ) : (
-          // Success state with data
-          <table className="w-full min-w-max table-auto">
-            <thead>
-              <tr className="border-b border-slate-200 bg-slate-50">
-                <th className="px-6 py-3 text-left text-sm font-medium text-slate-700">
-                  Patient
-                </th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-slate-700">
-                  Contact
-                </th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-slate-700">
-                  Age/Gender
-                </th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-slate-700">
-                  Blood Group
-                </th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-slate-700">
-                  Last Visit
-                </th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-slate-700">
-                  Medical History
-                </th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-slate-700">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {paginatedPatients?.map((patient) => (
-                <tr
-                  key={patient.id}
-                  className="border-b border-slate-200 hover:bg-slate-50"
-                >
-                  <td className="px-6 py-4">
-                    <div className="flex items-center">
-                      {patient.image ? (
-                        <Image
-                          src={patient.image}
-                          alt={patient.name}
-                          width={40}
-                          height={40}
-                          className="rounded-full object-cover"
-                        />
-                      ) : (
-                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100">
-                          <span className="text-sm text-slate-500">
-                            {patient.name.charAt(0)}
-                          </span>
+          <div className="overflow-auto">
+            <table className="w-full min-w-[900px] table-auto">
+              <thead>
+                <tr className="border-b border-slate-200 bg-slate-50 dark:border-slate-700 dark:bg-slate-800/50">
+                  <th className="px-6 py-3 text-left text-sm font-medium text-slate-700 dark:text-slate-300">
+                    Patient
+                  </th>
+                  <th className="px-6 py-3 text-left text-sm font-medium text-slate-700 dark:text-slate-300">
+                    Contact
+                  </th>
+                  <th className="px-6 py-3 text-left text-sm font-medium text-slate-700 dark:text-slate-300">
+                    Age/Gender
+                  </th>
+                  <th className="px-6 py-3 text-left text-sm font-medium text-slate-700 dark:text-slate-300">
+                    Blood Group
+                  </th>
+                  <th className="px-6 py-3 text-left text-sm font-medium text-slate-700 dark:text-slate-300">
+                    Last Visit
+                  </th>
+                  <th className="px-6 py-3 text-left text-sm font-medium text-slate-700 dark:text-slate-300">
+                    Medical History
+                  </th>
+                  <th className="px-6 py-3 text-left text-sm font-medium text-slate-700 dark:text-slate-300">
+                    Joined
+                  </th>
+                  <th className="px-6 py-3 text-left text-sm font-medium text-slate-700 dark:text-slate-300">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {data.patients.map((patient) => (
+                  <tr
+                    key={patient.id}
+                    className="border-b border-slate-200 hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800/50"
+                  >
+                    <td className="px-6 py-4">
+                      <div className="flex items-center">
+                        {patient?.user?.image ? (
+                          <Image
+                            src={patient.user.image}
+                            alt={patient.name || ""}
+                            width={40}
+                            height={40}
+                            className="rounded-full object-cover"
+                          />
+                        ) : (
+                          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-700">
+                            <span className="text-sm text-slate-500 dark:text-slate-400">
+                              {patient?.name?.charAt(0)}
+                            </span>
+                          </div>
+                        )}
+                        <Link
+                          href={`/dashboard/patients/${patient.id}/appointments`}
+                        >
+                          <div className="ml-4">
+                            <div className="font-medium text-slate-900 dark:text-slate-100">
+                              {patient.name}
+                            </div>
+                            <div className="text-sm text-slate-500 dark:text-slate-400">
+                              {patient.address}
+                            </div>
+                          </div>
+                        </Link>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="text-sm text-slate-900 dark:text-slate-100">
+                        {patient.email}
+                      </div>
+                      <div className="text-sm text-slate-500 dark:text-slate-400">
+                        {patient.phone}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      {patient?.age && (
+                        <div className="text-sm text-slate-900 dark:text-slate-100">
+                          {patient.age} years
                         </div>
                       )}
-                      <Link
-                        href={`/dashboard/patients/${patient.id}/appointments`}
-                      >
-                        <div className="ml-4">
-                          <div className="font-medium text-slate-900">
-                            {patient.name}
-                          </div>
-                          <div className="text-sm text-slate-500">
-                            {patient.address}
-                          </div>
+                      {patient?.gender && (
+                        <div className="text-sm text-slate-500 dark:text-slate-400">
+                          {patient.gender}
                         </div>
-                      </Link>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="text-sm text-slate-900">
-                      {patient.email}
-                    </div>
-                    <div className="text-sm text-slate-500">
-                      {patient.phone}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="text-sm text-slate-900">
-                      {patient.age} years
-                    </div>
-                    <div className="text-sm text-slate-500">
-                      {patient.gender}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className="inline-flex rounded-full bg-slate-100 px-2 py-1 text-xs font-semibold text-slate-700">
-                      {patient.bloodGroup}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="text-sm text-slate-900">
-                      {new Date(patient.lastVisit).toLocaleDateString()}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="text-sm text-slate-900">
-                      {patient.medicalHistory}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-3">
-                      <button className="rounded-md p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600">
-                        <Pencil className="h-5 w-5" />
-                      </button>
-                      <button className="rounded-md p-1 text-slate-400 hover:bg-slate-100 hover:text-red-600">
-                        <Trash2 className="h-5 w-5" />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                      )}
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className="inline-flex rounded-full bg-slate-100 px-2 py-1 text-xs font-semibold text-slate-700 dark:bg-slate-700 dark:text-slate-300">
+                        {patient.bloodGroup}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="text-sm text-slate-900 dark:text-slate-100">
+                        {new Date(patient.lastVisitDate).toLocaleDateString()}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="text-sm text-slate-900 dark:text-slate-100">
+                        {patient.medicalConditions}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="text-sm text-slate-900 dark:text-slate-100">
+                        {moment(patient.createdAt).format("DD/MM/YYYY")}
+                      </div>
+                      <div className="text-xs text-slate-500 dark:text-slate-400">
+                        {moment(patient.createdAt).format("hh:mm A")}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-3">
+                        <Link
+                          href={`/dashboard/patients/manage?id=${patient.id}`}
+                          className="rounded-md p-1 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600 dark:text-slate-500 dark:hover:bg-slate-700 dark:hover:text-slate-300"
+                        >
+                          <Pencil className="h-5 w-5" />
+                        </Link>
+                        <button
+                          onClick={() =>
+                            setDeleteModal({
+                              isOpen: true,
+                              patientId: patient.id,
+                              patientName: patient.name,
+                            })
+                          }
+                          className="rounded-md p-1 text-slate-400 transition-colors hover:bg-slate-100 hover:text-red-600 dark:text-slate-500 dark:hover:bg-slate-700 dark:hover:text-red-400"
+                        >
+                          <Trash2 className="h-5 w-5" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </div>
 
-      {/* Pagination */}
-      {filteredPatients && filteredPatients.length > itemsPerPage && (
-        <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={handlePageChange}
-        />
+      {/* Pagination with dark mode */}
+      {data?.meta.totalPages && data.meta.totalPages > 1 && (
+        <div className="flex items-center justify-end gap-4 px-2 py-4">
+          <button
+            onClick={() => setCurrentPage(currentPage - 1)}
+            disabled={currentPage === 1}
+            className="flex items-center gap-1 text-sm text-slate-600 transition-colors disabled:opacity-50 dark:text-slate-400"
+          >
+            <ChevronLeft className="h-4 w-4" /> Previous
+          </button>
+          <span className="text-sm text-slate-600 dark:text-slate-400">
+            Page {currentPage} of {data.meta.totalPages}
+          </span>
+          <button
+            onClick={() => setCurrentPage(currentPage + 1)}
+            disabled={currentPage === data.meta.totalPages}
+            className="flex items-center gap-1 text-sm text-slate-600 transition-colors disabled:opacity-50 dark:text-slate-400"
+          >
+            Next <ChevronRight className="h-4 w-4" />
+          </button>
+        </div>
       )}
+
+      {/* Add the ConfirmModal component */}
+      <ConfirmModal
+        isOpen={deleteModal.isOpen}
+        onClose={() =>
+          setDeleteModal({ isOpen: false, patientId: "", patientName: "" })
+        }
+        onConfirm={() => handleDelete(deleteModal.patientId)}
+        title="Delete Patient"
+        message={`Are you sure you want to delete ${deleteModal.patientName}? This action cannot be undone.`}
+      />
     </div>
   );
 }

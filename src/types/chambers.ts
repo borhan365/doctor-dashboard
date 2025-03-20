@@ -74,3 +74,13 @@ export interface CreateChamberInput {
   availableDays: DaySchedule[];
   status?: string;
 }
+export interface FetchChambersResponse {
+  success: boolean;
+  data: Chamber[];
+  meta: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  };
+}

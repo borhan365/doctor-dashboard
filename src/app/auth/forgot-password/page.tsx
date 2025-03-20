@@ -33,14 +33,14 @@ const ForgotPassword: React.FC = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        credentials: "include",
         body: JSON.stringify({ email }),
+        credentials: "include",
       });
 
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || "Something went wrong");
+        throw new Error(data.error || "Failed to send reset email");
       }
 
       setSuccess("Password reset instructions have been sent to your email");
@@ -48,11 +48,9 @@ const ForgotPassword: React.FC = () => {
       setTimeout(() => {
         router.push("/auth/login");
       }, 3000);
-    } catch (err) {
-      console.error("Forgot password error:", err);
-      setError(
-        err instanceof Error ? err.message : "An unexpected error occurred",
-      );
+    } catch (error) {
+      console.error("Forgot password error:", error);
+      setError(error instanceof Error ? error.message : "An error occurred");
     } finally {
       setIsLoading(false);
     }
