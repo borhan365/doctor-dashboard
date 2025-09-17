@@ -1,17 +1,14 @@
 "use client";
 
-import { ApiUrl } from "@/app/Variables";
-import { useAuth } from "@/store/useAuth";
 import { FetchChambersResponse } from "@/types/chambers";
-import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
 import debounce from "lodash/debounce";
 import { Edit, Eye, Search, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useState } from "react";
 
 function ChamberTable() {
-  const { user } = useAuth();
+  // Static data for demo purposes
+  const user = { doctorId: "demo-doctor-id" };
   const doctorId = user?.doctorId;
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -19,15 +16,229 @@ function ChamberTable() {
   const [inputValue, setInputValue] = useState("");
   const [status, setStatus] = useState<string>("");
 
-  const { data, isLoading, error } = useQuery<FetchChambersResponse>({
-    queryKey: ["chambers", doctorId, page, pageSize, searchText, status],
-    queryFn: async () => {
-      const response = await axios.get(
-        `${ApiUrl}/doctors/chambers/chambers-by-doctorid/${doctorId}`,
-      );
-      return response.data;
+  // Static dummy data for chambers
+  const mockChambers = [
+    {
+      id: "1",
+      name: "Apollo Hospitals Dhaka",
+      bnName: "অ্যাপোলো হাসপাতাল ঢাকা",
+      address: "Plot 81, Block E, Bashundhara R/A, Dhaka 1229",
+      bnAddress: "প্লট ৮১, ব্লক ই, বসুন্ধরা আবাসিক এলাকা, ঢাকা ১২২৯",
+      phone: "+8801712345678",
+      email: "dhaka@apollohospitals.com",
+      consultationFee: 1500,
+      followUpFee: 1000,
+      slotDuration: 30,
+      status: "published",
+      doctorId: "demo-doctor-id",
+      hospitalId: "1",
+      customHospitalName: "Apollo Hospitals Dhaka",
+      customAddress: "Plot 81, Block E, Bashundhara R/A, Dhaka 1229",
+      floorNumber: "5th Floor",
+      roomNumber: "Room 501",
+      availableDays: [
+        {
+          day: "Monday",
+          isAvailable: true,
+          startTime: "09:00",
+          endTime: "17:00",
+        },
+        {
+          day: "Tuesday",
+          isAvailable: true,
+          startTime: "09:00",
+          endTime: "17:00",
+        },
+        {
+          day: "Wednesday",
+          isAvailable: true,
+          startTime: "09:00",
+          endTime: "17:00",
+        },
+        {
+          day: "Thursday",
+          isAvailable: true,
+          startTime: "09:00",
+          endTime: "17:00",
+        },
+        {
+          day: "Friday",
+          isAvailable: true,
+          startTime: "09:00",
+          endTime: "17:00",
+        },
+        { day: "Saturday", isAvailable: false, startTime: "", endTime: "" },
+        { day: "Sunday", isAvailable: false, startTime: "", endTime: "" },
+      ],
+      hospital: {
+        id: "1",
+        name: "Apollo Hospitals Dhaka",
+        slug: "apollo-hospitals-dhaka",
+        address: "Plot 81, Block E, Bashundhara R/A, Dhaka 1229",
+      },
+      createdAt: new Date("2024-01-01"),
+      updatedAt: new Date("2024-01-01"),
     },
+    {
+      id: "2",
+      name: "Square Hospitals Ltd",
+      bnName: "স্কয়ার হাসপাতাল লিমিটেড",
+      address: "18/F, Bir Uttam Qazi Nuruzzaman Sarak, Panthapath, Dhaka 1205",
+      bnAddress: "১৮/এফ, বীর উত্তম কাজী নুরুজ্জামান সড়ক, পন্থপথ, ঢাকা ১২০৫",
+      phone: "+8801712345679",
+      email: "info@squarehospital.com",
+      consultationFee: 2000,
+      followUpFee: 1200,
+      slotDuration: 45,
+      status: "published",
+      doctorId: "demo-doctor-id",
+      hospitalId: "2",
+      customHospitalName: "Square Hospitals Ltd",
+      customAddress:
+        "18/F, Bir Uttam Qazi Nuruzzaman Sarak, Panthapath, Dhaka 1205",
+      floorNumber: "3rd Floor",
+      roomNumber: "Room 301",
+      availableDays: [
+        {
+          day: "Monday",
+          isAvailable: true,
+          startTime: "10:00",
+          endTime: "18:00",
+        },
+        {
+          day: "Tuesday",
+          isAvailable: true,
+          startTime: "10:00",
+          endTime: "18:00",
+        },
+        {
+          day: "Wednesday",
+          isAvailable: true,
+          startTime: "10:00",
+          endTime: "18:00",
+        },
+        {
+          day: "Thursday",
+          isAvailable: true,
+          startTime: "10:00",
+          endTime: "18:00",
+        },
+        {
+          day: "Friday",
+          isAvailable: true,
+          startTime: "10:00",
+          endTime: "18:00",
+        },
+        {
+          day: "Saturday",
+          isAvailable: true,
+          startTime: "09:00",
+          endTime: "13:00",
+        },
+        { day: "Sunday", isAvailable: false, startTime: "", endTime: "" },
+      ],
+      hospital: {
+        id: "2",
+        name: "Square Hospitals Ltd",
+        slug: "square-hospitals-ltd",
+        address:
+          "18/F, Bir Uttam Qazi Nuruzzaman Sarak, Panthapath, Dhaka 1205",
+      },
+      createdAt: new Date("2024-01-02"),
+      updatedAt: new Date("2024-01-02"),
+    },
+    {
+      id: "3",
+      name: "United Hospital Limited",
+      bnName: "ইউনাইটেড হাসপাতাল লিমিটেড",
+      address: "Plot 15, Road 71, Gulshan, Dhaka 1212",
+      bnAddress: "প্লট ১৫, রোড ৭১, গুলশান, ঢাকা ১২১২",
+      phone: "+8801712345680",
+      email: "info@unitedhospital.com",
+      consultationFee: 1800,
+      followUpFee: 1100,
+      slotDuration: 30,
+      status: "published",
+      doctorId: "demo-doctor-id",
+      hospitalId: "3",
+      customHospitalName: "United Hospital Limited",
+      customAddress: "Plot 15, Road 71, Gulshan, Dhaka 1212",
+      floorNumber: "2nd Floor",
+      roomNumber: "Room 201",
+      availableDays: [
+        {
+          day: "Monday",
+          isAvailable: true,
+          startTime: "08:00",
+          endTime: "16:00",
+        },
+        {
+          day: "Tuesday",
+          isAvailable: true,
+          startTime: "08:00",
+          endTime: "16:00",
+        },
+        {
+          day: "Wednesday",
+          isAvailable: true,
+          startTime: "08:00",
+          endTime: "16:00",
+        },
+        {
+          day: "Thursday",
+          isAvailable: true,
+          startTime: "08:00",
+          endTime: "16:00",
+        },
+        {
+          day: "Friday",
+          isAvailable: true,
+          startTime: "08:00",
+          endTime: "16:00",
+        },
+        { day: "Saturday", isAvailable: false, startTime: "", endTime: "" },
+        { day: "Sunday", isAvailable: false, startTime: "", endTime: "" },
+      ],
+      hospital: {
+        id: "3",
+        name: "United Hospital Limited",
+        slug: "united-hospital-limited",
+        address: "Plot 15, Road 71, Gulshan, Dhaka 1212",
+      },
+      createdAt: new Date("2024-01-03"),
+      updatedAt: new Date("2024-01-03"),
+    },
+  ];
+
+  // Filter chambers based on search and status
+  const filteredChambers = mockChambers.filter((chamber) => {
+    const matchesSearch =
+      !searchText ||
+      chamber.name.toLowerCase().includes(searchText.toLowerCase()) ||
+      chamber.address.toLowerCase().includes(searchText.toLowerCase());
+
+    const matchesStatus = !status || chamber.status === status;
+
+    return matchesSearch && matchesStatus;
   });
+
+  // Paginate results
+  const startIndex = (page - 1) * pageSize;
+  const endIndex = startIndex + pageSize;
+  const paginatedChambers = filteredChambers.slice(startIndex, endIndex);
+
+  const data: FetchChambersResponse = {
+    chambers: paginatedChambers,
+    meta: {
+      total: filteredChambers.length,
+      page: page,
+      limit: pageSize,
+      totalPages: Math.ceil(filteredChambers.length / pageSize),
+    },
+  };
+
+  const isLoading = false;
+  const error = null;
 
   // Create debounced function
   const debouncedSetSearch = useCallback(
@@ -81,11 +292,14 @@ function ChamberTable() {
   }
 
   const totalPages = Math.ceil((data?.meta.total || 0) / pageSize);
-  const startIndex = (page - 1) * pageSize + 1;
-  const endIndex = Math.min(startIndex + pageSize - 1, data?.meta.total || 0);
+  const displayStartIndex = (page - 1) * pageSize + 1;
+  const displayEndIndex = Math.min(
+    displayStartIndex + pageSize - 1,
+    data?.meta.total || 0,
+  );
 
   // No results message
-  if (data?.data.length === 0) {
+  if (data?.chambers.length === 0) {
     return (
       <div className="min-h-screen">
         {/* Search and Filter Section */}
@@ -216,7 +430,7 @@ function ChamberTable() {
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-200 bg-white">
-            {data?.data.map((chamber) => (
+            {data?.chambers.map((chamber) => (
               <tr key={chamber.id} className="hover:bg-slate-50">
                 <td className="whitespace-nowrap px-6 py-4">
                   <div className="space-y-1">
@@ -233,7 +447,8 @@ function ChamberTable() {
                 </td>
                 <td className="px-6 py-4">
                   <div className="space-y-2">
-                    {chamber.availableDays.some((day) => day.isAvailable) ? (
+                    {chamber.availableDays &&
+                    chamber.availableDays.some((day) => day.isAvailable) ? (
                       <div className="flex items-center gap-2">
                         <span className="rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700">
                           {
@@ -255,7 +470,7 @@ function ChamberTable() {
                   <div className="space-y-2">
                     <div className="rounded-md bg-green-50 px-3 py-1">
                       <p className="text-sm text-green-700">
-                        New Patient: ৳{chamber.newPatientFee}
+                        New Patient: ৳{chamber.consultationFee}
                       </p>
                     </div>
                     <div className="rounded-md bg-blue-50 px-3 py-1">
@@ -310,8 +525,8 @@ function ChamberTable() {
       <div className="flex items-center justify-between border-t border-slate-200 px-4 py-3 sm:px-6">
         <div className="hidden sm:block">
           <p className="text-sm text-slate-700">
-            Showing <span className="font-medium">{startIndex}</span> to{" "}
-            <span className="font-medium">{endIndex}</span> of{" "}
+            Showing <span className="font-medium">{displayStartIndex}</span> to{" "}
+            <span className="font-medium">{displayEndIndex}</span> of{" "}
             <span className="font-medium">{data?.meta.total}</span> results
           </p>
         </div>

@@ -1,6 +1,5 @@
 "use client";
 
-import { useAuth } from "@/store/useAuth";
 import Link from "next/link";
 import HealthaIcon from "../HealthaIcon";
 import HealthaTextLogo from "../HealthaTextLogo";
@@ -18,7 +17,15 @@ interface HeaderProps {
 }
 
 const Header = ({ sidebarOpen, setSidebarOpen, isMobile }: HeaderProps) => {
-  const { user } = useAuth();
+  // Static demo data - simulate logged in user
+  const user = {
+    id: "demo-user-id",
+    name: "Dr. John Doe",
+    email: "john.doe@example.com",
+    image: "/images/user/default-user.webp",
+    doctorSlug: "demo-doctor",
+    doctorId: "demo-doctor-id",
+  };
 
   return (
     <>

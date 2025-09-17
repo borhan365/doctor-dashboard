@@ -2,7 +2,7 @@
 
 import FaqSection from "@/app/dashboard/profile/ui/FaqSection";
 import TextEditor from "@/components/Globals/TextEditor";
-import { useDoctorProfile } from "@/hooks/useDoctors";
+// Removed useDoctorProfile import - using static data instead
 import { DoctorFormData } from "@/types/doctors";
 import { AlertCircle, ArrowRight, FileText, XCircle } from "lucide-react";
 import React, { useCallback, useRef, useState } from "react";
@@ -20,7 +20,14 @@ interface Props {
 
 // Use React.memo to prevent unnecessary re-renders
 const ProfileFormComponent = ({ formData, onFormChange }: Props) => {
-  const { isLoading, validateForm } = useDoctorProfile();
+  // Static validation function for demo purposes
+  const validateForm = (data: DoctorFormData) => {
+    if (!data.name) return "Name is required";
+    if (!data.bmdcNumber) return "BMDC number is required";
+    return null;
+  };
+
+  const isLoading = false; // Static loading state
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [featuredImage, setFeaturedImage] = useState<File | null>(null);

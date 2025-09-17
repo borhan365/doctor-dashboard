@@ -5,7 +5,6 @@ import IconLoading from "@/components/Loader/IconLoading";
 import ConfirmModal from "@/components/Modals/ConfirmModal";
 import EmptyState from "@/components/States/EmptyState";
 import { useExperiences } from "@/hooks/useExperiences";
-import { useAuth } from "@/store/useAuth";
 import { Pagination } from "antd";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -14,7 +13,8 @@ import SidebarDrawer from "./ui/SidebarDrawer";
 import Table from "./ui/Table";
 
 const ExperiencesPage = () => {
-  const { user } = useAuth();
+  // Static data for demo purposes
+  const user = { doctorId: "demo-doctor-id" };
   const doctorId = user?.doctorId;
 
   const [searchTerm, setSearchTerm] = useState("");

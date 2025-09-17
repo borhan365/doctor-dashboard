@@ -1,7 +1,6 @@
 "use client";
 
 import { ApiUrl } from "@/app/Variables";
-import { useAuth } from "@/store/useAuth";
 import { useQuery } from "@tanstack/react-query";
 import { Select } from "antd";
 import axios from "axios";
@@ -37,7 +36,8 @@ const SelectDoctorTypesComponent = ({
   onChange,
   placeholder = "Select Doctor Type",
 }: SelectDoctorTypesProps) => {
-  const { user } = useAuth();
+  // Static data for demo purposes
+  const user = { doctorId: "demo-doctor-id" };
 
   // Fetch prefixes with proper error handling
   const { data, isLoading, error, isError } = useQuery<DoctorTypeResponse>({

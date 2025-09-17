@@ -1,105 +1,111 @@
 "use client";
 
 import IconLoading from "@/components/Loader/IconLoading";
-import { useDoctorProfile } from "@/hooks/useDoctors";
-import { useAuth } from "@/store/useAuth";
 import { DoctorFormData } from "@/types/doctors";
 import { Menu, PanelRight, X } from "lucide-react";
-import dynamic from "next/dynamic";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import ChamberTable from "../chambers/ui/ChamberTable";
 import { ProfileForm } from "./ui/ProfileForm";
 
-// Dynamically import components
-const DynamicDoctorSidebar = dynamic(() => import("./ui/DoctorSidebar"), {
-  ssr: false,
-});
+// Import components
+import DoctorSidebar from "./ui/DoctorSidebar";
+
+// Mock doctor data for static demo
+const mockDoctorData: DoctorFormData = {
+  // Basic Info
+  prefixId: "1",
+  doctorTypeId: "1",
+  name: "Dr. John Doe",
+  bnName: "ড. জন ডো",
+  excerpt: "Experienced cardiologist with 15+ years of practice",
+  bnExcerpt: "১৫+ বছরের অভিজ্ঞতা সহ হৃদরোগ বিশেষজ্ঞ",
+  overview:
+    "Dr. John Doe is a renowned cardiologist specializing in interventional cardiology and heart disease prevention. With over 15 years of experience, he has successfully treated thousands of patients and is known for his expertise in complex cardiac procedures.",
+  bnOverview:
+    "ড. জন ডো একজন খ্যাতিমান হৃদরোগ বিশেষজ্ঞ যিনি হস্তক্ষেপমূলক কার্ডিওলজি এবং হৃদরোগ প্রতিরোধে বিশেষজ্ঞ। ১৫ বছরেরও বেশি অভিজ্ঞতা সহ, তিনি হাজার হাজার রোগীকে সফলভাবে চিকিৎসা করেছেন এবং জটিল হৃদরোগ পদ্ধতিতে তার দক্ষতার জন্য পরিচিত।",
+  description:
+    "Comprehensive description of the doctor's expertise, experience, and achievements in the field of cardiology. Dr. John Doe has published numerous research papers and is a member of several prestigious medical associations.",
+  bnDescription:
+    "কার্ডিওলজি ক্ষেত্রে চিকিৎসকের দক্ষতা, অভিজ্ঞতা এবং অর্জনের বিস্তৃত বিবরণ। ড. জন ডো অসংখ্য গবেষণা পত্র প্রকাশ করেছেন এবং বেশ কয়েকটি মর্যাদাপূর্ণ মেডিকেল অ্যাসোসিয়েশনের সদস্য।",
+
+  // Status and Features
+  isFeatured: true,
+  isVerified: true,
+  isSponsored: false,
+  status: "published",
+
+  // Medical Information
+  bmdcNumber: "12345",
+  discountForHealthaUser: 10,
+  discountForHealthaUserNote: "10% discount for Healtha users",
+  discountForHealthaUserNoteBn: "হেলথা ব্যবহারকারীদের জন্য ১০% ছাড়",
+
+  // Personal Info
+  gender: "male",
+  experience: 15,
+  about:
+    "Dr. John Doe is a highly experienced cardiologist with a passion for patient care and medical innovation.",
+  emailAddresses: ["john.doe@example.com", "dr.john@cardiology.com"],
+  phoneNumbers: ["+8801712345678", "+8801712345679"],
+  website: "https://drjohndoe.com",
+  videoUrl: "https://youtube.com/watch?v=demo",
+
+  // Location Info
+  locationId: "1",
+
+  // Social Media
+  facebookLink: "https://facebook.com/drjohndoe",
+  twitterLink: "https://twitter.com/drjohndoe",
+  instagramLink: "https://instagram.com/drjohndoe",
+  youtubeLink: "https://youtube.com/drjohndoe",
+  linkedinLink: "https://linkedin.com/in/drjohndoe",
+
+  // Relations
+  specialists: ["1", "2", "3"],
+  treatments: ["1", "2", "3", "4"],
+  degrees: ["1", "2", "3"],
+  languages: ["1", "2"],
+  adminId: "1",
+  userId: "1",
+  featuredImage: null,
+
+  // FAQs
+  faqs: [
+    {
+      question: "What are your consultation hours?",
+      answer:
+        "I am available for consultation from 9:00 AM to 6:00 PM, Monday to Friday.",
+      bnQuestion: "আপনার পরামর্শের সময় কী?",
+      bnAnswer:
+        "আমি সোমবার থেকে শুক্রবার সকাল ৯টা থেকে বিকাল ৬টা পর্যন্ত পরামর্শের জন্য উপলব্ধ।",
+    },
+    {
+      question: "Do you accept insurance?",
+      answer:
+        "Yes, I accept most major insurance plans. Please contact our office for details.",
+      bnQuestion: "আপনি কি বীমা গ্রহণ করেন?",
+      bnAnswer:
+        "হ্যাঁ, আমি বেশিরভাগ প্রধান বীমা পরিকল্পনা গ্রহণ করি। বিস্তারিত জানতে আমাদের অফিসে যোগাযোগ করুন।",
+    },
+  ],
+};
 
 export default function ManageDoctorProfile() {
   console.log("ManageDoctorProfile rendering");
 
-  const { user, status } = useAuth();
+  // Static data for demo purposes
+  const user = { doctorSlug: "demo-doctor" };
+  const status = "authenticated";
   const doctorSlug = user?.doctorSlug;
   const router = useRouter();
-  const searchParams = useSearchParams();
   const [contentSidebarOpen, setContentSidebarOpen] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [featuredImage, setFeaturedImage] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Import the doctor profile hook
-  const {
-    loadDoctor,
-    saveDoctor,
-    isLoading: isLoadingDoctor,
-    error: doctorError,
-  } = useDoctorProfile();
-
-  const [formData, setFormData] = useState<DoctorFormData>({
-    // Basic Info
-    prefixId: null,
-    doctorTypeId: null,
-    name: "",
-    bnName: "",
-    excerpt: "",
-    bnExcerpt: "",
-    overview: "",
-    bnOverview: "",
-    description: "",
-    bnDescription: "",
-
-    // Status and Features
-    isFeatured: false,
-    isVerified: false,
-    isSponsored: false,
-    status: "published",
-
-    // Medical Information
-    bmdcNumber: "",
-    discountForHealthaUser: 0,
-    discountForHealthaUserNote: "",
-    discountForHealthaUserNoteBn: "",
-
-    // Personal Info
-    gender: "",
-    experience: 0,
-    about: "",
-    emailAddresses: [""],
-    phoneNumbers: [""],
-    website: "",
-    videoUrl: "",
-
-    // Location Info
-    locationId: null,
-
-    // Social Media
-    facebookLink: "",
-    twitterLink: "",
-    instagramLink: "",
-    youtubeLink: "",
-    linkedinLink: "",
-
-    // Relations
-    specialists: [],
-    treatments: [],
-    degrees: [],
-    languages: [],
-    adminId: null,
-    userId: null,
-    featuredImage: null,
-
-    // FAQs
-    faqs: [
-      {
-        question: "",
-        answer: "",
-        bnQuestion: "",
-        bnAnswer: "",
-      },
-    ],
-  });
+  const [formData, setFormData] = useState<DoctorFormData>(mockDoctorData);
 
   const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -126,31 +132,10 @@ export default function ManageDoctorProfile() {
     }));
   }, [selectedCategories]);
 
+  // Initialize form data with mock data
   useEffect(() => {
-    if (status === "unauthenticated") {
-      router.push("/auth/login");
-    }
-  }, [status, router]);
-
-  // Fetch doctor data when slug is available
-  useEffect(() => {
-    const fetchDoctorData = async () => {
-      if (doctorSlug) {
-        try {
-          const data = await loadDoctor(doctorSlug);
-          console.log("Loaded doctor data:", data);
-          if (data) {
-            setFormData(data);
-          }
-        } catch (error) {
-          console.error("Error loading doctor:", error);
-          setError("Failed to load doctor profile");
-        }
-      }
-    };
-
-    fetchDoctorData();
-  }, [doctorSlug, loadDoctor]);
+    setFormData(mockDoctorData);
+  }, []);
 
   // Use useCallback for handlers
   const handleInputChange = useCallback(
@@ -194,72 +179,16 @@ export default function ManageDoctorProfile() {
     setError(null);
 
     try {
-      // Create a copy of the form data to manipulate
-      const submissionData = { ...formData };
+      // Simulate API call delay
+      await new Promise((resolve) => setTimeout(resolve, 2000));
 
-      // Transform specialists to extract IDs
-      if (
-        submissionData.specialists &&
-        Array.isArray(submissionData.specialists)
-      ) {
-        submissionData.specialists = submissionData.specialists.map(
-          (spec: any) =>
-            typeof spec === "string" ? spec : spec.id ? spec.id : spec,
-        );
-      }
-
-      // Transform treatments to extract IDs
-      if (
-        submissionData.treatments &&
-        Array.isArray(submissionData.treatments)
-      ) {
-        submissionData.treatments = submissionData.treatments.map(
-          (treat: any) =>
-            typeof treat === "string" ? treat : treat.id ? treat.id : treat,
-        );
-      }
-
-      // Transform degrees to extract IDs
-      if (submissionData.degrees && Array.isArray(submissionData.degrees)) {
-        submissionData.degrees = submissionData.degrees.map((deg: any) =>
-          typeof deg === "string" ? deg : deg.id ? deg.id : deg,
-        );
-      }
-
-      // Transform languages to extract IDs
-      if (submissionData.languages && Array.isArray(submissionData.languages)) {
-        submissionData.languages = submissionData.languages.map((lang: any) =>
-          typeof lang === "string" ? lang : lang.id ? lang.id : lang,
-        );
-      }
-
-      const form = new FormData();
-
-      // Remove the featuredImage from the JSON data if it's a File object
-      // We'll append it separately to the FormData
-      const { featuredImage, ...restData } = submissionData;
-
-      const preparedData = {
-        ...restData,
-        discountForHealthaUser: Number(restData.discountForHealthaUser) || 0,
-        experience: Number(restData.experience) || 0,
-        emailAddresses: restData.emailAddresses.filter(Boolean),
-        phoneNumbers: restData.phoneNumbers.filter(Boolean),
-      };
-
-      form.append("data", JSON.stringify(preparedData));
-
-      // Check if featuredImage is a File object before appending
-      if (featuredImage instanceof File) {
-        form.append("featuredImage", featuredImage);
-      }
-
-      console.log("Submitting doctor data:", preparedData);
-      await saveDoctor(form, doctorSlug);
+      console.log("Submitting doctor data:", formData);
 
       toast.dismiss(loadingToastId);
-      toast.success("Doctor profile updated successfully!");
-      router.push("/dashboard/profile");
+      toast.success("Doctor profile updated successfully! (Demo mode)");
+
+      // Update form data to show changes
+      setFormData({ ...formData });
     } catch (error: any) {
       toast.dismiss(loadingToastId);
       setError(error.message || "An error occurred");
@@ -273,9 +202,7 @@ export default function ManageDoctorProfile() {
 
   return (
     <div className="min-h-screen">
-      {(isLoading || isLoadingDoctor || status === "loading") && (
-        <IconLoading />
-      )}
+      {isLoading && <IconLoading />}
       <form onSubmit={(e) => e.preventDefault()} className="space-y-2">
         {/* Header */}
         <div className="flex items-center justify-between gap-4 border-b border-slate-200 bg-white p-4">
@@ -328,21 +255,23 @@ export default function ManageDoctorProfile() {
 
           {/* Sidebar Content */}
           {contentSidebarOpen && (
-            <DynamicDoctorSidebar
+            <DoctorSidebar
               formData={formData}
               onInputChange={handleInputChange}
               onAuthorChange={handleAuthorChange}
               onAdminChange={handleAdminChange}
               onImageChange={handleImageChange}
-              isLoading={isLoading || isLoadingDoctor}
+              isLoading={isLoading}
             />
           )}
         </div>
       </form>
 
-      <div>
-        <h2>My Chambers</h2>
-        <ChamberTable doctorId={doctorSlug} />
+      <div className="p-4">
+        <h2 className="mb-4 text-xl font-semibold text-slate-800">
+          My Chambers
+        </h2>
+        <ChamberTable />
       </div>
     </div>
   );

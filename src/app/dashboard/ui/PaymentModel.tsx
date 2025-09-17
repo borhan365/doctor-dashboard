@@ -1,4 +1,3 @@
-import { useAuth } from "@/store/useAuth";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Copy, X } from "lucide-react";
 import Image from "next/image";
@@ -13,7 +12,8 @@ import { ApiUrl } from "@/app/Variables";
 import bkashLogo from "/public/images/logo/bkash.webp";
 
 export default function CreatePayment({ onClose }: CreatePaymentProps) {
-  const { user } = useAuth();
+  // Static data for demo purposes
+  const user = { doctorId: "demo-doctor-id" };
 
   const queryClient = useQueryClient();
   const [formData, setFormData] = useState({

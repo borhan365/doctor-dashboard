@@ -1,32 +1,57 @@
-import { ApiUrl } from "@/app/Variables";
-import { useAuth } from "@/store/useAuth";
 import { Doctor } from "@/types/doctors";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "react-hot-toast";
 
-// Function to fetch a single doctor
-async function fetchDoctor(slug: string): Promise<Doctor> {
-  const response = await fetch(`${ApiUrl}/doctors/doctor/get-single/${slug}`);
+// Mock doctor data for static demo
+const mockDoctor: Doctor = {
+  id: "1",
+  slug: "demo-doctor",
+  name: "Dr. John Doe",
+  bnName: "ড. জন ডো",
+  excerpt: "Experienced cardiologist with 15+ years of practice",
+  bnExcerpt: "১৫+ বছরের অভিজ্ঞতা সহ হৃদরোগ বিশেষজ্ঞ",
+  overview:
+    "Dr. John Doe is a renowned cardiologist specializing in interventional cardiology and heart disease prevention.",
+  bnOverview:
+    "ড. জন ডো একজন খ্যাতিমান হৃদরোগ বিশেষজ্ঞ যিনি হস্তক্ষেপমূলক কার্ডিওলজি এবং হৃদরোগ প্রতিরোধে বিশেষজ্ঞ।",
+  description:
+    "Comprehensive description of the doctor's expertise and experience.",
+  bnDescription: "চিকিৎসকের দক্ষতা এবং অভিজ্ঞতার বিস্তৃত বিবরণ।",
+  status: "published",
+  featured: true,
+  featuredImage: "/images/doctor/demo-doctor.webp",
+  bmdcNumber: "12345",
+  phone: "+8801234567890",
+  email: "demo@example.com",
+  website: "https://demo-doctor.com",
+  facebook: "https://facebook.com/demo-doctor",
+  twitter: "https://twitter.com/demo-doctor",
+  linkedin: "https://linkedin.com/in/demo-doctor",
+  instagram: "https://instagram.com/demo-doctor",
+  youtube: "https://youtube.com/demo-doctor",
+  scheduleDate: new Date(),
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  prefixId: "1",
+  doctorTypeId: "1",
+  prefix: { id: "1", name: "Dr.", bnName: "ড." },
+  doctorType: { id: "1", name: "Cardiologist", bnName: "হৃদরোগ বিশেষজ্ঞ" },
+  chambers: [],
+  educations: [],
+  experiences: [],
+  awards: [],
+  publications: [],
+  affiliations: [],
+  treatments: [],
+  degrees: [],
+};
 
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || "Failed to fetch doctor");
-  }
-
-  const data = await response.json();
-  return data.data; // Extract the doctor data from the response
-}
-
-// Hook to get doctor details
+// Hook to get doctor details (now returns mock data)
 export function useDoctorDetails() {
-  const { user, doctor } = useAuth();
-  // Try to get slug from either user or doctor object
-  const doctorSlug = user?.doctorSlug || doctor?.slug;
-
   return useQuery({
-    queryKey: ["doctor", doctorSlug],
-    queryFn: () => fetchDoctor(doctorSlug as string),
-    enabled: !!doctorSlug,
+    queryKey: ["doctor", "demo-doctor"],
+    queryFn: () => Promise.resolve(mockDoctor),
+    enabled: true,
     onError: (error) => {
       toast.error(error instanceof Error ? error.message : String(error));
     },

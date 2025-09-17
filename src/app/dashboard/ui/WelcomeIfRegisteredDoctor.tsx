@@ -1,8 +1,7 @@
 import Image from "next/image";
 
 function WelcomeIfRegisteredDoctor() {
-  // const { data: session } = useSession();
-
+  // Static data for demo purposes
   const session = {
     user: {
       id: "1",

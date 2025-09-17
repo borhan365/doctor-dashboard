@@ -1,8 +1,6 @@
 import { ApiUrl } from "@/app/Variables";
-import { useAuth } from "@/store/useAuth";
 import { useQuery } from "@tanstack/react-query";
 import { Select } from "antd";
-import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { useEffect } from "react";
 import { IoIosArrowDown } from "react-icons/io";
@@ -18,7 +16,8 @@ export default function AdminAuthorBox({
   value,
   onChange,
 }: AdminAuthorBoxProps) {
-  const { user } = useAuth();
+  // Static data for demo purposes
+  const user = { id: "demo-user-id" };
 
   // Fetch admin users using React Query
   const { data, isLoading, error } = useQuery({
@@ -37,8 +36,7 @@ export default function AdminAuthorBox({
   useEffect(() => {
     if (!value && user?.id) {
       const currentUser = data?.find(
-        (user: any) =>
-          user.id === user.id && user.role.name === "ADMIN",
+        (user: any) => user.id === user.id && user.role.name === "ADMIN",
       );
       if (currentUser) {
         onChange(currentUser.id);

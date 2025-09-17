@@ -1,11 +1,10 @@
 "use client";
 
 import { LogOut } from "lucide-react";
-import { signOut } from "next-auth/react";
-
 const LogoutButton = () => {
   const handleLogout = async () => {
-    await signOut({ callbackUrl: "/auth/login" });
+    // Static demo - no actual logout needed
+    console.log("Logout clicked (demo mode)");
   };
 
   return (

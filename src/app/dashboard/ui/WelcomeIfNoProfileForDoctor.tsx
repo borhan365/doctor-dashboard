@@ -1,11 +1,11 @@
 "use client";
 
-import { useAuth } from "@/store/useAuth";
 import Link from "next/link";
 import { FC } from "react";
 
 export const WelcomeIfNoProfileForDoctor: FC = () => {
-  const { user } = useAuth();
+  // Static data for demo purposes
+  const user = { doctorId: "demo-doctor-id" };
 
   return (
     <section className="mb-8 overflow-hidden rounded-lg bg-white dark:bg-slate-800">

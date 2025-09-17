@@ -1,6 +1,5 @@
 "use client";
 import { ApiUrl } from "@/app/Variables";
-import { useAuth } from "@/store/useAuth";
 import { Chamber, FetchChambersResponse } from "@/types/chambers";
 import { useQuery } from "@tanstack/react-query";
 import { Select, Spin } from "antd";
@@ -26,7 +25,8 @@ function SelectChamber({
   defaultValue,
   disabled = false,
 }: SelectChamberProps) {
-  const { user } = useAuth();
+  // Static data for demo purposes
+  const user = { doctorId: "demo-doctor-id" };
   const doctorId = user?.doctorId || "";
 
   const [searchText, setSearchText] = useState("");

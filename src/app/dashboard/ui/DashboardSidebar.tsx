@@ -99,15 +99,6 @@ const DashboardSidebar = ({
   const profileMenuItems = [
     { label: "Profile", link: "/dashboard/profile", icon: User },
     { label: "Chambers", link: "/dashboard/chambers", icon: Calendar },
-    { label: "Experiences", link: "/dashboard/experiences", icon: Briefcase },
-    { label: "Educations", link: "/dashboard/educations", icon: BookOpen },
-    {
-      label: "Publications",
-      link: "/dashboard/publications",
-      icon: NotebookText,
-    },
-    { label: "Affiliations", link: "/dashboard/affiliations", icon: Route },
-    { label: "Awards", link: "/dashboard/awards", icon: Trophy },
   ];
 
   const menuItems = [

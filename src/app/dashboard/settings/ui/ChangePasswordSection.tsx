@@ -1,7 +1,6 @@
 "use client";
 
 import { ApiUrl } from "@/app/Variables";
-import { useAuth } from "@/store/useAuth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CheckCircle, X } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -29,7 +28,8 @@ type ChangePasswordFormData = z.infer<typeof changePasswordSchema>;
 function ChangePasswordSection() {
   const [isLoading, setIsLoading] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
-  const { user } = useAuth();
+  // Static data for demo purposes
+  const user = { id: "demo-user-id" };
 
   const {
     register,

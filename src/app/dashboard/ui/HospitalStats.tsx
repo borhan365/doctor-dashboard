@@ -3,7 +3,6 @@ import { useHospitalFloors } from "@/hooks/useHospitalFloors";
 import { useHospitalGallery } from "@/hooks/useHospitalGallery";
 import { useHospitalHealthPackages } from "@/hooks/useHospitalHealthPackages";
 import { useHospitalPriceCharts } from "@/hooks/useHospitalPriceCharts";
-import { useAuth } from "@/store/useAuth";
 import { useQuery } from "@tanstack/react-query";
 import { Activity, Building2, FileText, Image, Package } from "lucide-react";
 import Link from "next/link";
@@ -55,7 +54,8 @@ const StatCard: React.FC<StatCardProps> = ({
 );
 
 function HospitalStats() {
-  const { user } = useAuth();
+  // Static data for demo purposes
+  const user = { hospitalId: "demo-hospital-id" };
   // Get the hospital ID (you might need to get this from context or another source)
   const hospitalId = user?.hospitalId;
 
@@ -103,9 +103,10 @@ function HospitalStats() {
 
   // Calculate total number of health packages - FIXED based on the provided data structure
   // The packages array contains hospital package groups, and each group has a 'packages' array with the actual packages
-  const healthPackagesCount = healthPackagesData?.packages?.reduce((total: number, packageGroup: any) => {
-    return total + (packageGroup.packages?.length || 0);
-  }, 0) ?? 0;
+  const healthPackagesCount =
+    healthPackagesData?.packages?.reduce((total: number, packageGroup: any) => {
+      return total + (packageGroup.packages?.length || 0);
+    }, 0) ?? 0;
 
   // Stats data with actual counts
   const stats = {

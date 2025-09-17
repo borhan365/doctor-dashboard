@@ -1,14 +1,8 @@
 "use client";
-import {
-  useCreateTreatment,
-  useDeleteTreatment,
-  useTreatments,
-  useUpdateTreatment,
-} from "@/hooks/useDoctorTreatments";
+// Removed API hooks - using static data instead
 import { Treatment } from "@/types/doctorTreatments";
 import { Checkbox } from "antd";
 import { Check, Edit2, Plus, Search, Trash2, X } from "lucide-react";
-import { useSession } from "next-auth/react";
 import { useCallback, useState } from "react";
 import { toast } from "react-hot-toast";
 
@@ -27,27 +21,102 @@ function TreatmentSection({
   const [editValue, setEditValue] = useState("");
   const [page, setPage] = useState(1);
   const limit = 10;
-  // const { data: session } = useSession();
+  // Static data for demo purposes
+  const session = { user: { id: "demo-user-id" } };
+  const isLoading = false;
 
-  const session = {
-    user: {
-      id: "123",
+  // Mock treatments data
+  const mockTreatments: Treatment[] = [
+    {
+      id: "1",
+      name: "Cardiac Catheterization",
+      bnName: "কার্ডিয়াক ক্যাথেটারাইজেশন",
+      description: "A procedure to examine and treat heart conditions",
+      bnDescription: "হৃদরোগ পরীক্ষা এবং চিকিৎসার পদ্ধতি",
+      status: "published",
+      userId: null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     },
+    {
+      id: "2",
+      name: "Angioplasty",
+      bnName: "অ্যানজিওপ্লাস্টি",
+      description: "Procedure to open blocked blood vessels",
+      bnDescription: "অবরুদ্ধ রক্তনালী খোলার পদ্ধতি",
+      status: "published",
+      userId: null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+    {
+      id: "3",
+      name: "Echocardiogram",
+      bnName: "ইকোকার্ডিওগ্রাম",
+      description: "Ultrasound of the heart",
+      bnDescription: "হৃদয়ের আল্ট্রাসাউন্ড",
+      status: "published",
+      userId: null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+    {
+      id: "4",
+      name: "Stress Test",
+      bnName: "স্ট্রেস টেস্ট",
+      description: "Exercise test to check heart function",
+      bnDescription: "হৃদয়ের কার্যকারিতা পরীক্ষার জন্য ব্যায়াম পরীক্ষা",
+      status: "published",
+      userId: null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+    {
+      id: "5",
+      name: "Pacemaker Implantation",
+      bnName: "পেসমেকার ইমপ্লান্টেশন",
+      description: "Surgical procedure to implant a pacemaker",
+      bnDescription: "পেসমেকার ইমপ্লান্ট করার জন্য অস্ত্রোপচার পদ্ধতি",
+      status: "published",
+      userId: null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+  ];
+
+  const treatments = mockTreatments.filter(
+    (treatment) =>
+      treatment.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      treatment.bnName.includes(searchTerm),
+  );
+
+  // Mock mutation functions
+  const createTreatmentMutation = {
+    mutateAsync: async (data: any) => {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      toast.success("Treatment created successfully (demo mode)");
+      return { data: { id: Date.now().toString(), ...data } };
+    },
+    isPending: false,
   };
 
-  // Use the API hooks
-  const { data, isLoading } = useTreatments({
-    page,
-    limit,
-    search: searchTerm,
-    status: "published",
-  });
+  const updateTreatmentMutation = {
+    mutateAsync: async (data: any) => {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      toast.success("Treatment updated successfully (demo mode)");
+      return { data: { id: editingId, ...data } };
+    },
+    isPending: false,
+  };
 
-  const createTreatmentMutation = useCreateTreatment();
-  const updateTreatmentMutation = useUpdateTreatment(editingId || "");
-  const deleteTreatmentMutation = useDeleteTreatment();
-
-  const treatments = data?.treatments || [];
+  const deleteTreatmentMutation = {
+    mutateAsync: async (id: string) => {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      toast.success("Treatment deleted successfully (demo mode)");
+      return { data: { id } };
+    },
+    isPending: false,
+  };
 
   // Separate default and custom treatments
   const defaultTreatments = treatments.filter((treatment) => !treatment.userId);
@@ -102,7 +171,9 @@ function TreatmentSection({
       await deleteTreatmentMutation.mutateAsync(id);
       // Remove from selected if it was selected
       if (selectedTreatments.includes(id)) {
-        onChange(selectedTreatments.filter((treatmentId) => treatmentId !== id));
+        onChange(
+          selectedTreatments.filter((treatmentId) => treatmentId !== id),
+        );
       }
       toast.success("Treatment deleted successfully");
     } catch (error) {
@@ -122,7 +193,7 @@ function TreatmentSection({
     if (selectedTreatments.length === 0) return null;
 
     const selectedItems = treatments.filter((treatment) =>
-      selectedTreatments.includes(treatment.id)
+      selectedTreatments.includes(treatment.id),
     );
 
     return (
@@ -158,9 +229,7 @@ function TreatmentSection({
     return (
       <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
         {treatments.map((treatment) => {
-          const isSelected = selectedTreatments.some(
-            (t) => t === treatment.id,
-          );
+          const isSelected = selectedTreatments.some((t) => t === treatment.id);
 
           return (
             <div

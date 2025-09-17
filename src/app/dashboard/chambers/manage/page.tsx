@@ -1,16 +1,14 @@
 "use client";
 
+import HealthaLoader from "@/components/Loader/HealthaLoader";
 import { prepareChamberFormData, useChambers } from "@/hooks/useChambers";
 import { CreateChamberInput } from "@/types/chambers";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
-import SelectDoctor from "./ui/SelectDoctor";
 import SelectHospital from "./ui/SelectHospital";
 import SlotConfiguration from "./ui/SlotConfiguration";
-import HealthaLoader from "@/components/Loader/HealthaLoader";
-import { useAuth } from "@/store/useAuth";
 
 const slotDurations = [
   { label: "5 Minutes", value: 5 },
@@ -33,7 +31,8 @@ export function ManageChamber() {
   const chamberId = searchParams.get("id");
   const isEditMode = !!chamberId;
 
-  const { user } = useAuth();
+  // Static data for demo purposes
+  const user = { doctorSlug: "demo-doctor" };
   const doctorSlug = user?.doctorSlug;
 
   const initialFormData: Partial<CreateChamberInput> = {

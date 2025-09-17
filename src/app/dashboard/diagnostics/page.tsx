@@ -3,9 +3,8 @@
 import ErrorMessage from "@/components/common/Messages/errorMessage";
 import Pagination from "@/components/common/Pagination";
 import IconLoading from "@/components/Loader/IconLoading";
-import { useHospitalDiagnostics } from "@/hooks/useHospitalDiagnostics";
 import { HospitalDiagnostic } from "@/types/hospitalDiagnostics";
-import { debounce } from "lodash";
+// Removed lodash import - using custom debounce
 import { Package } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -21,14 +20,165 @@ export default function DiagnosticsPage() {
   const [status, setStatus] = useState<string>("");
   const [priceSort, setPriceSort] = useState<"asc" | "desc">();
 
-  const { diagnostics, meta, isLoading, error } = useHospitalDiagnostics({
+  // Static dummy data for diagnostics
+  const mockDiagnostics: HospitalDiagnostic[] = [
+    {
+      id: "1",
+      name: "Complete Blood Count (CBC)",
+      excerpt: "Comprehensive blood test to evaluate overall health",
+      slug: "complete-blood-count-cbc",
+      price: 500,
+      sampleCollectionFee: 50,
+      status: "published",
+      isFeatured: false,
+      isPublic: true,
+      version: 1,
+      faqs: [],
+      featuredImage: {
+        fileUrl: "/images/diagnostics/cbc-test.jpg",
+      },
+      categories: [
+        { id: "1", name: "Blood Tests" },
+        { id: "2", name: "Routine Tests" },
+      ],
+      createdAt: new Date("2024-01-01"),
+      updatedAt: new Date("2024-01-01"),
+    },
+    {
+      id: "2",
+      name: "ECG (Electrocardiogram)",
+      excerpt: "Heart rhythm and electrical activity test",
+      slug: "ecg-electrocardiogram",
+      price: 800,
+      sampleCollectionFee: 0,
+      status: "published",
+      isFeatured: false,
+      isPublic: true,
+      version: 1,
+      faqs: [],
+      featuredImage: {
+        fileUrl: "/images/diagnostics/ecg-test.jpg",
+      },
+      categories: [
+        { id: "3", name: "Cardiology" },
+        { id: "4", name: "Heart Tests" },
+      ],
+      createdAt: new Date("2024-01-02"),
+      updatedAt: new Date("2024-01-02"),
+    },
+    {
+      id: "3",
+      name: "MRI Brain",
+      excerpt: "Magnetic resonance imaging of the brain",
+      slug: "mri-brain",
+      price: 8000,
+      sampleCollectionFee: 200,
+      status: "published",
+      isFeatured: false,
+      isPublic: true,
+      version: 1,
+      faqs: [],
+      featuredImage: {
+        fileUrl: "/images/diagnostics/mri-brain.jpg",
+      },
+      categories: [
+        { id: "5", name: "Radiology" },
+        { id: "6", name: "Neurology" },
+      ],
+      createdAt: new Date("2024-01-03"),
+      updatedAt: new Date("2024-01-03"),
+    },
+    {
+      id: "4",
+      name: "Thyroid Function Test",
+      excerpt: "Comprehensive thyroid hormone levels test",
+      slug: "thyroid-function-test",
+      price: 1200,
+      sampleCollectionFee: 100,
+      status: "published",
+      isFeatured: false,
+      isPublic: true,
+      version: 1,
+      faqs: [],
+      featuredImage: {
+        fileUrl: "/images/diagnostics/thyroid-test.jpg",
+      },
+      categories: [
+        { id: "1", name: "Blood Tests" },
+        { id: "7", name: "Endocrinology" },
+      ],
+      createdAt: new Date("2024-01-04"),
+      updatedAt: new Date("2024-01-04"),
+    },
+    {
+      id: "5",
+      name: "X-Ray Chest",
+      excerpt: "Chest X-ray for lung and heart evaluation",
+      slug: "x-ray-chest",
+      price: 600,
+      sampleCollectionFee: 0,
+      status: "published",
+      isFeatured: false,
+      isPublic: true,
+      version: 1,
+      faqs: [],
+      featuredImage: {
+        fileUrl: "/images/diagnostics/xray-chest.jpg",
+      },
+      categories: [
+        { id: "5", name: "Radiology" },
+        { id: "8", name: "Pulmonology" },
+      ],
+      createdAt: new Date("2024-01-05"),
+      updatedAt: new Date("2024-01-05"),
+    },
+  ];
+
+  // Filter diagnostics based on search and filter criteria
+  const filteredDiagnostics = mockDiagnostics.filter((diagnostic) => {
+    const matchesSearch =
+      !search ||
+      diagnostic.name.toLowerCase().includes(search.toLowerCase()) ||
+      (diagnostic.excerpt &&
+        diagnostic.excerpt.toLowerCase().includes(search.toLowerCase()));
+
+    const matchesStatus = !status || diagnostic.status === status;
+
+    return matchesSearch && matchesStatus;
+  });
+
+  // Sort by price if specified
+  const sortedDiagnostics = priceSort
+    ? [...filteredDiagnostics].sort((a, b) =>
+        priceSort === "asc"
+          ? (a.price || 0) - (b.price || 0)
+          : (b.price || 0) - (a.price || 0),
+      )
+    : filteredDiagnostics;
+
+  // Paginate results
+  const startIndex = (currentPage - 1) * 10;
+  const endIndex = startIndex + 10;
+  const diagnostics = sortedDiagnostics.slice(startIndex, endIndex);
+
+  const meta = {
+    total: filteredDiagnostics.length,
     page: currentPage,
     limit: 10,
-    search,
-    categoryId,
-    status,
-    priceSort,
-  });
+    totalPages: Math.ceil(filteredDiagnostics.length / 10),
+  };
+
+  const isLoading = false;
+  const error = null;
+
+  // Custom debounce function
+  const debounce = (func: Function, delay: number) => {
+    let timeoutId: NodeJS.Timeout;
+    return (...args: any[]) => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => func.apply(null, args), delay);
+    };
+  };
 
   // Debounced search
   const debouncedSearch = debounce((value: string) => {
@@ -50,7 +200,7 @@ export default function DiagnosticsPage() {
       className="border-b border-slate-200 hover:bg-slate-50 dark:border-strokedark dark:hover:bg-meta-4"
     >
       <td className="px-4 py-4">
-        <div className="flex items-center gap-4 justify-start">
+        <div className="flex items-center justify-start gap-4">
           <div>
             {diagnostic.featuredImage ? (
               <div className="relative h-10 w-10">
@@ -73,7 +223,7 @@ export default function DiagnosticsPage() {
               {diagnostic.name}
             </h5>
             <p className="text-sm text-slate-500 dark:text-slate-400">
-              {diagnostic.excerpt}
+              {diagnostic.excerpt || "No description available"}
             </p>
           </div>
         </div>

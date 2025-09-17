@@ -2,7 +2,6 @@
 
 import { ApiUrl } from "@/app/Variables";
 import { useUpdateUser, useUser } from "@/hooks/useUsers";
-import { useAuth } from "@/store/useAuth";
 import { User } from "@/types/users";
 import { CheckCircle, SettingsIcon, ShieldIcon, X } from "lucide-react";
 import { useState } from "react";
@@ -10,7 +9,8 @@ import ChangePasswordSection from "./ui/ChangePasswordSection";
 import GeneralInfoSection from "./ui/GeneralInfoSection";
 
 function SettingsPage() {
-  const { user } = useAuth();
+  // Static data for demo purposes
+  const user = { id: "demo-user-id" };
   const userId = user?.id as string;
 
   const { data: userData, isLoading: isUserLoading } = useUser(userId);

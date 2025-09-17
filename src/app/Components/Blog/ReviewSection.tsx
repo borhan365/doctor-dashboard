@@ -2,7 +2,6 @@
 
 import { Hospital } from "@/types/hospital";
 import axios from "axios";
-import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
@@ -34,7 +33,8 @@ export default function ReviewSection({
   articleId,
   hospital,
 }: ReviewSectionProps) {
-  const { data: session } = useSession();
+  // Static data for demo purposes
+  const session = { user: { id: "demo-user-id" } };
   const [reviews, setReviews] = useState<Review[]>([]);
   const [userReview, setUserReview] = useState<Review | null>(null);
   const [error, setError] = useState("");

@@ -1,47 +1,108 @@
-import { ApiUrl } from "@/app/Variables";
 import { AwardFormData, DoctorAward } from "@/types/awards";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-hot-toast";
+
+// Static dummy data for awards
+const mockAwards: DoctorAward[] = [
+  {
+    id: "1",
+    title: "Best Cardiologist Award 2023",
+    bnTitle: "সেরা হৃদরোগ বিশেষজ্ঞ পুরস্কার ২০২৩",
+    organization: "Bangladesh Medical Association",
+    bnOrganization: "বাংলাদেশ মেডিকেল অ্যাসোসিয়েশন",
+    year: "2023",
+    description:
+      "Awarded for outstanding contribution to cardiology in Bangladesh",
+    bnDescription: "বাংলাদেশে কার্ডিওলজিতে অসামান্য অবদানের জন্য পুরস্কৃত",
+    doctorId: "demo-doctor-id",
+    status: "published",
+    createdAt: new Date("2023-12-01"),
+    updatedAt: new Date("2023-12-01"),
+  },
+  {
+    id: "2",
+    title: "Excellence in Medical Research",
+    bnTitle: "চিকিৎসা গবেষণায় শ্রেষ্ঠত্ব",
+    organization: "International Medical Society",
+    bnOrganization: "আন্তর্জাতিক মেডিকেল সোসাইটি",
+    year: "2022",
+    description:
+      "Recognized for groundbreaking research in interventional cardiology",
+    bnDescription:
+      "হস্তক্ষেপমূলক কার্ডিওলজিতে যুগান্তকারী গবেষণার জন্য স্বীকৃত",
+    doctorId: "demo-doctor-id",
+    status: "published",
+    createdAt: new Date("2022-11-15"),
+    updatedAt: new Date("2022-11-15"),
+  },
+  {
+    id: "3",
+    title: "Patient Care Excellence Award",
+    bnTitle: "রোগী সেবা শ্রেষ্ঠত্ব পুরস্কার",
+    organization: "Healthcare Excellence Foundation",
+    bnOrganization: "স্বাস্থ্যসেবা শ্রেষ্ঠত্ব ফাউন্ডেশন",
+    year: "2021",
+    description: "Awarded for exceptional patient care and satisfaction",
+    bnDescription: "অসাধারণ রোগী সেবা এবং সন্তুষ্টির জন্য পুরস্কৃত",
+    doctorId: "demo-doctor-id",
+    status: "published",
+    createdAt: new Date("2021-10-20"),
+    updatedAt: new Date("2021-10-20"),
+  },
+  {
+    id: "4",
+    title: "Young Researcher Award",
+    bnTitle: "তরুণ গবেষক পুরস্কার",
+    organization: "Bangladesh Heart Foundation",
+    bnOrganization: "বাংলাদেশ হার্ট ফাউন্ডেশন",
+    year: "2020",
+    description: "Recognized as emerging talent in cardiovascular medicine",
+    bnDescription: "কার্ডিওভাসকুলার মেডিসিনে উদীয়মান প্রতিভা হিসেবে স্বীকৃত",
+    doctorId: "demo-doctor-id",
+    status: "published",
+    createdAt: new Date("2020-09-10"),
+    updatedAt: new Date("2020-09-10"),
+  },
+  {
+    id: "5",
+    title: "Community Service Award",
+    bnTitle: "সমাজসেবা পুরস্কার",
+    organization: "Dhaka Medical College Alumni",
+    bnOrganization: "ঢাকা মেডিকেল কলেজ অ্যালামনাই",
+    year: "2019",
+    description: "Awarded for outstanding community health initiatives",
+    bnDescription: "অসামান্য সম্প্রদায় স্বাস্থ্য উদ্যোগের জন্য পুরস্কৃত",
+    doctorId: "demo-doctor-id",
+    status: "published",
+    createdAt: new Date("2019-08-05"),
+    updatedAt: new Date("2019-08-05"),
+  },
+];
 
 export const useAwards = (doctorId?: string) => {
   const queryClient = useQueryClient();
 
-  const {
-    data: awards,
-    isLoading: isLoadingAwards,
-    error,
-  } = useQuery<{ awards: DoctorAward[]; meta: any }>({
-    queryKey: ["awards", doctorId],
-    queryFn: async () => {
-      const url = new URL(
-        `${ApiUrl}/doctors/awards/get-all`,
-        window.location.origin,
-      );
-      if (doctorId) url.searchParams.append("doctorId", doctorId);
-      const res = await fetch(url);
-      if (!res.ok) throw new Error("Failed to fetch awards");
-      return res.json();
-    },
-  });
+  // Return static data instead of API calls
+  const awards = mockAwards.filter((award) => award.doctorId === doctorId);
+  const isLoadingAwards = false;
+  const error = null;
 
   const { mutateAsync: createAward, isPending: isCreating } = useMutation({
     mutationFn: async (data: AwardFormData) => {
-      const response = await fetch(`${ApiUrl}/doctors/awards/create`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to create award");
-      }
-
-      return response.json();
+      // Static demo - simulate API call
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const newAward: DoctorAward = {
+        id: Date.now().toString(),
+        ...data,
+        doctorId: doctorId || "demo-doctor-id",
+        status: "published",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+      return { data: newAward };
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["awards"] });
-      toast.success("Award created successfully");
+      toast.success("Award created successfully (demo mode)");
     },
     onError: (error) => {
       toast.error(
@@ -52,22 +113,12 @@ export const useAwards = (doctorId?: string) => {
 
   const { mutateAsync: updateAward, isPending: isUpdating } = useMutation({
     mutationFn: async ({ id, data }: { id: string; data: AwardFormData }) => {
-      const response = await fetch(`${ApiUrl}/doctors/awards/update/${id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to update award");
-      }
-
-      return response.json();
+      // Static demo - simulate API call
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      return { data: { id, ...data } };
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["awards"] });
-      toast.success("Award updated successfully");
+      toast.success("Award updated successfully (demo mode)");
     },
     onError: (error) => {
       toast.error(
@@ -78,25 +129,18 @@ export const useAwards = (doctorId?: string) => {
 
   const { mutateAsync: deleteAward, isPending: isDeleting } = useMutation({
     mutationFn: async (id: string) => {
-      const res = await fetch(`${ApiUrl}/doctors/awards/delete/${id}`, {
-        method: "DELETE",
-      });
-
-      const responseData = await res.json();
-      if (!res.ok) {
-        throw new Error(responseData.error || "Failed to delete award");
-      }
-      return responseData;
+      // Static demo - simulate API call
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      return { data: { id } };
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["awards"] });
-      toast.success("Award deleted successfully");
+      toast.success("Award deleted successfully (demo mode)");
     },
   });
 
   return {
-    awards: awards?.awards || [],
-    meta: awards?.meta,
+    awards: awards || [],
+    meta: { total: awards.length, page: 1, limit: 10 },
     isLoadingAwards,
     error,
     createAward,

@@ -7,7 +7,6 @@ import {
 } from "@/hooks/doctor/degree/useDegree";
 import { Checkbox } from "antd";
 import { Check, Edit2, Plus, Search, Trash2, X } from "lucide-react";
-import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -21,7 +20,8 @@ function DegreeSection({ selectedDegrees = [], onChange }: DegreeSectionProps) {
   const [newDegree, setNewDegree] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editValue, setEditValue] = useState("");
-  const { data: session } = useSession();
+  // Static data for demo purposes
+  const session = { user: { id: "demo-user-id" } };
 
   // Fetch degrees from API
   const { data, isLoading } = useDegrees({

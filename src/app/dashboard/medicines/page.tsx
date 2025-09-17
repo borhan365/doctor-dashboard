@@ -3,9 +3,8 @@
 import ErrorMessage from "@/components/common/Messages/errorMessage";
 import Pagination from "@/components/common/Pagination";
 import IconLoading from "@/components/Loader/IconLoading";
-import { useGetMedicines } from "@/hooks/useMedicines";
 import { Medicine } from "@/types/medicines";
-import { debounce } from "lodash";
+// Removed lodash import - using custom debounce
 import { Package } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -21,14 +20,320 @@ export default function AllMedicinesPage() {
   const [medicineTypeId, setMedicineTypeId] = useState<string>("");
   const [currentPage, setCurrentPage] = useState(1);
 
-  const { data, isLoading, error } = useGetMedicines({
-    page: currentPage,
-    limit: 10,
-    search,
-    genericId,
-    manufacturerId,
-    medicineTypeId,
+  // Static dummy data for medicines
+  const mockMedicines: Medicine[] = [
+    {
+      id: "1",
+      name: "Paracetamol 500mg",
+      slug: "paracetamol-500mg",
+      medicineId: "MED001",
+      featuredImage: "/images/medicines/paracetamol.jpg",
+      medicineType: {
+        id: "1",
+        name: "OTC",
+      },
+      categories: [
+        { id: "1", name: "Pain Relief" },
+        { id: "2", name: "Fever Reducer" },
+      ],
+      diseases: [
+        { id: "1", name: "Fever" },
+        { id: "2", name: "Headache" },
+        { id: "3", name: "Body Pain" },
+      ],
+      totalImpressions: 5000,
+      totalClicks: 250,
+      generic: {
+        id: "1",
+        name: "Paracetamol",
+      },
+      manufacturer: {
+        id: "1",
+        name: "Square Pharmaceuticals",
+      },
+      dosageForms: [
+        { id: "1", name: "Tablet" },
+        { id: "2", name: "Syrup" },
+      ],
+      details: [
+        {
+          id: "1",
+          unitPrice: 2.5,
+          stockQuantity: 1000,
+          isActive: true,
+          isFeatured: false,
+          isVerified: true,
+          isSponsored: false,
+          requiresPrescription: false,
+          isGeneric: true,
+          isOtc: true,
+          isBranded: false,
+          sku: "PAR500",
+          barCode: "1234567890123",
+          expiryDate: new Date("2025-12-31"),
+          discount: 0,
+          safetyAdvices: {},
+        },
+      ],
+      createdAt: new Date("2024-01-01"),
+      updatedAt: new Date("2024-01-01"),
+    },
+    {
+      id: "2",
+      name: "Amoxicillin 250mg",
+      slug: "amoxicillin-250mg",
+      medicineId: "MED002",
+      featuredImage: "/images/medicines/amoxicillin.jpg",
+      medicineType: {
+        id: "2",
+        name: "Prescription",
+      },
+      categories: [
+        { id: "3", name: "Antibiotic" },
+        { id: "4", name: "Infection Treatment" },
+      ],
+      diseases: [
+        { id: "4", name: "Bacterial Infection" },
+        { id: "5", name: "Respiratory Infection" },
+        { id: "6", name: "Urinary Tract Infection" },
+      ],
+      totalImpressions: 3200,
+      totalClicks: 180,
+      generic: {
+        id: "2",
+        name: "Amoxicillin",
+      },
+      manufacturer: {
+        id: "2",
+        name: "Beximco Pharmaceuticals",
+      },
+      dosageForms: [
+        { id: "1", name: "Capsule" },
+        { id: "3", name: "Suspension" },
+      ],
+      details: [
+        {
+          id: "2",
+          unitPrice: 5.0,
+          stockQuantity: 500,
+          isActive: true,
+          isFeatured: false,
+          isVerified: true,
+          isSponsored: false,
+          requiresPrescription: true,
+          isGeneric: true,
+          isOtc: false,
+          isBranded: false,
+          sku: "AMO250",
+          barCode: "1234567890124",
+          expiryDate: new Date("2025-12-31"),
+          discount: 0,
+          safetyAdvices: {},
+        },
+      ],
+      createdAt: new Date("2024-01-02"),
+      updatedAt: new Date("2024-01-02"),
+    },
+    {
+      id: "3",
+      name: "Metformin 500mg",
+      slug: "metformin-500mg",
+      medicineId: "MED003",
+      featuredImage: "/images/medicines/metformin.jpg",
+      medicineType: {
+        id: "2",
+        name: "Prescription",
+      },
+      categories: [
+        { id: "5", name: "Diabetes" },
+        { id: "6", name: "Blood Sugar Control" },
+      ],
+      diseases: [
+        { id: "7", name: "Type 2 Diabetes" },
+        { id: "8", name: "Insulin Resistance" },
+      ],
+      totalImpressions: 2800,
+      totalClicks: 140,
+      generic: {
+        id: "3",
+        name: "Metformin",
+      },
+      manufacturer: {
+        id: "1",
+        name: "Square Pharmaceuticals",
+      },
+      dosageForms: [{ id: "1", name: "Tablet" }],
+      details: [
+        {
+          id: "3",
+          unitPrice: 3.5,
+          stockQuantity: 800,
+          isActive: true,
+          isFeatured: false,
+          isVerified: true,
+          isSponsored: false,
+          requiresPrescription: true,
+          isGeneric: true,
+          isOtc: false,
+          isBranded: false,
+          sku: "MET500",
+          barCode: "1234567890125",
+          expiryDate: new Date("2025-12-31"),
+          discount: 0,
+          safetyAdvices: {},
+        },
+      ],
+      createdAt: new Date("2024-01-03"),
+      updatedAt: new Date("2024-01-03"),
+    },
+    {
+      id: "4",
+      name: "Omeprazole 20mg",
+      slug: "omeprazole-20mg",
+      medicineId: "MED004",
+      featuredImage: "/images/medicines/omeprazole.jpg",
+      medicineType: {
+        id: "2",
+        name: "Prescription",
+      },
+      categories: [
+        { id: "7", name: "Gastrointestinal" },
+        { id: "8", name: "Acid Reducer" },
+      ],
+      diseases: [
+        { id: "9", name: "GERD" },
+        { id: "10", name: "Peptic Ulcer" },
+        { id: "11", name: "Acid Reflux" },
+      ],
+      totalImpressions: 1900,
+      totalClicks: 95,
+      generic: {
+        id: "4",
+        name: "Omeprazole",
+      },
+      manufacturer: {
+        id: "3",
+        name: "Incepta Pharmaceuticals",
+      },
+      dosageForms: [{ id: "1", name: "Capsule" }],
+      details: [
+        {
+          id: "4",
+          unitPrice: 8.0,
+          stockQuantity: 300,
+          isActive: true,
+          isFeatured: false,
+          isVerified: true,
+          isSponsored: false,
+          requiresPrescription: true,
+          isGeneric: true,
+          isOtc: false,
+          isBranded: false,
+          sku: "OME20",
+          barCode: "1234567890126",
+          expiryDate: new Date("2025-12-31"),
+          discount: 0,
+          safetyAdvices: {},
+        },
+      ],
+      createdAt: new Date("2024-01-04"),
+      updatedAt: new Date("2024-01-04"),
+    },
+    {
+      id: "5",
+      name: "Atorvastatin 20mg",
+      slug: "atorvastatin-20mg",
+      medicineId: "MED005",
+      featuredImage: "/images/medicines/atorvastatin.jpg",
+      medicineType: {
+        id: "2",
+        name: "Prescription",
+      },
+      categories: [
+        { id: "1", name: "Cardiovascular" },
+        { id: "9", name: "Cholesterol Control" },
+      ],
+      diseases: [
+        { id: "12", name: "High Cholesterol" },
+        { id: "13", name: "Atherosclerosis" },
+        { id: "14", name: "Heart Disease" },
+      ],
+      totalImpressions: 2400,
+      totalClicks: 120,
+      generic: {
+        id: "5",
+        name: "Atorvastatin",
+      },
+      manufacturer: {
+        id: "2",
+        name: "Beximco Pharmaceuticals",
+      },
+      dosageForms: [{ id: "1", name: "Tablet" }],
+      details: [
+        {
+          id: "5",
+          unitPrice: 12.0,
+          stockQuantity: 200,
+          isActive: true,
+          isFeatured: false,
+          isVerified: true,
+          isSponsored: false,
+          requiresPrescription: true,
+          isGeneric: true,
+          isOtc: false,
+          isBranded: false,
+          sku: "ATO20",
+          barCode: "1234567890127",
+          expiryDate: new Date("2025-12-31"),
+          discount: 0,
+          safetyAdvices: {},
+        },
+      ],
+      createdAt: new Date("2024-01-05"),
+      updatedAt: new Date("2024-01-05"),
+    },
+  ];
+
+  // Filter medicines based on search and filter criteria
+  const filteredMedicines = mockMedicines.filter((medicine) => {
+    const matchesSearch =
+      !search ||
+      medicine.name.toLowerCase().includes(search.toLowerCase()) ||
+      medicine.medicineId.toLowerCase().includes(search.toLowerCase());
+
+    const matchesGeneric = !genericId || medicine.generic?.id === genericId;
+    const matchesManufacturer =
+      !manufacturerId || medicine.manufacturer?.id === manufacturerId;
+
+    return matchesSearch && matchesGeneric && matchesManufacturer;
   });
+
+  // Paginate results
+  const startIndex = (currentPage - 1) * 10;
+  const endIndex = startIndex + 10;
+  const paginatedMedicines = filteredMedicines.slice(startIndex, endIndex);
+
+  const data = {
+    medicines: paginatedMedicines,
+    meta: {
+      total: filteredMedicines.length,
+      page: currentPage,
+      limit: 10,
+      totalPages: Math.ceil(filteredMedicines.length / 10),
+    },
+  };
+
+  const isLoading = false;
+  const error = null;
+
+  // Custom debounce function
+  const debounce = (func: Function, delay: number) => {
+    let timeoutId: NodeJS.Timeout;
+    return (...args: any[]) => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => func.apply(null, args), delay);
+    };
+  };
 
   // Debounced search
   const debouncedSearch = debounce((value: string) => {

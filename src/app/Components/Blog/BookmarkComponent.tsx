@@ -1,7 +1,6 @@
 "use client";
 
 import { Bookmark, BookmarkCheck } from "lucide-react";
-import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 
@@ -10,7 +9,8 @@ interface BookmarkComponentProps {
 }
 
 function BookmarkComponent({ articleId }: BookmarkComponentProps) {
-  const { data: session } = useSession();
+  // Static data for demo purposes
+  const session = { user: { id: "demo-user-id" } };
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -60,7 +60,9 @@ function BookmarkComponent({ articleId }: BookmarkComponentProps) {
       toast.success(isBookmarked ? "Bookmark removed" : "Article bookmarked");
     } catch (error) {
       console.error("Error updating bookmark:", error);
-      toast.error(error instanceof Error ? error.message : "Error updating bookmark");
+      toast.error(
+        error instanceof Error ? error.message : "Error updating bookmark",
+      );
     } finally {
       setIsLoading(false);
     }

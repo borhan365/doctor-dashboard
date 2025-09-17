@@ -1,10 +1,8 @@
 "use client";
 
-import { ApiUrl } from "@/app/Variables";
 import ConfirmModal from "@/components/Modals/ConfirmModal";
 import { cn } from "@/lib/utils";
 import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu";
-import { useQuery } from "@tanstack/react-query";
 import {
   ChevronLeft,
   ChevronRight,
@@ -67,6 +65,7 @@ interface Patient {
   address: string | null;
   lastVisitDate: string | null;
   medicalConditions: string | null;
+  createdAt: string;
   user: {
     id: string;
     image: string | null;
@@ -127,53 +126,139 @@ function Patients() {
     patientName: "",
   });
 
-  // Fetch patients data
-  const { data, isLoading, isError, error, refetch } =
-    useQuery<PatientsResponse>({
-      queryKey: ["patients", currentPage, searchQuery, filterBy],
-      queryFn: async () => {
-        const params = new URLSearchParams({
-          page: currentPage.toString(),
-          limit: itemsPerPage.toString(),
-          search: searchQuery,
-          gender: filterBy,
-        });
-
-        const response = await fetch(
-          `${ApiUrl}/doctors/patients/get-all?${params}`,
-          {
-            credentials: "include",
-          },
-        );
-
-        if (!response.ok) {
-          const error = await response.json();
-          throw new Error(error.message || "Failed to fetch patients");
-        }
-
-        return response.json();
+  // Static dummy data for patients
+  const mockPatients: Patient[] = [
+    {
+      id: "1",
+      patientId: "P001",
+      name: "Ahmed Rahman",
+      email: "ahmed.rahman@email.com",
+      phone: "+8801712345678",
+      age: 45,
+      gender: "male",
+      bloodGroup: "A+",
+      address: "Dhanmondi, Dhaka",
+      lastVisitDate: "2024-01-15",
+      medicalConditions: "Hypertension, Diabetes",
+      user: {
+        id: "1",
+        image: "/images/user/user-01.png",
       },
-    });
+      createdAt: "2023-06-15T10:30:00Z",
+    },
+    {
+      id: "2",
+      patientId: "P002",
+      name: "Fatima Begum",
+      email: "fatima.begum@email.com",
+      phone: "+8801712345679",
+      age: 38,
+      gender: "female",
+      bloodGroup: "B+",
+      address: "Gulshan, Dhaka",
+      lastVisitDate: "2024-01-10",
+      medicalConditions: "Heart Disease",
+      user: {
+        id: "2",
+        image: "/images/user/user-02.png",
+      },
+      createdAt: "2023-07-20T14:45:00Z",
+    },
+    {
+      id: "3",
+      patientId: "P003",
+      name: "Karim Uddin",
+      email: "karim.uddin@email.com",
+      phone: "+8801712345680",
+      age: 52,
+      gender: "male",
+      bloodGroup: "O+",
+      address: "Mirpur, Dhaka",
+      lastVisitDate: "2024-01-08",
+      medicalConditions: "Arthritis, High Cholesterol",
+      user: {
+        id: "3",
+        image: "/images/user/user-03.png",
+      },
+      createdAt: "2023-08-10T09:15:00Z",
+    },
+    {
+      id: "4",
+      patientId: "P004",
+      name: "Rashida Khan",
+      email: "rashida.khan@email.com",
+      phone: "+8801712345681",
+      age: 41,
+      gender: "female",
+      bloodGroup: "AB+",
+      address: "Uttara, Dhaka",
+      lastVisitDate: "2024-01-05",
+      medicalConditions: "Migraine, Anxiety",
+      user: {
+        id: "4",
+        image: "/images/user/user-04.png",
+      },
+      createdAt: "2023-09-05T16:20:00Z",
+    },
+    {
+      id: "5",
+      patientId: "P005",
+      name: "Mohammad Ali",
+      email: "mohammad.ali@email.com",
+      phone: "+8801712345682",
+      age: 29,
+      gender: "male",
+      bloodGroup: "A-",
+      address: "Banani, Dhaka",
+      lastVisitDate: "2024-01-12",
+      medicalConditions: "Allergies",
+      user: {
+        id: "5",
+        image: "/images/user/user-05.png",
+      },
+      createdAt: "2023-10-12T11:30:00Z",
+    },
+  ];
+
+  // Filter patients based on search and filter criteria
+  const filteredPatients = mockPatients.filter((patient) => {
+    const matchesSearch =
+      !searchQuery ||
+      patient.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      patient.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      patient.phone?.includes(searchQuery);
+
+    const matchesFilter = filterBy === "all" || patient.gender === filterBy;
+
+    return matchesSearch && matchesFilter;
+  });
+
+  // Paginate results
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedPatients = filteredPatients.slice(startIndex, endIndex);
+
+  const data: PatientsResponse = {
+    patients: paginatedPatients,
+    meta: {
+      total: filteredPatients.length,
+      page: currentPage,
+      limit: itemsPerPage,
+      totalPages: Math.ceil(filteredPatients.length / itemsPerPage),
+    },
+  };
+
+  const isLoading = false;
+  const isError = false;
+  const error = null;
+  const refetch = () => {};
 
   const handleDelete = async (id: string) => {
     try {
-      const response = await fetch(
-        `${ApiUrl}/doctors/patients/single-delete/${id}`,
-        {
-          method: "DELETE",
-          credentials: "include",
-        },
-      );
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || "Failed to delete patient");
-      }
-
-      toast.success(data.message || "Patient deleted successfully");
+      // Static demo - simulate API call
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      toast.success("Patient deleted successfully (demo mode)");
       setDeleteModal({ isOpen: false, patientId: "", patientName: "" });
-      refetch();
     } catch (error) {
       console.error("Error:", error);
       toast.error(error instanceof Error ? error.message : "An error occurred");
@@ -233,10 +318,7 @@ function Patients() {
         ) : isError ? (
           <div className="p-4">
             <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-center text-red-600 dark:border-red-900 dark:bg-red-900/20 dark:text-red-400">
-              <p>
-                Error:{" "}
-                {error instanceof Error ? error.message : "Unknown error"}
-              </p>
+              <p>Error: Unknown error</p>
               <button
                 className="mt-2 rounded-md border border-slate-200 bg-white px-4 py-2 text-sm font-medium hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700"
                 onClick={() => refetch()}
@@ -308,10 +390,10 @@ function Patients() {
                         >
                           <div className="ml-4">
                             <div className="font-medium text-slate-900 dark:text-slate-100">
-                              {patient.name}
+                              {patient.name || "Unknown Patient"}
                             </div>
                             <div className="text-sm text-slate-500 dark:text-slate-400">
-                              {patient.address}
+                              {patient.address || "No address"}
                             </div>
                           </div>
                         </Link>
@@ -339,12 +421,14 @@ function Patients() {
                     </td>
                     <td className="px-6 py-4">
                       <span className="inline-flex rounded-full bg-slate-100 px-2 py-1 text-xs font-semibold text-slate-700 dark:bg-slate-700 dark:text-slate-300">
-                        {patient.bloodGroup}
+                        {patient.bloodGroup || "N/A"}
                       </span>
                     </td>
                     <td className="px-6 py-4">
                       <div className="text-sm text-slate-900 dark:text-slate-100">
-                        {new Date(patient.lastVisitDate).toLocaleDateString()}
+                        {patient.lastVisitDate
+                          ? new Date(patient.lastVisitDate).toLocaleDateString()
+                          : "N/A"}
                       </div>
                     </td>
                     <td className="px-6 py-4">
@@ -363,7 +447,7 @@ function Patients() {
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
                         <Link
-                          href={`/dashboard/patients/manage?id=${patient.id}`}
+                          href={`/dashboard/patients/manage?id=${patient.id || ""}`}
                           className="rounded-md p-1 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600 dark:text-slate-500 dark:hover:bg-slate-700 dark:hover:text-slate-300"
                         >
                           <Pencil className="h-5 w-5" />
@@ -373,7 +457,7 @@ function Patients() {
                             setDeleteModal({
                               isOpen: true,
                               patientId: patient.id,
-                              patientName: patient.name,
+                              patientName: patient.name || "Unknown Patient",
                             })
                           }
                           className="rounded-md p-1 text-slate-400 transition-colors hover:bg-slate-100 hover:text-red-600 dark:text-slate-500 dark:hover:bg-slate-700 dark:hover:text-red-400"

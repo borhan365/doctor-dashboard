@@ -2,7 +2,6 @@
 
 import { cn } from "@/lib/utils";
 import { ChevronLeft, ChevronRight, Moon, Sun } from "lucide-react";
-import { useSession } from "next-auth/react";
 import Link from "next/link";
 import ProfileDropdown from "./ProfileDropdown";
 
@@ -21,8 +20,8 @@ export function Header({
   darkMode,
   toggleDarkMode,
 }: HeaderProps) {
-  const { status } = useSession();
-  const isLoading = status === "loading";
+  // Static data for demo purposes
+  const isLoading = false;
 
   return (
     <header className="sticky top-0 z-40 w-full bg-white shadow-sm dark:bg-boxdark">

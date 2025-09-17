@@ -1,48 +1,107 @@
-import { ApiUrl } from "@/app/Variables";
 import { DoctorPublication, PublicationFormData } from "@/types/publications";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-hot-toast";
+
+// Static dummy data for publications
+const mockPublications: DoctorPublication[] = [
+  {
+    id: "1",
+    doctorId: "demo-doctor-id",
+    publication: {
+      id: "1",
+      title: "Advanced Interventional Cardiology Techniques",
+      bnTitle: "উন্নত হস্তক্ষেপমূলক কার্ডিওলজি কৌশল",
+      description:
+        "Comprehensive guide to modern interventional cardiology procedures",
+      bnDescription:
+        "আধুনিক হস্তক্ষেপমূলক কার্ডিওলজি পদ্ধতির ব্যাপক নির্দেশিকা",
+      status: "published",
+      createdAt: new Date("2023-06-01"),
+      updatedAt: new Date("2023-06-01"),
+    },
+    journal: "Journal of Cardiovascular Medicine",
+    bnJournal: "কার্ডিওভাসকুলার মেডিসিন জার্নাল",
+    year: "2023",
+    volume: "15",
+    issue: "3",
+    pages: "245-260",
+    doi: "10.1234/jcm.2023.15.3.245",
+    status: "published",
+    createdAt: new Date("2023-06-01"),
+    updatedAt: new Date("2023-06-01"),
+  },
+  {
+    id: "2",
+    doctorId: "demo-doctor-id",
+    publication: {
+      id: "2",
+      title: "Cardiac Catheterization in Bangladesh: A 10-Year Review",
+      bnTitle: "বাংলাদেশে কার্ডিয়াক ক্যাথেটারাইজেশন: ১০ বছরের পর্যালোচনা",
+      description:
+        "Retrospective analysis of cardiac catheterization procedures in Bangladesh",
+      bnDescription:
+        "বাংলাদেশে কার্ডিয়াক ক্যাথেটারাইজেশন পদ্ধতির পশ্চাদপদ বিশ্লেষণ",
+      status: "published",
+      createdAt: new Date("2022-12-01"),
+      updatedAt: new Date("2022-12-01"),
+    },
+    journal: "Bangladesh Heart Journal",
+    bnJournal: "বাংলাদেশ হার্ট জার্নাল",
+    year: "2022",
+    volume: "37",
+    issue: "2",
+    pages: "78-92",
+    doi: "10.5678/bhj.2022.37.2.78",
+    status: "published",
+    createdAt: new Date("2022-12-01"),
+    updatedAt: new Date("2022-12-01"),
+  },
+  {
+    id: "3",
+    doctorId: "demo-doctor-id",
+    publication: {
+      id: "3",
+      title: "Preventive Cardiology: Evidence-Based Approaches",
+      bnTitle: "প্রতিরোধমূলক কার্ডিওলজি: প্রমাণ-ভিত্তিক পদ্ধতি",
+      description:
+        "Evidence-based strategies for preventing cardiovascular diseases",
+      bnDescription: "কার্ডিওভাসকুলার রোগ প্রতিরোধের প্রমাণ-ভিত্তিক কৌশল",
+      status: "published",
+      createdAt: new Date("2021-09-01"),
+      updatedAt: new Date("2021-09-01"),
+    },
+    journal: "International Journal of Preventive Medicine",
+    bnJournal: "আন্তর্জাতিক প্রতিরোধমূলক মেডিসিন জার্নাল",
+    year: "2021",
+    volume: "12",
+    issue: "4",
+    pages: "156-170",
+    doi: "10.7890/ijpm.2021.12.4.156",
+    status: "published",
+    createdAt: new Date("2021-09-01"),
+    updatedAt: new Date("2021-09-01"),
+  },
+];
 
 export const usePublications = (doctorId?: string) => {
   const queryClient = useQueryClient();
 
-  const {
-    data: publications,
-    isLoading: isLoadingPublications,
-    error,
-  } = useQuery<{ publications: DoctorPublication[]; meta: any }>({
-    queryKey: ["publications", doctorId],
-    queryFn: async () => {
-      const url = new URL(
-        `${ApiUrl}/doctors/publications/get-all`,
-        window.location.origin,
-      );
-      if (doctorId) url.searchParams.append("doctorId", doctorId);
-      const res = await fetch(url);
-      if (!res.ok) throw new Error("Failed to fetch publications");
-      return res.json();
-    },
-  });
+  // Return static data instead of API calls
+  const publications = mockPublications.filter(
+    (pub) => pub.doctorId === doctorId,
+  );
+  const isLoadingPublications = false;
+  const error = null;
 
   const { mutateAsync: createPublication, isPending: isCreating } = useMutation(
     {
       mutationFn: async (data: PublicationFormData) => {
-        const response = await fetch(`${ApiUrl}/doctors/publications/create`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data),
-        });
-
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.error || "Failed to create publication");
-        }
-
-        return response.json();
+        // Static demo - simulate API call
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        return { data: { id: Date.now().toString(), ...data } };
       },
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ["publications"] });
-        toast.success("Publication created successfully");
+        toast.success("Publication created successfully (demo mode)");
       },
       onError: (error) => {
         toast.error(
@@ -61,28 +120,14 @@ export const usePublications = (doctorId?: string) => {
         data,
       }: {
         id: string;
-        data: Partial<PublicationFormData>;
+        data: PublicationFormData;
       }) => {
-        const response = await fetch(
-          `${ApiUrl}/doctors/publications/update/${id}`,
-          {
-            method: "PATCH",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(data),
-          },
-        );
-
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.error || "Failed to update publication");
-        }
-
-        return response.json();
+        // Static demo - simulate API call
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        return { data: { id, ...data } };
       },
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ["publications"] });
+        toast.success("Publication updated successfully (demo mode)");
       },
       onError: (error) => {
         toast.error(
@@ -97,28 +142,19 @@ export const usePublications = (doctorId?: string) => {
   const { mutateAsync: deletePublication, isPending: isDeleting } = useMutation(
     {
       mutationFn: async (id: string) => {
-        const res = await fetch(`${ApiUrl}/doctors/publications/delete/${id}`, {
-          method: "DELETE",
-        });
-
-        const responseData = await res.json();
-
-        if (!res.ok) {
-          throw new Error(responseData.error || "Failed to delete publication");
-        }
-
-        return responseData;
+        // Static demo - simulate API call
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        return { data: { id } };
       },
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ["publications"] });
-        toast.success("Publication deleted successfully");
+        toast.success("Publication deleted successfully (demo mode)");
       },
     },
   );
 
   return {
-    publications: publications?.publications || [],
-    meta: publications?.meta,
+    publications: publications || [],
+    meta: { total: publications.length, page: 1, limit: 10 },
     isLoadingPublications,
     error,
     createPublication,

@@ -8,7 +8,6 @@ import {
 import { Treatment } from "@/types/doctor.treatment.type";
 import { Checkbox } from "antd";
 import { Check, Edit2, Plus, Search, Trash2, X } from "lucide-react";
-import { useSession } from "next-auth/react";
 import { useCallback, useState } from "react";
 import { toast } from "react-hot-toast";
 
@@ -27,7 +26,8 @@ function TreatmentSection({
   const [editValue, setEditValue] = useState("");
   const [page, setPage] = useState(1);
   const limit = 10;
-  const { data: session } = useSession();
+  // Static data for demo purposes
+  const session = { user: { id: "demo-user-id" } };
 
   // Use the API hooks
   const { data, isLoading } = useTreatments({
